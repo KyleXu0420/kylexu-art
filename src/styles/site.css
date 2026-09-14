@@ -66,9 +66,6 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .reach ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
 .signoff { grid-column: 6 / span 5; display: grid; gap: var(--s-1); justify-items: start; align-content: start; }
 .signoff p { color: var(--fg-2); }
-.fine { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: var(--s-2); font-size: 14px; color: var(--fg-3); }
-.fine span + span::before { content: '·'; margin-right: 8px; }
-.fine .link { font-weight: 400; }
 
 /* ---- responsive ---- */
 @media (max-width: 1099px) {
@@ -82,8 +79,6 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
   .pill a, .pill .theme { padding: 0 12px; }
   .theme { padding: 0 10px; }
   .hero .lead { margin-top: var(--s-1); }
-  .fine { flex-direction: column; }
-  .fine span + span::before { content: none; }
 }
 @media (max-width: 400px) {
   .pill a { padding: 0 10px; font-size: 13px; }

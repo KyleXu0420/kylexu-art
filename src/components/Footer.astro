@@ -1,11 +1,4 @@
 ---
-import { execSync } from 'node:child_process';
-
-// Build stamp: the commit this page was built from, and the day. CI provides GITHUB_SHA;
-// a local build asks git.
-let commit = (process.env.GITHUB_SHA ?? '').slice(0, 7);
-if (!commit) { try { commit = execSync('git rev-parse --short HEAD').toString().trim(); } catch { commit = 'local'; } }
-const built = new Date().toISOString().slice(0, 10);
 const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
 interface Props { signoff?: boolean }   // whether the page passed a sign-off paragraph
 const { signoff = false } = Astro.props;
@@ -26,11 +19,6 @@ const { signoff = false } = Astro.props;
         </ul>
       </div>
       {signoff && <div class="signoff"><slot name="signoff" /></div>}
-    </div>
-    <div class="fine">
-      <span>© 2026 Kyle Xu</span>
-      <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source ↗</a></span>
-      <span>built {built} from {commit}</span>
     </div>
   </div>
 </footer>
