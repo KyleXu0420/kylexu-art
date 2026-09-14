@@ -1,7 +1,6 @@
 ---
 import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
-import { href } from '../lib/url';
 import '../styles/home.css';   // the same rows and the same card treatment as the index
 import '../styles/about.css';
 import portrait from '../assets/img/about-portrait.png';
@@ -13,15 +12,15 @@ import home1 from '../assets/img/about-home-1.png';
 import home2 from '../assets/img/about-home-2.png';
 import michigan from '../assets/img/about-michigan.jpg';
 
-// The same eight pictures the Webflow About page used, framed like the project cards on the
-// index: 24px radius, no hairline, the image covering the frame. The portrait stands alone under
-// the claim, cropped to 4:3 so the figure is larger than the shelving. The other seven sit in the
-// chapters, paired as the Webflow page paired them, in the slot where the index's rows put the
-// organisation: columns 3–5, one size, stacked, top-aligned to the heading. The words keep the
-// index's reading column and nothing sits beneath them. No hairline in the body: sections are
-// parted by air, and the facts sit on one fixed row pitch.
+// The same eight pictures the Webflow About page used, in the places it used them, framed like the
+// project cards on the index: 24px radius, no hairline, the image covering the frame, every frame
+// 3:2. The portrait is the hero's figure, cropped half-length with the figure on the left third.
+// Each chapter is the index's row — the years at column 1, the words from column 6 to the edge —
+// and carries its pictures beneath the words as the cards do: a pair of halves, or one full width.
+// No hairline in the body: sections are parted by air.
 const wide = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2036], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 92vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
-const small = { formats: ['avif', 'webp'] as const, widths: [480, 800, 1200], sizes: '(max-width: 767px) 46vw, (max-width: 1023px) 36vw, (max-width: 1440px) 21vw, 294px', loading: 'lazy' as const, decoding: 'async' as const };
+const hero = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2036], sizes: '(max-width: 767px) 164vw, (max-width: 1440px) 151vw, 2041px', loading: 'eager' as const, decoding: 'async' as const };
+const half = { formats: ['avif', 'webp'] as const, widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 45vw, 612px', loading: 'lazy' as const, decoding: 'async' as const };
 
 const facts = [
   { label: 'Worked with', items: ['Temper', 'Dify (LangGenius)', 'Curio Digital Therapeutics', 'Infloww', 'Heygen', 'Eaton Corporation', 'HIL Architects', 'ColdMe', 'COIL Connect for Virtual Exchange', 'Capital Area District Libraries', 'Erb Family Foundation'] },
@@ -37,12 +36,9 @@ const facts = [
   ogImage="/og-about.jpg"
 >
   <section class="col hero" aria-labelledby="h1">
-    <h1 class="display" id="h1">At fifteen I was sketching buildings instead of studying for the gaokao.</h1>
-    <p class="lead">Product designer for AI systems, trained as an architect.</p>
-  </section>
-
-  <section class="col sec" aria-label="Portrait">
-    <div class="photo portrait"><Picture src={portrait} {...wide} loading="eager" alt="Kyle in kendo uniform, holding a helmet, in front of a wall of labelled equipment shelves" /></div>
+    <p class="eyebrow">AI product designer</p>
+    <h1 class="display" id="h1">At fifteen I was sketching buildings <span class="nb">instead of studying</span> <span class="nb">for the gaokao.</span></h1>
+    <div class="photo portrait"><Picture src={portrait} {...hero} alt="Kyle in kendo uniform, holding a helmet, in front of a wall of labelled equipment shelves" /></div>
   </section>
 
   <section class="col sec" aria-label="Organisations, skills, tools and languages">
@@ -59,62 +55,52 @@ const facts = [
   <section class="col sec" aria-label="How I got here">
     <ul class="tl story">
       <li>
-        <span class="meta when">2013 – 2018</span>
+        <span class="when">2013 – 2018</span>
         <div class="what">
-          <h2>A design studio at eighteen</h2>
-          <p>In 2013, alongside the sketches, I was in volunteer building workshops in Hangzhou, making small physical improvements. By 2017 I was designing spaces and art pieces for my father's business associates, and being paid for it. At eighteen a local design studio took me on for my first professional project. I got into architecture school in Xi'an all the same.</p>
+          <p>In 2013, alongside the sketches, I was in volunteer building workshops in Hangzhou, making small physical improvements. By 2017 I was designing spaces and art pieces for my father's business associates, and being paid for it. At eighteen a local design studio took me on for my first professional project. I got into architecture school in Xi'an.</p>
         </div>
         <div class="pics">
-          <div class="photo"><Picture src={sketch1} {...small} alt="Kyle as a student, sitting on the steps of a rooftop garden" /></div>
-          <div class="photo"><Picture src={sketch2} {...small} alt="Kyle's reflection in the window of a brick building, camera raised" /></div>
+          <div class="photo"><Picture src={sketch1} {...half} alt="Kyle as a student, sitting on the steps of a rooftop garden" /></div>
+          <div class="photo"><Picture src={sketch2} {...half} alt="Kyle's reflection in the window of a brick building, camera raised" /></div>
         </div>
       </li>
       <li>
-        <span class="meta when">2019</span>
+        <span class="when">2019</span>
         <div class="what">
-          <h2>Junior architect, then my own clients</h2>
-          <p>In 2019 I worked <span class="nb">part-time</span> at an <span class="nb">urban-design</span> practice, and learned that cost and construction decide more of a building than the drawing does. Outside the field nobody wanted a junior architect, so I found my own clients while still a student.</p>
+          <p>In 2019 I worked <span class="nb">part-time</span> at an <span class="nb">urban-design</span> practice, and learned that cost and construction decide more of a building than the drawing does. A junior architect's title did not travel into other fields, so I found my own clients while still a student.</p>
         </div>
         <div class="pics">
-          <div class="photo"><Picture src={studio1} {...small} alt="A small studio interior: a long wooden table and a glass partition" /></div>
-          <div class="photo right"><Picture src={studio2} {...small} alt="A narrow city street lined with shop signs" /></div>
+          <div class="photo"><Picture src={studio1} {...half} alt="A small studio interior: a long wooden table and a glass partition" /></div>
+          <div class="photo right"><Picture src={studio2} {...half} alt="A narrow city street lined with shop signs" /></div>
         </div>
       </li>
       <li>
-        <span class="meta when">2020 – 2022</span>
+        <span class="when">2020 – 2022</span>
         <div class="what">
-          <h2>The Muslim Quarter platform</h2>
-          <p>From 2020 I worked from home, on UI and UX projects with partners in several Chinese cities and on a digital platform for a community in Xi'an's Muslim Quarter, a joint project between my university and the city. A few of us from a film community also built and launched an app. By 2022 all of the work was on screens.</p>
+          <p>From 2020 I worked from home, on UI and UX projects with partners in several Chinese cities. One of them was a digital platform for a community in Xi'an's Muslim Quarter, run jointly by my university and the city. The one I remember most is an app that a few of us from a film community built and launched.</p>
         </div>
         <div class="pics">
-          <div class="photo up"><Picture src={home1} {...small} alt="Kyle at a workbench in a workshop" /></div>
-          <div class="photo mid"><Picture src={home2} {...small} alt="A night-market kitchen in Xi'an's Muslim Quarter, cooks at the grills" /></div>
+          <div class="photo up"><Picture src={home1} {...half} alt="Kyle at a workbench in a workshop" /></div>
+          <div class="photo mid"><Picture src={home2} {...half} alt="A night-market kitchen in Xi'an's Muslim Quarter, cooks at the grills" /></div>
         </div>
       </li>
       <li>
-        <span class="meta when">2022 – 2025</span>
+        <span class="when">2022 – 2026</span>
         <div class="what">
-          <h2>From Eaton to Curio</h2>
-          <p>In 2022 I interned at Eaton on an IoT configuration tool for airport clients, then began the master's in HCI at the University of Michigan. At Heygen I <span class="nb">re-architected</span> the AI video editor around the script.</p>
-          <p>At Infloww the product was a chat assistant for a B2B CRM, and most of the design turned out to sit around the model rather than in it. With the prompt engineers I designed the payment and messaging tools for the cases where it is wrong.</p>
+          <p>By 2022 all of the work was on screens. I interned at Eaton on an IoT configuration tool for airport clients, then began the master's in HCI at the University of Michigan. At Heygen I <span class="nb">re-architected</span> the AI video editor around the script.</p>
+          <p>At Infloww the product was a chat assistant for a B2B CRM, and most of the design turned out to be the work around the model. With the prompt engineers I designed the payment and messaging tools for the cases where it is wrong.</p>
           <p>At Curio Digital Therapeutics I was the founding product designer on MamaLift and MenoLift, two <span class="nb">FDA-cleared</span> products. The design system and the information architecture went through clinical review, and so did a feature called the Achievement Garden.</p>
+          <p>In 2026, for Dify, an AI application platform, I designed a team knowledge base called Droploft, a <span class="nb">multi-agent</span> workplace concept called Syncless, and Skills Agent for Dify Enterprise. Then a contract at Temper, inside the production codebase, on the <span class="nb">design-token</span> architecture and the lint that enforces it.</p>
         </div>
         <div class="pics">
-          <div class="photo"><Picture src={michigan} {...small} alt="Kyle with classmates at the University of Michigan" /></div>
-        </div>
-      </li>
-      <li>
-        <span class="meta when">2026</span>
-        <div class="what">
-          <h2>Dify and Temper</h2>
-          <p>Dify is an AI application platform, and I designed three products for it. Droploft is a team knowledge base. Syncless is a <span class="nb">multi-agent</span> workplace concept. Skills Agent is for Dify Enterprise. After that I was on contract at Temper, inside the production codebase, on the <span class="nb">design-token</span> architecture and the <span class="nb">design-lint</span> checks that enforce it. All of it is on the <a class="link inline" href={href('/')}>Work</a> page.</p>
+          <div class="photo"><Picture src={michigan} {...wide} alt="Kyle with classmates at the University of Michigan" /></div>
         </div>
       </li>
     </ul>
   </section>
 
   <Fragment slot="signoff">
-    <p class="stance">Architecture taught me to decide what the parts are and what each is allowed to do. On an agent product that is most of the job.</p>
-    <p>I do my best work where the model is already capable and the interaction around it is not yet decided. If that is your product, <a class="link inline" href="mailto:kylexu@umich.edu">write to me</a>.</p>
+    <p class="stance wide">Architecture taught me to decide what the parts are <br />and what each is allowed to do. <br />On an agent product, that is most of the job.</p>
+    <p>I am most useful once the model works and before the interface is settled. <span class="nb">If that</span> is your product, write to me.</p>
   </Fragment>
 </Sheet>
