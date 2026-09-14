@@ -26,6 +26,7 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
 .sec { margin-top: var(--s-3); }
 .hero { padding-top: var(--s-3); }
+.hero .eyebrow { margin: 0 0 var(--s-1); font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--fg-2); }
 .hero .lead { margin-top: var(--s-2); max-width: calc(8 / 12 * (100% - 11 * var(--gutter)) + 7 * var(--gutter)); }   /* two thirds of the claim's measure */
 .hero .lead + .lead { margin-top: var(--s-1); }
 .skip { position: absolute; left: -999px; top: 12px; z-index: 20; background: var(--bg); padding: 8px 14px; border-radius: var(--r-pill); font-size: 14px; }
