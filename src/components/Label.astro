@@ -1,7 +1,0 @@
----
-/** A section label in the title-block column: `// 01 — work`. The slashes are
- *  decoration; screen readers get only the words. */
-interface Props { n: string; text: string }
-const { n, text } = Astro.props;
----
-<div class="label"><span aria-hidden="true">// {n} — </span>{text}</div>

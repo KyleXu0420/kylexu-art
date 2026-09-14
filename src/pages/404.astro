@@ -1,15 +1,11 @@
 ---
 import Sheet from '../layouts/Sheet.astro';
-import Label from '../components/Label.astro';
 import { href } from '../lib/url';
 ---
-<Sheet title="Not found — Kyle Xu" description="This page doesn't exist." sheet="404 / not found" robots="noindex">
-  <section class="s">
-    <div class="rail"><Label n="404" text="not found" /></div>
-    <div class="field stack">
-      <h1 class="display-l">This page doesn't exist.</h1>
-      <p class="lede">The address may have changed, or there was a typo in it. Everything that is here is reachable from the index.</p>
-      <a class="go" href={href('/')}>→ back to the index</a>
-    </div>
+<Sheet title="Not found — Kyle Xu" description="This page doesn't exist." robots="noindex">
+  <section class="col hero">
+    <h1 class="display">This page doesn't exist.</h1>
+    <p class="lead">The address may have changed, or there was a typo in it. Everything that is here is reachable from the work page.</p>
+    <p class="lead"><a class="link" href={href('/')}>Back to the work →</a></p>
   </section>
 </Sheet>

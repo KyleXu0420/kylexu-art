@@ -10,6 +10,7 @@ export function href(path = '/'): string {
 /** True when `path` is the page being rendered (base-insensitive, extension-insensitive). */
 export function isCurrent(pathname: string, path: string): boolean {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  const here = pathname.replace(base, '').replace(/\.html$/, '').replace(/\/$/, '') || '/';
+  // with build.format 'file' the index renders as /index.html; treat it as '/'
+  const here = pathname.replace(base, '').replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '') || '/';
   return here === path;
 }

@@ -1,0 +1,57 @@
+/* home.css — composition of the index only. Shared rules live in site.css. */
+
+.nb { white-space: nowrap; }   /* a hyphenated compound never breaks on its hyphen */
+
+/* the work: one hairline list, strictly by date. Every row is date / org / what / link on the
+   twelve columns (2 / 3 / 5 / 2), a rule above every row and one below the last. The whole
+   row is the link. A row with something to show carries it beneath its text on the same grid. */
+.tl { list-style: none; margin: 0; padding: 0; }
+.tl li { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); padding: var(--s-1) 0; border-top: 1px solid var(--line); align-items: start; }
+.tl li:last-child { border-bottom: 1px solid var(--line); }
+.tl .when { grid-column: 1 / span 2; padding-top: 3px; }
+.tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; padding-top: 3px; font-size: 14px; line-height: 1.5; letter-spacing: 0; color: var(--fg-3); }
+.tl .org b { font-weight: 500; color: var(--fg-2); }
+.tl .what { grid-column: 6 / span 5; display: grid; gap: 4px; }
+.tl h2 { font-size: 20px; font-weight: 500; line-height: 1.3; letter-spacing: -.02em; text-wrap: balance; }
+.tl p { color: var(--fg-2); }
+.tl .link { grid-column: 11 / -1; justify-self: end; white-space: nowrap; padding-top: 4px; }
+.tl .link::after { content: ''; position: absolute; inset: 0; }
+.tl li:hover .link { text-decoration-color: currentColor; }
+/* a row with two links: the links sit together and neither claims the whole row */
+.tl .links { grid-column: 11 / -1; justify-self: end; display: grid; gap: 6px; justify-items: end; }
+.tl .links .link { grid-column: auto; padding-top: 4px; }
+.tl .links .link::after { content: none; }
+.tl li:hover .links .link { text-decoration-color: transparent; }   /* row hover lights neither… */
+.tl li:hover .links .link:hover, .tl li .links .link:focus-visible { text-decoration-color: currentColor; }   /* …each lights itself (outranks the row rule) */
+
+
+/* responsive */
+@media (max-width: 1279px) {
+}
+@media (max-width: 1023px) {
+  .tl li { grid-template-columns: 136px minmax(0, 1fr); }
+  .tl li { row-gap: 8px; }
+  .tl .when { grid-column: 1; }
+  .tl .org, .tl .what, .tl .link, .tl .links { grid-column: 2; justify-self: start; }
+  .tl .links { grid-auto-flow: column; gap: 16px; justify-items: start; }
+}
+@media (max-width: 767px) {
+  .tl li { grid-template-columns: 1fr; row-gap: 6px; }
+  /* a timeline pans sideways by nature: on a phone it keeps a readable scale inside its frame */
+  .tl .when, .tl .org, .tl .what, .tl .link, .tl .links { grid-column: 1; }
+}
+
+/* ---- the project cards, as the Webflow site had them: 24px radius, first card full width, then pairs,
+   the image covers the card (each image carries its own tint) ---- */
+.cards { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 24px; }
+.card { flex: 1 1 calc(50% - 12px); min-width: 0; border-radius: 24px; overflow: hidden; background: var(--selection); }
+.card:first-child { flex-basis: 100%; }
+.card a { display: block; position: relative; height: clamp(280px, 34vw, 490px); color: inherit; text-decoration: none; }
+.card picture, .card img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card .cap { position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 2px; padding: 20px 24px; font-size: 14px; line-height: 1.4; color: var(--fill-fg); background: linear-gradient(to top, var(--fill) 0%, transparent 100%); opacity: 0; transition: opacity 180ms ease-out; }
+.card .cap b { font-weight: 600; }
+.card .cap span { opacity: .8; }
+.card a:hover .cap, .card a:focus-visible .cap { opacity: 1; }
+@media (hover: none) { .card .cap { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .card .cap { transition: none; } }
+@media (max-width: 767px) { .card, .card:first-child { flex-basis: 100%; } .card a { height: 62vw; } }

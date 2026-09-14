@@ -1,0 +1,126 @@
+---
+import { Picture } from 'astro:assets';
+import Sheet from '../layouts/Sheet.astro';
+import { href } from '../lib/url';
+import '../styles/home.css';
+import cardDify from '../assets/img/card-dify.png';
+import cardHeygen from '../assets/img/card-heygen.png';
+import cardCurio from '../assets/img/card-curio.png';
+import cardEaton from '../assets/img/card-eaton.png';
+import cardEcho from '../assets/img/card-echo.png';
+
+const observe = 'https://github.com/KyleXu0420/observe';
+const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
+const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
+const echo = 'https://doi.org/10.7302/29019';
+const echoSlides = 'https://www.figma.com/slides/QK7PL9LLx7rcA96mYxw1ij/Echo?node-id=1-1016&t=ThNdmY0SvqYmQacn-0';
+
+// The five project cards of the Webflow site, in its order, with its images (each already carries
+// its own tint) and its links — Figma files stay Figma files for now.
+const card = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 92vw, 1360px', decoding: 'async' as const };
+const cards = [
+  { src: cardDify, href: droploft, ext: true, title: 'Three AI products at Dify — Droploft, Syncless, Skills Agent', sub: 'AI Product Designer (Design Engineer) at Dify, 2026', alt: 'The Dify wordmark' },
+  { src: cardHeygen, href: href('/projects/heygen'), ext: false, title: 'AI video editor revamp & mobile MVP', sub: 'Product Design Intern at Heygen, 2023', alt: 'The Heygen video editor: script panel, avatar canvas and timeline' },
+  { src: cardCurio, href: curio, ext: true, title: 'AI therapeutic UX & gamification design', sub: 'Founding Product Designer at Curio, 2024–2025', alt: 'Four MenoLift phone screens with the daily garden' },
+  { src: cardEaton, href: href('/projects/eaton'), ext: false, title: 'Airport parameter editing tool', sub: 'UX Design Intern at Eaton, 2022', alt: 'The RapidLinkX dashboard with parameter charts' },
+  { src: cardEcho, href: echoSlides, ext: true, title: 'AI health companion', sub: 'M.S. thesis, University of Michigan', alt: 'Two phones showing the Echo avatar' },
+];
+
+---
+<Sheet
+  title="Kyle Xu - AI Product Designer & Design Engineer"
+  description="Kyle Xu, AI product designer. I design the controls, limits, and views that make AI agents usable. Dify, Curio Digital Therapeutics, Heygen, Eaton."
+>
+  <section class="col hero" aria-labelledby="h1">
+    <p class="eyebrow">AI product designer</p>
+    <h1 class="display" id="h1">I design the controls, limits, and views that make AI agents usable.</h1>
+  </section>
+
+  <section class="col sec" id="work" aria-label="Selected work">
+    <ul class="cards">
+      {cards.map((c) => (
+        <li class="card">
+          <a href={c.href} rel={c.ext ? 'noopener' : undefined}>
+            <Picture src={c.src} {...card} alt={c.alt} loading={c === cards[0] ? 'eager' : 'lazy'} />
+            <span class="cap"><b>{c.title}</b><span>{c.sub}</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="col sec" id="history" aria-label="Work, in order">
+    <ul class="tl">
+      <li>
+        <span class="meta when">2026.07 – 2026.09</span>
+        <div class="org"><b>Temper</b><span>Design Engineer (Contract)</span></div>
+        <div class="what">
+          <h2 id="t-temper">A two-layer token architecture, and its <span class="nb">design-lint</span> checkers</h2>
+          <p>Sole designer in the production repo, shipped to main. Hardcoded colour down 60%.</p>
+        </div>
+        <a class="link" href={observe} rel="noopener" aria-describedby="t-temper">Repo ↗</a>
+      </li>
+      <li>
+        <span class="meta when">2026.02 – 2026.06</span>
+        <div class="org"><b>Dify (LangGenius)</b><span>AI Product Designer (Design Engineer)</span></div>
+        <div class="what">
+          <h2 id="t-dify">Droploft</h2>
+          <p>Designed and built end-to-end in code. A team knowledge base on a four-level information architecture, 30+ screens.</p>
+        </div>
+        <a class="link" href={droploft} rel="noopener" aria-describedby="t-dify">File ↗</a>
+      </li>
+      <li>
+        <span class="meta when">2024.11 – 2025.12</span>
+        <div class="org"><b>Curio Digital Therapeutics</b><span>Founding Product Designer</span></div>
+        <div class="what">
+          <h2 id="t-curio">MamaLift and MenoLift</h2>
+          <p>Two FDA-cleared digital therapeutics, their design system and information architecture built from zero under clinical review.</p>
+        </div>
+        <a class="link" href={curio} rel="noopener" aria-describedby="t-curio">File ↗</a>
+      </li>
+      <li>
+        <span class="meta when">2024.03 – 2024.11</span>
+        <div class="org"><b>Infloww</b><span>Product Designer (AI Specialist)</span></div>
+        <div class="what">
+          <h2>An AI chat assistant</h2>
+          <p>Shipped as an MVP, then payment and mass-messaging tools, designed with prompt engineers for the cases where the model is wrong.</p>
+        </div>
+      </li>
+      <li>
+        <span class="meta when">2023.06 – 2023.10</span>
+        <div class="org"><b>Heygen</b><span>Product Design Intern</span></div>
+        <div class="what">
+          <h2 id="t-heygen">The video editor, <span class="nb">re-architected</span> around the script</h2>
+          <p>Script, canvas and timeline reorganised with an updated component library; then a 0→1 iOS companion MVP in three weeks.</p>
+        </div>
+        <a class="link" href={href('/projects/heygen')} aria-describedby="t-heygen">Case →</a>
+      </li>
+      <li>
+        <span class="meta when">2022 – 2025</span>
+        <div class="org"><b>University of Michigan</b><span>M.S. thesis</span></div>
+        <div class="what">
+          <h2 id="t-echo">Echo, a future-self avatar for behaviour change</h2>
+          <p>An LLM-driven agent for everyday health behaviour, piloted and then deployed for 12 days with 36 users.</p>
+        </div>
+        <div class="links">
+          <a class="link" href={echo} rel="noopener" aria-describedby="t-echo">Thesis ↗</a>
+          <a class="link" href={echoSlides} rel="noopener" aria-describedby="t-echo">Slides ↗</a>
+        </div>
+      </li>
+      <li>
+        <span class="meta when">2022.06 – 2022.08</span>
+        <div class="org"><b>Eaton Corporation</b><span>UX Design Intern</span></div>
+        <div class="what">
+          <h2 id="t-eaton">RapidLinkX</h2>
+          <p>An IoT configuration tool for airport conveyor systems, with parameter editing and error monitoring.</p>
+        </div>
+        <a class="link" href={href('/projects/eaton')} aria-describedby="t-eaton">Case →</a>
+      </li>
+    </ul>
+  </section>
+
+  <Fragment slot="signoff">
+    <p class="stance">I start from what the agent is allowed to do, not from the chat box.</p>
+    <p>That's the architecture school in me — six years of learning the site's constraints before you get to draw a wall. It makes the first version look less magical. It also means that when the model does something wrong, and it will, the person can see it and stop it. I'll take that trade.</p>
+  </Fragment>
+</Sheet>

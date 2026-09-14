@@ -1,97 +1,88 @@
-/* site.css — the shared system: base, type, the 3/9 sheet, nav, footer title block.
-   Page-specific composition lives with the page. Colours come from roles only. */
+/* site.css — the shared system: base, type, the one column, the spacing units, the pill,
+   media, nav, footer. Page composition lives with the page. Colours come from roles only. */
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0; background: var(--bg); color: var(--fg);
-  font-family: var(--serif); font-size: 18px; line-height: 28px;
-  font-optical-sizing: auto; font-variant-numeric: lining-nums;
-  -webkit-font-smoothing: antialiased; overflow-x: clip;
+  font-family: var(--sans); font-size: 15px; line-height: 1.5; font-weight: 400;
+  letter-spacing: -.01em; font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: clip;
 }
-html.theming body, html.theming .tb { transition: background-color 200ms, color 200ms, border-color 200ms; }
+html.theming body, html.theming .pill { transition: background-color 200ms, color 200ms, border-color 200ms; }
 img { max-width: 100%; display: block; height: auto; }
 a { color: inherit; text-decoration: none; }
-p { margin: 0 0 1em; text-wrap: pretty; }
-h1, h2, h3 { margin: 0; font-weight: 400; }
+p { margin: 0; text-wrap: pretty; }
+h1, h2, h3 { margin: 0; font-weight: 500; }
 ::selection { background: var(--selection); }
-:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 
-/* ---- type ---- */
-.mono { font-family: var(--mono); font-size: 13px; line-height: 20px; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
-.muted { color: var(--fg-3); }
+/* ---- the column: 1248px inside 96px margins at 1440; twelve columns on a 24px gutter.
+        Identity sits in columns 1–5, the grey reading voice in 6–10, a link in 11–12:
+        the same three positions in every row.
+        Four spacing values: --s-1 inside a row, --s-2 a row to its figure, --s-3 between
+        sections, --s-4 above the footer. Sections are divided by air, rows by a hairline. ---- */
+.col { max-width: 1440px; margin: 0 auto; padding-left: clamp(20px, 6.667vw, 96px); padding-right: clamp(20px, 6.667vw, 96px); }
+.sec { margin-top: var(--s-3); }
+.hero { padding-top: var(--s-3); }
+.hero .eyebrow { margin: 0 0 var(--s-1); font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--fg-2); }
+.hero .lead { margin-top: var(--s-2); max-width: calc(8 / 12 * (100% - 11 * var(--gutter)) + 7 * var(--gutter)); }   /* two thirds of the claim's measure */
+.hero .lead + .lead { margin-top: var(--s-1); }
+.skip { position: absolute; left: -999px; top: 12px; z-index: 20; background: var(--bg); padding: 8px 14px; border-radius: var(--r-pill); font-size: 14px; }
+.skip:focus { left: 16px; }
+
+/* ---- type: four sizes — 86 for the claim, 20 for a title, 15 for everything read, 14 for everything noted ---- */
+.display { font-size: clamp(40px, 5.97vw, 86px); line-height: 1.02; letter-spacing: -.035em; font-weight: 600; text-wrap: balance; }
+.lead { color: var(--fg-2); }
+.meta { font-size: 14px; line-height: 1.5; color: var(--fg-3); font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .cjk { font-family: var(--cjk); font-weight: 400; }
-.display-l { font-size: clamp(34px, 4vw, 56px); line-height: 1.05; letter-spacing: -.015em; text-wrap: balance; max-width: 16em; font-weight: 400; }
-.lede { font-size: 22px; line-height: 32px; max-width: 34em; text-wrap: pretty; }
-.lede a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; text-decoration-color: var(--rule); transition: color var(--t), text-decoration-color var(--t); }
-.lede a:hover { color: var(--redline); text-decoration-color: var(--redline); }
-.go { font-family: var(--mono); font-size: 13px; line-height: 20px; color: var(--fg-2); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: var(--rule); transition: color var(--t), text-decoration-color var(--t); }
-.go:hover { color: var(--redline); text-decoration-color: var(--redline); }
-.label { font-family: var(--mono); font-size: 13px; line-height: 28px; letter-spacing: .01em; color: var(--fg-3); font-weight: 400; white-space: nowrap; }
+.link { font-weight: 500; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: transparent; transition: text-decoration-color var(--t), color var(--t); }
+.link:hover { text-decoration-color: currentColor; }
 
-/* ---- the sheet: 3/9 grid, the axis is the field's left border ---- */
-.skip { position: absolute; left: -999px; top: 8px; font-family: var(--mono); font-size: 13px; background: var(--bg); padding: 8px 12px; border: 1px solid var(--rule); }
-.skip:focus { left: 8px; z-index: 9; }
-.sheet { max-width: 1360px; margin: 0 auto; padding: 0 40px; }
-.s { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); column-gap: var(--s-6); border-top: 1px solid var(--rule); }
-.rail { padding: var(--s-22) 0; }
-.rail .label { position: sticky; top: var(--s-6); }
-.field { border-left: 1px solid var(--rule); padding: var(--s-22) 0 var(--s-22) 40px; min-width: 0; }
-.field > *:last-child { margin-bottom: 0; }
-.stack > * + * { margin-top: var(--s-6); }
+/* ---- the one filled pill: the call to action ---- */
+.btn { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; background: var(--fill); color: var(--fill-fg); border-radius: var(--r-pill); font-size: 14px; font-weight: 600; letter-spacing: 0; transition: transform var(--t); }
+.btn:hover { transform: translateY(-2px); }
 
-/* ---- nav ---- */
-.nav { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-6); align-items: center; height: 64px; border-bottom: 1px solid var(--rule); }
-.nav .brand { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
-.nav .brand b { font-weight: 400; font-size: 20px; letter-spacing: -.01em; white-space: nowrap; }
-.nav .links { display: flex; gap: 28px; justify-content: flex-end; align-items: center; padding-left: 40px; }
-.nav .links a { font-family: var(--mono); font-size: 13px; letter-spacing: .01em; color: var(--fg-2); position: relative; padding: 22px 0; transition: color var(--t); }
-.nav .links a:hover { color: var(--redline); }
-.nav .links a[aria-current] { color: var(--fg); }
-.nav .links a[aria-current]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--redline); }
-.theme { appearance: none; background: none; border: 1px solid var(--rule); border-radius: 50%; width: 26px; height: 26px; cursor: pointer; color: var(--fg-2); display: grid; place-items: center; padding: 0; transition: border-color var(--t), color var(--t); }
-.theme:hover { color: var(--redline); border-color: var(--redline); }
-.theme svg { width: 12px; height: 12px; }
+/* ---- media: a hairline-framed figure on the page ground, one radius ---- */
 
-/* ---- footer: a title block ---- */
-.foot { border-top: 1px solid var(--rule); padding: var(--s-12) 0 64px; }
-.tb { border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; font-family: var(--mono); font-size: 12.5px; line-height: 18px; margin: 0; }
-.tb > div { padding: 14px 16px; border-left: 1px solid var(--rule); min-width: 0; }
-.tb > div:first-child { border-left: 0; }
-.tb dt { color: var(--fg-3); margin: 0 0 2px; }
-.tb dt + dd + dt { margin-top: var(--s-3); }
-.tb dd { margin: 0; color: var(--fg); }
-.tb dd a { color: var(--fg); border-bottom: 1px solid var(--rule); transition: color var(--t), border-color var(--t); }
-.tb dd a:hover { color: var(--redline); border-color: var(--redline); }
-.tb .cjk { font-size: 13px; }
-.foot .close { display: flex; justify-content: space-between; gap: var(--s-6); flex-wrap: wrap; margin-top: var(--s-6); font-family: var(--mono); font-size: 12px; line-height: 18px; color: var(--fg-3); }
+/* ---- nav: the name left, one outlined pill right, the theme toggle inside it ---- */
+.nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.nav .col { display: flex; justify-content: space-between; align-items: center; height: 72px; gap: 16px; }
+.brand { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.pill { display: flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: var(--r-pill); }
+.pill a, .pill .theme { display: flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; line-height: 1; color: var(--fg-3); white-space: nowrap; transition: color var(--t); }
+.pill a:hover, .pill .theme:hover, .pill a[aria-current] { color: var(--fg); }
+.theme { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; padding: 0 12px; }
+.theme svg { width: 14px; height: 14px; }
+
+/* ---- footer: the close — a stance line and its argument — then a hairline and one row of contact.
+        The page opens and closes on an "I" sentence in ink; the pill is the last thing seen. ---- */
+.foot { margin-top: var(--s-4); padding: 0 0 var(--s-2); }
+.close { display: grid; gap: var(--s-1); justify-items: start; }
+.close .stance { margin: 0; font-size: clamp(28px, 2.78vw, 40px); line-height: 1.1; letter-spacing: -.02em; font-weight: 500; max-width: 34ch; text-wrap: balance; color: var(--fg); }
+.close p { color: var(--fg-2); font-size: 17px; line-height: 1.55; max-width: 58ch; }
+.reach { margin-top: 112px; padding-top: var(--s-2); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: var(--s-1) var(--s-2); flex-wrap: wrap; }
+.who { display: flex; align-items: baseline; gap: 12px; }
+.who b { font-weight: 600; letter-spacing: -.01em; }
+.who .cjk { margin-left: 6px; }
+.reach ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
 
 /* ---- responsive ---- */
+@media (max-width: 1099px) {
+  .hero .lead { max-width: none; }
+}
 @media (max-width: 1023px) {
-  .sheet { padding: 0 24px; }
+  .reach { margin-top: var(--s-3); }
 }
-@media (max-width: 899px) {
-  .s, .nav { grid-template-columns: 1fr; }
-  .rail { padding: var(--s-12) 0 var(--s-4); }
-  .rail .label { position: static; }
-  .field { border-left: 0; padding: 0 0 var(--s-14); }
-  .nav { height: auto; padding: 12px 0; }
-  .nav .links { justify-content: flex-start; padding-left: 0; gap: 20px; flex-wrap: wrap; }
-  .nav .links a { padding: 8px 0; }
-  .tb { grid-template-columns: 1fr 1fr; }
-  .tb > div:nth-child(3) { border-left: 0; border-top: 1px solid var(--rule); }
-  .tb > div:nth-child(4) { border-top: 1px solid var(--rule); }
-  .lede { font-size: 19px; line-height: 28px; }
-  body { font-size: 17px; line-height: 26px; }
+@media (max-width: 767px) {
+  .nav .col { height: 64px; }
+  .pill a, .pill .theme { padding: 0 12px; }
+  .theme { padding: 0 10px; }
+  .hero .lead { margin-top: var(--s-1); }
 }
-@media (max-width: 639px) {
-  .sheet { padding: 0 20px; }
-  .nav .brand { flex-direction: column; gap: 2px; }
-  .lede { font-size: 18px; line-height: 26px; }
+@media (max-width: 400px) {
+  .pill a { padding: 0 10px; font-size: 13px; }
 }
 @media print {
   .nav, .theme, .skip { display: none; }
-  .s { grid-template-columns: 1fr; }
-  .field { border-left: 0; padding-left: 0; }
-  body { background: var(--white); color: var(--ink-900); }
 }
