@@ -2,74 +2,52 @@
 
 .nb { white-space: nowrap; }   /* a hyphenated compound never breaks on its hyphen */
 
-/* the proof of the sentence: six roles from this site's own tokens.css, read at build time,
-   set between the same hairlines the work list uses and on its columns — the name where a
-   date sits, the value and its live swatch where the company sits, the comment where the
-   title sits. The swatch is painted with the role itself, so it is the token doing its job. */
-.tok { margin: 0; padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 15px; line-height: 1.5; font-variant-ligatures: none; }
-.tok .grid { row-gap: 0; padding: 4px 0; }
-.tok dt { grid-column: 1 / span 2; margin: 0; color: var(--fg); }
-.tok dd { margin: 0; color: var(--fg-3); }
-.tok .v { grid-column: 3 / span 3; display: flex; align-items: center; gap: 10px; }
-.tok .n { grid-column: 6 / -1; }
-.tok .d { display: none; }   /* the dark value shows in the dark theme, below */
-.hy { letter-spacing: .25em; margin-right: -.25em; }   /* the two hyphens of a custom property, kept apart */
-.sw { flex: none; width: 12px; height: 12px; border-radius: 50%; background: var(--sw); box-shadow: inset 0 0 0 1px var(--line); }
-.tok + .cap { display: block; margin-top: 12px; }
+/* the pictured work: one rule — captures never sit inside a row; the two with a public capture
+   are shown here, above the list, every capture in the same hairline frame at the one radius,
+   with one meta caption 12px beneath. Three square details of MenoLift on the twelve columns
+   (four each), then the Heygen timeline at the full width. */
+.shots { margin: 0; display: grid; gap: 12px; }
+.shots + .shots { margin-top: var(--s-2); }
+.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
 
 /* the work: one hairline list, strictly by date. Every row is date / org / what on the twelve
    columns (2 / 3 / 7), a rule above every row and one below the last. The title is the link
-   and the whole row its target; the row says so on hover, once, with the title's underline and
-   a glyph that tells external from internal. A row with something to show carries it beneath
-   its text at the full width of the column. */
+   and the whole row its target; a hairline arrow at the row's right margin says so — → for a
+   case here, ↗ for a file elsewhere — and darkens with the title's underline on hover. */
 .tl { list-style: none; margin: 0; padding: 0; }
 .tl li { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); padding: var(--s-1) 0; border-top: 1px solid var(--line); align-items: start; }
 .tl li:last-child { border-bottom: 1px solid var(--line); }
 .tl .when { grid-column: 1 / span 2; padding-top: 5px; }
 .tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; padding-top: 5px; font-size: 14px; line-height: 1.5; letter-spacing: 0; color: var(--fg-3); }
 .tl .org b { font-weight: 500; color: var(--fg-2); }
-.tl .what { grid-column: 6 / -1; display: grid; gap: 10px; }
+.tl .what { grid-column: 6 / -1; display: grid; gap: 10px; padding-right: 48px; }
 .tl h2 { font-size: 22px; font-weight: 500; line-height: 1.25; letter-spacing: -.025em; text-wrap: balance; }
 .tl h2 a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; text-decoration-color: transparent; transition: text-decoration-color var(--t); }
 .tl h2 a::before { content: ''; position: absolute; inset: 0; }   /* the whole row is the link */
-.tl h2 a::after { content: ' →'; opacity: 0; transition: opacity var(--t); }
-.tl h2 a[rel]::after { content: ' ↗'; }   /* an external link (the only ones that carry rel) */
+.tl h2 a::after { content: '→'; position: absolute; right: 0; top: var(--s-1); font-weight: 300; color: var(--fg-3); transition: color var(--t); }   /* the cue, on the rule's right margin */
+.tl h2 a[rel]::after { content: '↗'; }   /* an external link (the only ones that carry rel) */
 .tl li:hover h2 a, .tl h2 a:focus-visible { text-decoration-color: currentColor; }
-.tl li:hover h2 a::after, .tl h2 a:focus-visible::after { opacity: 1; }
+.tl li:hover h2 a::after, .tl h2 a:focus-visible::after { color: var(--fg); }
 .tl p { color: var(--fg-2); }
-.tl .fig { grid-column: 1 / -1; margin-top: var(--s-2); }
-
-/* the dark theme: the value column shows what the file gives the role in dark */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .tok .l { display: none; }
-  :root:not([data-theme="light"]) .tok .d { display: inline; }
-}
-:root[data-theme="dark"] .tok .l { display: none; }
-:root[data-theme="dark"] .tok .d { display: inline; }
 
 /* responsive */
 @media (max-width: 1023px) {
   .tl li { grid-template-columns: 136px minmax(0, 1fr); row-gap: 8px; }
   .tl .when { grid-column: 1; }
   .tl .org, .tl .what { grid-column: 2; }
-  .tl .fig { grid-column: 1 / -1; }
-  .tok .grid { grid-template-columns: 136px 200px minmax(0, 1fr); }
-  .tok dt { grid-column: 1; }
-  .tok .v { grid-column: 2; }
-  .tok .n { grid-column: 3; }
+  /* below the full column a capture pans sideways inside its frame rather than shrinking past reading */
+  .pan { overflow-x: auto; }
+  .pan picture, .pan img { width: 960px; max-width: none; }
+  .trio { display: flex; overflow-x: auto; scroll-snap-type: x proximity; }
+  .trio .media { flex: none; width: 320px; scroll-snap-align: start; }
 }
 @media (max-width: 767px) {
   .display .br { display: none; }
   .display .pivot { display: block; }   /* the counter-claim keeps its own line on a phone */
-  .tok { font-size: 13px; }
-  .tok .grid { grid-template-columns: 76px minmax(0, 1fr); row-gap: 0; padding: 6px 0; }   /* the name, then the value over its comment */
-  .tok dt { grid-column: 1; }
-  .tok .v, .tok .n { grid-column: 2; }
-  .tok .n { padding-left: 22px; }   /* under the value, not under its swatch */
   .tl li { grid-template-columns: 1fr; row-gap: 6px; }
-  .tl .when, .tl .org, .tl .what, .tl .fig { grid-column: 1; }
+  .tl .when, .tl .org, .tl .what { grid-column: 1; }
+  .tl .what { padding-right: 0; }
   .tl h2 { font-size: 20px; }
-  /* a timeline pans sideways by nature: on a phone it keeps a readable scale inside its frame */
-  .pan { overflow-x: auto; }
-  .pan picture, .pan img { width: 960px; max-width: none; }
+  .tl h2 a::after { font-size: 20px; }
+  .trio .media { width: 300px; }
 }

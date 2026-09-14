@@ -3,38 +3,18 @@ import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';
-import tokensRaw from '../styles/tokens.css?raw';
-import menolift from '../assets/img/menolift-screens.png';
-import heygen from '../assets/img/heygen-after.png';
+import home from '../assets/img/menolift-home.png';
+import plan from '../assets/img/menolift-plan.png';
+import garden from '../assets/img/menolift-garden.png';
+import heygen from '../assets/img/heygen-timeline.png';
 
 const observe = 'https://github.com/KyleXu0420/observe';
 const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
 const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
 const echo = 'https://doi.org/10.7302/29019';
 
-// The proof under the claim: six colour roles from this site's own tokens.css, read from the
-// file at build time — the name, the value it is given in light and in dark, and its comment —
-// beside a swatch painted with the role itself, so the reader sees the token doing its job on
-// the page they are reading. Nothing here is typed twice: if the file changes, so does this.
-const ROLES = ['--bg', '--fg', '--fg-2', '--fg-3', '--line', '--fill'];
-const lines = tokensRaw.split('\n');
-function block(marker: string): Map<string, { value: string; note: string }> {
-  const at = lines.findIndex((l) => l.startsWith(marker));
-  const out = new Map();
-  for (const l of lines.slice(at)) {
-    const m = l.match(/^\s*(--[\w-]+):\s*([^;]+);\s*(?:\/\*\s*(.*?)\s*\*\/)?/);
-    if (m) out.set(m[1], { value: m[2].trim(), note: m[3] ?? '' });
-    else if (l.trim() === '}') break;
-  }
-  return out;
-}
-const light = block('/* @roles — light');
-const dark = block('/* @roles — dark');
-const roles = ROLES.map((name) => ({ name, light: light.get(name)!.value, dark: dark.get(name)!.value, note: light.get(name)!.note }));
-const hy = (s: string) => s.replace(/--/g, '<span class="hy">--</span>');   // the two hyphens of a custom property, kept apart in a mono face whose hyphen is wide
-
-const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1248, 2496], sizes: '(max-width: 767px) 960px, (max-width: 1440px) 86.7vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
-const card = { formats: ['avif', 'webp'] as const, widths: [640, 1248, 2496], sizes: '(max-width: 1440px) 86.7vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
+const square = { formats: ['avif', 'webp'] as const, widths: [300, 400, 503], sizes: '(max-width: 767px) 300px, (max-width: 1023px) 320px, (max-width: 1440px) 27.8vw, 400px', loading: 'lazy' as const, decoding: 'async' as const };
+const wide = { formats: ['avif', 'webp'] as const, widths: [960, 1248, 1697], sizes: '(max-width: 1023px) 960px, (max-width: 1440px) 86.7vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
 ---
 <Sheet
   title="Kyle Xu — AI product designer · design engineer"
@@ -44,17 +24,19 @@ const card = { formats: ['avif', 'webp'] as const, widths: [640, 1248, 2496], si
     <h1 class="display" id="h1">I design AI products <br class="br" />in the codebase they ship from. <br class="br" /><span class="pivot">Not in a file that describes it.</span></h1>
   </section>
 
-  <section class="col sec" aria-label="The codebase: six colour roles from this site's own tokens.css, each shown with the colour it resolves to">
-    <dl class="tok">
-      {roles.map((r) => (
-        <div class="grid">
-          <dt set:html={hy(r.name)} />
-          <dd class="v"><i class="sw" style={`--sw: var(${r.name})`} aria-hidden="true"></i><span class="l" set:html={hy(r.light)} /><span class="d" set:html={hy(r.dark)} /></dd>
-          <dd class="n">{r.note}</dd>
-        </div>
-      ))}
-    </dl>
-    <p class="meta cap">src/styles/tokens.css</p>
+  <section class="col sec" aria-label="Pictured: the two with a public capture">
+    <figure class="shots">
+      <div class="trio">
+        <div class="media"><Picture src={home} {...square} alt="The MenoLift home screen: 956 of 1000 points, a Store Uplifts button, the day's quote and a seven-day streak row" /></div>
+        <div class="media"><Picture src={plan} {...square} alt="The MenoLift plan for Monday, May 5: answer one question, drink eight cups of water, work out, meditate, log symptoms" /></div>
+        <div class="media"><Picture src={garden} {...square} alt="The MenoLift daily garden: an illustrated bed of red, white, purple and blue flowers" /></div>
+      </div>
+      <figcaption class="meta">MenoLift, Curio Digital Therapeutics · the home with its streak, the day's plan, the daily garden</figcaption>
+    </figure>
+    <figure class="shots">
+      <div class="media pan"><Picture src={heygen} {...wide} alt="The Heygen editor timeline after the re-architecture: playback controls, a time ruler, three Monica clips and the playhead at 00:38:88" /></div>
+      <figcaption class="meta">Heygen · the editor timeline after the <span class="nb">re-architecture</span></figcaption>
+    </figure>
   </section>
 
   <section class="col sec" id="work" aria-label="Work">
@@ -82,7 +64,6 @@ const card = { formats: ['avif', 'webp'] as const, widths: [640, 1248, 2496], si
           <h2><a href={curio} rel="noopener">MamaLift and MenoLift</a></h2>
           <p>Two FDA-cleared digital therapeutics, their design system and information architecture built from zero under clinical review.</p>
         </div>
-        <div class="fig media"><Picture src={menolift} {...card} alt="Five MenoLift screens fanned on an indigo field: a community post, the daily garden, a day's plan, the uplift store with a streak, and the memory stand" /></div>
       </li>
       <li>
         <span class="meta when">2024.03 – 2024.11</span>
@@ -99,15 +80,6 @@ const card = { formats: ['avif', 'webp'] as const, widths: [640, 1248, 2496], si
           <h2><a href={href('/projects/heygen')}>The video editor, <span class="nb">re-architected</span> around the script</a></h2>
           <p>Script, canvas and timeline reorganised with an updated component library; then a 0→1 iOS companion MVP in three weeks.</p>
         </div>
-        <div class="fig media pan"><Picture src={heygen} {...shot} alt="The Heygen editor timeline after the re-architecture: a playback bar, time markers and numbered clips" /></div>
-      </li>
-      <li>
-        <span class="meta when">2022 – 2025</span>
-        <div class="org"><b>University of Michigan</b><span>M.S. thesis</span></div>
-        <div class="what">
-          <h2><a href={echo} rel="noopener">Echo, a future-self avatar for behaviour change</a></h2>
-          <p>An LLM-driven agent for everyday health behaviour, piloted and then deployed for 12 days with 36 users.</p>
-        </div>
       </li>
       <li>
         <span class="meta when">2022.06 – 2022.08</span>
@@ -121,6 +93,6 @@ const card = { formats: ['avif', 'webp'] as const, widths: [640, 1248, 2496], si
   </section>
 
   <Fragment slot="signoff">
-    <p>Trained as an architect for six years before product. A building holds because someone decided what the parts are and what each is allowed to do, and wrote it down so it could be checked. I hold design to that rule: ship it as production code, make the decisions checkable, and study how people actually use AI.</p>
+    <p>Trained as an architect for six years before product. A building holds because someone decided what the parts are and what each is allowed to do, and wrote it down so it could be checked. I hold design to that rule: ship it as production code, make the decisions checkable, and study how people actually use AI. My M.S. thesis at the University of Michigan (<span class="nb">2022 – 2025</span>), <a href={echo} rel="noopener">Echo, a future-self avatar for behaviour change</a>, was an LLM-driven agent for everyday health behaviour, piloted and then deployed for 12 days with 36 users.</p>
   </Fragment>
 </Sheet>

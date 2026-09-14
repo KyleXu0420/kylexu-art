@@ -1,7 +1,28 @@
 ---
+import tokensRaw from '../styles/tokens.css?raw';
 const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
 interface Props { signoff?: boolean }   // whether the page passed a sign-off paragraph
 const { signoff = false } = Astro.props;
+
+// The colophon: six colour roles from this site's own tokens.css, read from the file at build
+// time — the name, the value it is given in light and in dark, and its comment — beside a swatch
+// painted with the role itself. Nothing here is typed twice: if the file changes, so does this.
+const ROLES = ['--bg', '--fg', '--fg-2', '--fg-3', '--line', '--fill'];
+const lines = tokensRaw.split('\n');
+function block(marker: string): Map<string, { value: string; note: string }> {
+  const at = lines.findIndex((l) => l.startsWith(marker));
+  const out = new Map();
+  for (const l of lines.slice(at)) {
+    const m = l.match(/^\s*(--[\w-]+):\s*([^;]+);\s*(?:\/\*\s*(.*?)\s*\*\/)?/);
+    if (m) out.set(m[1], { value: m[2].trim(), note: m[3] ?? '' });
+    else if (l.trim() === '}') break;
+  }
+  return out;
+}
+const light = block('/* @roles — light');
+const dark = block('/* @roles — dark');
+const roles = ROLES.map((name) => ({ name, light: light.get(name)!.value, dark: dark.get(name)!.value, note: light.get(name)!.note }));
+const hy = (s: string) => s.replace(/--/g, '<span class="hy">--</span>');   // the two hyphens of a custom property, kept apart
 ---
 <footer class="foot" id="contact">
   <div class="col">
@@ -20,10 +41,21 @@ const { signoff = false } = Astro.props;
       </div>
       {signoff && <div class="signoff"><slot name="signoff" /></div>}
     </div>
-    <div class="fine">
-      <span>© 2026 Kyle Xu</span>
-      <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source</a></span>
-      <span><button class="theme" id="theme" type="button" aria-label="Switch between the light and dark theme"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 1a6 6 0 0 1 0 12z" fill="currentColor"/></svg>Theme</button></span>
+    <div class="grid fine">
+      <p class="legal">
+        <span>© 2026 Kyle Xu</span>
+        <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source</a></span>
+        <span><button class="theme" id="theme" type="button"><span class="l">Dark theme</span><span class="d">Light theme</span></button></span>
+      </p>
+      <dl class="tok" aria-label="Colophon: six colour roles from this site's tokens.css, each shown with the colour it resolves to">
+        {roles.map((r) => (
+          <div>
+            <dt set:html={hy(r.name)} />
+            <dd class="v"><i class="sw" style={`--sw: var(${r.name})`} aria-hidden="true"></i><span class="l" set:html={hy(r.light)} /><span class="d" set:html={hy(r.dark)} /></dd>
+            <dd class="n">{r.note}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </div>
 </footer>
