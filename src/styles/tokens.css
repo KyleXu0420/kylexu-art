@@ -25,7 +25,7 @@
   --fill-fg: var(--white);      /* text on the fill */
   --code-bg: var(--ink);        /* the code window */
   --code-fg: var(--grey-5);     /* a token's name */
-  --code-muted: var(--grey-40); /* everything else in the window */
+  --code-muted: var(--grey-40); /* the rest of the window */
   --focus: var(--ink);
   --selection: var(--grey-15);
 
@@ -33,12 +33,13 @@
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --cjk: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
 
-  --r-media: 20px;                /* every piece of media */
-  --r-pill: 999px;                /* every pill */
+  --r-media: 12px;                /* every framed figure */
+  --r-pill: 999px;                /* the two pills */
   --gutter: 24px;                 /* the grid gutter */
-  --s-1: 40px;                    /* inside a section */
-  --s-2: clamp(64px, 6.667vw, 96px);  /* between sections */
-  --s-3: clamp(96px, 11.1vw, 160px);  /* above the footer */
+  --s-1: 24px;                    /* inside a row */
+  --s-2: 48px;                    /* a row to its figure; the hero to its lede */
+  --s-3: clamp(72px, 7.78vw, 112px);   /* between sections */
+  --s-4: clamp(104px, 12.2vw, 176px);  /* the page break above the footer */
   --ease: cubic-bezier(.2, .7, .2, 1);
   --t: 320ms var(--ease);
   color-scheme: light;
@@ -56,7 +57,7 @@
     --fill-fg: var(--ink);        /* text on the fill */
     --code-bg: var(--ink-950);    /* the code window */
     --code-fg: var(--grey-15);    /* a token's name */
-    --code-muted: var(--grey-60); /* everything else in the window */
+    --code-muted: var(--grey-60); /* the rest of the window */
     --focus: var(--grey-5);
     --selection: var(--ink-700);
     color-scheme: dark;

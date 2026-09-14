@@ -4,24 +4,28 @@ import Sheet from '../layouts/Sheet.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';
 import tokensRaw from '../styles/tokens.css?raw';
-import timeline from '../assets/img/heygen-timeline.png';
+import before from '../assets/img/heygen-before.png';
+import after from '../assets/img/heygen-after.png';
 
 const observe = 'https://github.com/KyleXu0420/observe';
 const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
 const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
 const echo = 'https://doi.org/10.7302/29019';
 
-// The Temper row shows this site's own tokens.css — the first lines of the light role block
-// and of the dark one — read from the file at build time, so what it shows is what runs.
-// Two tones: a token's name in the code colour, everything else muted.
+// The band under the claim shows this site's own tokens.css — the first lines of the light role
+// block and of the dark one — read from the file at build time, so what it shows is what runs.
+// Two tones: a token's name in the code colour, everything else muted. The two hyphens of a
+// custom property are wrapped so they can be kept apart in a mono face whose hyphen is wide.
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const dd = (s: string) => s.replace(/^--/, '<span class="dd">--</span>');
 function paint(line: string): string {
-  const re = /(--[\w-]+)(?=\s*:)|(\/\*.*?\*\/)/g;
+  const re = /(--[\w-]+)(?=\s*:)|(\/\*.*?\*\/)|(--)/g;
   let out = '', i = 0, m: RegExpExecArray | null;
   while ((m = re.exec(line))) {
     out += esc(line.slice(i, m.index));
     out += m[2] ? `<span class=${m.index ? '"t"' : '"h"'}>${esc(m[2])}</span>`   // .t: a trailing comment, hidden when narrow; .h: a heading comment, wrapped on a phone
-                : `<span class="k">${esc(m[1])}</span>`;
+        : m[1] ? `<span class="k">${dd(esc(m[1]))}</span>`
+               : '<span class="dd">--</span>';
     i = m.index + m[0].length;
   }
   return out + esc(line.slice(i));
@@ -29,16 +33,27 @@ function paint(line: string): string {
 const tokens = tokensRaw.split('\n');
 const lightAt = tokens.findIndex((l) => l.startsWith('/* @roles — light'));
 const darkAt = tokens.findIndex((l) => l.startsWith('/* @roles — dark'));
-const light = [...tokens.slice(lightAt, lightAt + 10), '  …', '}'].map(paint).join('\n');
-const dark = [...tokens.slice(darkAt, darkAt + 9), '    …', '  }', '}'].map(paint).join('\n');
+// fourteen lines each: the light block opens with one selector line, the dark with two
+const light = [...tokens.slice(lightAt, lightAt + 12), '  …', '}'].map(paint).join('\n');
+const dark = [...tokens.slice(darkAt, darkAt + 11), '    …', '  }', '}'].map(paint).join('\n');
+const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1036, 2066], sizes: '(max-width: 767px) 960px, (max-width: 1440px) 72vw, 1036px', loading: 'lazy' as const, decoding: 'async' as const };
 ---
 <Sheet
   title="Kyle Xu — AI product designer · design engineer"
   description="Kyle Xu designs AI products in the codebase they ship from. Most recently Temper (a token architecture and the design-lint checkers that keep it honest) and Dify (Droploft, built end-to-end in code)."
 >
   <section class="col hero" aria-labelledby="h1">
-    <h1 class="display" id="h1">I design AI products in the codebase <br class="br" />they ship from. <br class="br" />Not in a file that describes it.</h1>
-    <p class="lead">Most recently at Temper, on a token architecture and the lint that keeps it honest. <br class="br" />Before that at Dify, where I designed and built Droploft.</p>
+    <h1 class="display" id="h1">I design AI products <br class="br" />in the codebase they ship from. <br class="br" /><span class="pivot">Not in a file that describes it.</span></h1>
+  </section>
+
+  <section aria-label="The codebase: this site's own colour tokens">
+    <div class="band" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
+      <div class="col grid">
+        <pre><code set:html={light} /></pre>
+        <pre><code set:html={dark} /></pre>
+      </div>
+    </div>
+    <p class="col meta cap">src/styles/tokens.css · this site's own, read at build time</p>
   </section>
 
   <section class="col sec" id="work" aria-label="Work">
@@ -48,41 +63,35 @@ const dark = [...tokens.slice(darkAt, darkAt + 9), '    …', '  }', '}'].map(pa
         <div class="org"><b>Temper</b><span>Design Engineer (Contract)</span></div>
         <div class="what">
           <h2 id="t-temper">A two-layer token architecture, and its <span class="nb">design-lint</span> checkers</h2>
-          <p>Sole designer in the production repo, shipped to main; hardcoded colour down 60%. Every lint rule ships with a control fixture: a planted defect it must catch, a near-miss it must leave alone. Open-sourced as observe.</p>
+          <p>Sole designer in the production repo, shipped to main. Hardcoded colour down 60%.</p>
         </div>
-        <a class="link" href={observe} rel="noopener" aria-describedby="t-temper">GitHub ↗</a>
-        <div class="media code" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
-          <pre><code set:html={light} /></pre>
-          <pre><code set:html={dark} /></pre>
-        </div>
-        <span class="meta cap">src/styles/tokens.css · this site's own, read at build time</span>
+        <a class="link" href={observe} rel="noopener" aria-describedby="t-temper">Repo ↗</a>
       </li>
       <li>
         <span class="meta when">2026.02 – 2026.06</span>
         <div class="org"><b>Dify (LangGenius)</b><span>AI Product Designer (Design Engineer)</span></div>
         <div class="what">
           <h2 id="t-dify">Droploft</h2>
-          <p>A team knowledge base, designed and built end-to-end in code: a four-level information architecture, 30+ screens.</p>
+          <p>Designed and built end-to-end in code. A team knowledge base on a four-level information architecture, 30+ screens.</p>
         </div>
-        <a class="link" href={droploft} rel="noopener" aria-describedby="t-dify">Figma ↗</a>
+        <a class="link" href={droploft} rel="noopener" aria-describedby="t-dify">File ↗</a>
       </li>
       <li>
         <span class="meta when">2024.11 – 2025.12</span>
         <div class="org"><b>Curio Digital Therapeutics</b><span>Founding Product Designer</span></div>
         <div class="what">
           <h2 id="t-curio">MamaLift and MenoLift</h2>
-          <p>FDA-cleared digital therapeutics: design system and information architecture from zero, under clinical review.</p>
+          <p>Two FDA-cleared digital therapeutics, their design system and information architecture built from zero under clinical review.</p>
         </div>
-        <a class="link" href={curio} rel="noopener" aria-describedby="t-curio">Figma ↗</a>
+        <a class="link" href={curio} rel="noopener" aria-describedby="t-curio">File ↗</a>
       </li>
       <li>
         <span class="meta when">2024.03 – 2024.11</span>
         <div class="org"><b>Infloww</b><span>Product Designer (AI Specialist)</span></div>
         <div class="what">
           <h2>An AI chat assistant</h2>
-          <p>Shipped as an MVP, then payment and mass-messaging tools; designed with prompt engineers for the cases where the model is wrong.</p>
+          <p>Shipped as an MVP, then payment and mass-messaging tools, designed with prompt engineers for the cases where the model is wrong.</p>
         </div>
-        <span class="meta none">No public link</span>
       </li>
       <li>
         <span class="meta when">2023.06 – 2023.10</span>
@@ -92,17 +101,20 @@ const dark = [...tokens.slice(darkAt, darkAt + 9), '    …', '  }', '}'].map(pa
           <p>Script, canvas and timeline reorganised with an updated component library; then a 0→1 iOS companion MVP in three weeks.</p>
         </div>
         <a class="link" href={href('/projects/heygen')} aria-describedby="t-heygen">Case →</a>
-        <div class="media shot">
-          <Picture src={timeline} formats={['avif', 'webp']} widths={[640, 1248, 2066]} sizes="(max-width: 1440px) 87vw, 1248px" alt="The Heygen editor timeline before and after the re-architecture: the new one adds a playback bar, time markers and numbered clips" loading="lazy" decoding="async" />
+        <div class="fig" role="group" aria-label="The editor timeline, before and after">
+          <span class="meta lab">Before</span>
+          <div class="media"><Picture src={before} {...shot} alt="The Heygen editor timeline before the re-architecture: unlabelled clips on one track, no playback bar" /></div>
+          <span class="meta lab">After</span>
+          <div class="media"><Picture src={after} {...shot} alt="The Heygen editor timeline after the re-architecture: a playback bar, time markers and numbered clips" /></div>
+          <span class="meta cap">Heygen, 2023 · editor timeline</span>
         </div>
-        <span class="meta cap">Heygen, 2023 · the editor timeline before (above) and after the re-architecture</span>
       </li>
       <li>
         <span class="meta when">2022 – 2025</span>
         <div class="org"><b>University of Michigan</b><span>M.S. thesis</span></div>
         <div class="what">
           <h2 id="t-echo">Echo, a future-self avatar for behaviour change</h2>
-          <p>An LLM-driven agent for everyday health behaviour: a pilot, then a 12-day deployment with 36 users.</p>
+          <p>An LLM-driven agent for everyday health behaviour, piloted and then deployed for 12 days with 36 users.</p>
         </div>
         <a class="link" href={echo} rel="noopener" aria-describedby="t-echo">Thesis ↗</a>
       </li>
@@ -111,7 +123,7 @@ const dark = [...tokens.slice(darkAt, darkAt + 9), '    …', '  }', '}'].map(pa
         <div class="org"><b>Eaton Corporation</b><span>UX Design Intern</span></div>
         <div class="what">
           <h2 id="t-eaton">RapidLinkX</h2>
-          <p>An IoT configuration tool for airport conveyor systems: parameter editing and error monitoring.</p>
+          <p>An IoT configuration tool for airport conveyor systems, with parameter editing and error monitoring.</p>
         </div>
         <a class="link" href={href('/projects/eaton')} aria-describedby="t-eaton">Case →</a>
       </li>
