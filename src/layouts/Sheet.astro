@@ -13,6 +13,7 @@ interface Props {
   robots?: string;
 }
 const { title, description, ogImage, robots } = Astro.props;
+const signoff = Astro.slots.has('signoff');   // the index passes its closing paragraph to the footer
 const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/', Astro.site);
 const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 ---
@@ -50,7 +51,7 @@ const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
   <a class="skip" href="#main">Skip to content</a>
   <Nav />
   <main id="main"><slot /></main>
-  <Footer />
+  <Footer signoff={signoff}><slot name="signoff" slot="signoff" /></Footer>
   <script is:inline>
     (function () {
       var r = document.documentElement, k = 'kx-theme', b = document.getElementById('theme');

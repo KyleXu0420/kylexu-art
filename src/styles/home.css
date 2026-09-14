@@ -1,67 +1,52 @@
 /* home.css — composition of the index only. Shared rules live in site.css. */
 
-/* the first card peeks under the fold */
-.work { margin-top: clamp(64px, 7vw, 96px); }
+/* hero: the claim across the whole column, the lede in seven of its twelve */
+.hero .display { grid-column: 1 / -1; }
+.hero .lead { grid-column: 1 / span 7; }
 
-/* the three cards: a 2/1 row of equal height, then one full width */
-.grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 40px var(--gutter); }
-.grid .wide { grid-column: 1 / -1; }
+/* the two cards, stacked; the caption is a pair with its card, the cards are siblings */
 .card { min-width: 0; }
-.card .media { aspect-ratio: 16 / 10; }
-.card.tall .media { aspect-ratio: 4 / 5; }
-.card.wide .media { aspect-ratio: 7 / 4; }
-.cap { margin-top: 18px; display: grid; gap: 8px; }
-.cap h3 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.card + .card { margin-top: var(--s-2); }
+.cap { margin-top: var(--s-1); row-gap: var(--s-1); }
+.cap .head { grid-column: 1 / span 5; display: grid; gap: 8px; align-content: start; }
+.cap .body { grid-column: 6 / -1; display: grid; gap: 12px; align-content: start; justify-items: start; }
+.cap h3 { font-size: 24px; line-height: 1.2; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
 .cap h3 a { transition: color var(--t); }
 .cap h3 a:hover { color: var(--fg-2); }
-.cap p { color: var(--fg-2); max-width: 60ch; }
-.cap .link { justify-self: start; margin-top: 4px; }
-.wide .cap { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: var(--gutter); }
-.wide .cap > div { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.cap p { color: var(--fg-2); max-width: 62ch; }
 
-/* the Temper tile: this site's own tokens.css, read at build time */
-.code { display: flex; flex-direction: column; gap: 14px; padding: 24px 28px; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 13px; line-height: 1.6; font-variant-ligatures: none; }
+/* the Temper artefact: this site's own tokens.css, read at build time, in a window */
+.code { display: flex; flex-direction: column; gap: 14px; padding: 22px 28px 26px; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 13px; line-height: 1.6; font-variant-ligatures: none; }
 .code .file { display: flex; justify-content: space-between; gap: 16px; color: var(--code-muted); font-family: var(--sans); font-size: 14px; letter-spacing: 0; }
-.code pre { margin: 0; flex: 1; min-height: 0; overflow: hidden; white-space: pre; font: inherit; }
+.code .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px var(--gutter); }
+.code pre { margin: 0; min-width: 0; overflow: hidden; white-space: pre; font: inherit; }
 .code .k { color: var(--code-key); }
 .code .v { color: var(--code-val); }
 .code .c { color: var(--code-muted); }
-.code .t { white-space: pre; }
+.code .t, .code .h { white-space: pre; }
 
-/* earlier: a plain timeline, hairline rows */
+/* the index: hairline rows on the same twelve columns — 2 / 3 / 5 / 2 */
 .tl { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.tl li { display: grid; grid-template-columns: 168px minmax(0, 4fr) minmax(0, 7fr) 176px; gap: 8px var(--gutter); padding: 24px 0; border-bottom: 1px solid var(--line); align-items: start; }
-.tl .org { display: grid; gap: 2px; }
+.tl li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px var(--gutter); padding: var(--s-1) 0; border-bottom: 1px solid var(--line); align-items: start; }
+.tl .when { grid-column: 1 / span 2; }
+.tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; }
 .tl .org b { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.tl p { color: var(--fg-2); }
-.tl .link { font-size: 15px; white-space: nowrap; justify-self: end; }
-.tl .none { font-size: 14px; color: var(--fg-3); white-space: nowrap; justify-self: end; }
-
-/* how i work: three claims, then where it comes from */
-.claims { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px var(--gutter); }
-.claim { display: grid; gap: 10px; align-content: start; }
-.claim h3 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.claim p { color: var(--fg-2); }
-.claim .link { justify-self: start; margin-top: 4px; font-size: 15px; }
-.origin { margin-top: 64px; padding-top: 40px; border-top: 1px solid var(--line); display: grid; gap: 20px; }
-.origin .link { justify-self: start; }
+.tl p { grid-column: 6 / span 5; color: var(--fg-2); }
+.tl .link { grid-column: 11 / -1; font-size: 15px; white-space: nowrap; justify-self: end; }
 
 /* responsive */
 @media (max-width: 1023px) {
+  .hero .lead { grid-column: 1 / -1; }
+  .cap .head, .cap .body { grid-column: 1 / -1; }
   .tl li { grid-template-columns: 136px minmax(0, 1fr); }
-  .tl p { grid-column: 2; }
-  .tl .link, .tl .none { grid-column: 2; justify-self: start; }
-  .claims { grid-template-columns: 1fr; gap: 32px; }
-  .wide .cap { grid-template-columns: 1fr; }
+  .tl .when { grid-column: 1; }
+  .tl .org, .tl p, .tl .link { grid-column: 2; justify-self: start; }
 }
 @media (max-width: 767px) {
-  .grid { grid-template-columns: 1fr; gap: 36px; }
-  .card .media, .card.tall .media, .card.wide .media { aspect-ratio: 4 / 3; }
-  .card.wide .media { aspect-ratio: 8 / 5; }
-  .card .media.code { aspect-ratio: auto; }
-  .code { font-size: 12px; padding: 18px 20px; }
+  .code { font-size: 12px; padding: 16px 18px 20px; }
+  .code .two { grid-template-columns: 1fr; }
   .code .t, .code .file span + span { display: none; }
+  .code .h { white-space: normal; display: inline-block; vertical-align: top; max-width: 100%; }
   .tl li { grid-template-columns: 1fr; gap: 6px; padding: 20px 0; }
-  .tl p, .tl .link, .tl .none { grid-column: 1; }
-  .origin { margin-top: 48px; padding-top: 32px; }
+  .tl .when, .tl .org, .tl p, .tl .link { grid-column: 1; }
 }

@@ -10,7 +10,7 @@
   --white: #FFFFFF;
   --grey-5: #F5F5F5;   --grey-15: #ECEDF1;  --grey-20: #CFD1D7;  --grey-40: #9FA0A3;
   --grey-50: #8E8F93;  --grey-60: #828283;  --grey-70: #66676B;  --grey-80: #4D4E50;
-  --ink: #131417;      --ink-900: #1A1B1F;  --ink-800: #222327;  --ink-700: #2C2D33;  --ink-600: #3B3C43;
+  --ink: #131417;      --ink-950: #0E0F12;  --ink-900: #1A1B1F;  --ink-800: #222327;  --ink-700: #2C2D33;  --ink-600: #3B3C43;
   --mint-200: #C0E3D1; --mint-300: #9CD1B6; --linen-100: #F9F3EE; --linen-300: #E6D9C9;
 }
 /* @end-primitives */
@@ -18,8 +18,8 @@
 /* @roles — light. One job each. */
 :root {
   --bg: var(--grey-5);          /* the page */
-  --surface: var(--white);      /* pills, cards */
-  --surface-2: var(--grey-15);  /* tiles, hover */
+  --surface: var(--white);      /* the pill */
+  --surface-2: var(--grey-15);  /* a card's field */
   --fg: var(--ink);             /* reading text */
   --fg-2: var(--grey-80);       /* secondary text */
   --fg-3: var(--grey-70);       /* meta, captions */
@@ -28,7 +28,7 @@
   --line-2: var(--grey-15);     /* a pill's edge */
   --fill: var(--ink);           /* the filled pill */
   --fill-fg: var(--white);      /* text on the fill */
-  --code-bg: var(--ink);        /* the code tile */
+  --code-bg: var(--ink);        /* the code window */
   --code-fg: var(--grey-5);     /* code text */
   --code-key: var(--mint-200);  /* a token's name */
   --code-val: var(--linen-100); /* its value */
@@ -40,9 +40,14 @@
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   --cjk: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
 
-  --r-media: 20px;                /* every piece of media */
+  --r-media: 20px;                /* every card */
+  --r-win: 12px;                  /* the window inside a card */
   --r-pill: 999px;                /* every pill */
-  --gutter: 24px;                 /* between cards */
+  --gutter: 24px;                 /* the grid gutter */
+  --s-1: 24px;                    /* a pair: label and its content, a card and its caption */
+  --s-2: 48px;                    /* siblings inside a section */
+  --s-3: clamp(80px, 8.9vw, 128px); /* between sections */
+  --inset: clamp(20px, 3.9vw, 56px); /* a window's inset from its card */
   --ease: cubic-bezier(.2, .7, .2, 1);
   --t: 320ms var(--ease);
   color-scheme: light;
@@ -52,8 +57,8 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: var(--ink);             /* the page */
-    --surface: var(--ink-900);    /* pills, cards */
-    --surface-2: var(--ink-800);  /* tiles, hover */
+    --surface: var(--ink-900);    /* the pill */
+    --surface-2: var(--ink-800);  /* a card's field */
     --fg: var(--grey-5);          /* reading text */
     --fg-2: var(--grey-20);       /* secondary text */
     --fg-3: var(--grey-40);       /* meta, captions */
@@ -62,7 +67,7 @@
     --line-2: var(--ink-700);     /* a pill's edge */
     --fill: var(--grey-5);        /* the filled pill */
     --fill-fg: var(--ink);        /* text on the fill */
-    --code-bg: var(--ink-900);    /* the code tile */
+    --code-bg: var(--ink-950);    /* the code window */
     --code-fg: var(--grey-15);    /* code text */
     --code-key: var(--mint-300);  /* a token's name */
     --code-val: var(--linen-300); /* its value */
@@ -84,7 +89,7 @@
   --line-2: var(--ink-700);
   --fill: var(--grey-5);
   --fill-fg: var(--ink);
-  --code-bg: var(--ink-900);
+  --code-bg: var(--ink-950);
   --code-fg: var(--grey-15);
   --code-key: var(--mint-300);
   --code-val: var(--linen-300);

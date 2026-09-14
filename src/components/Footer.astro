@@ -7,28 +7,31 @@ let commit = (process.env.GITHUB_SHA ?? '').slice(0, 7);
 if (!commit) { try { commit = execSync('git rev-parse --short HEAD').toString().trim(); } catch { commit = 'local'; } }
 const built = new Date().toISOString().slice(0, 10);
 const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
+interface Props { signoff?: boolean }   // whether the page passed a sign-off paragraph
+const { signoff = false } = Astro.props;
 ---
 <footer class="foot" id="contact">
   <div class="col">
-    <div class="row">
-      <div class="who">
-        <b>Kyle Xu<span class="cjk">徐匡泓</span></b>
-        <span class="meta">they / them · AI product designer · design engineer</span>
-      </div>
+    <div class="grid">
+      {signoff && <div class="signoff"><slot name="signoff" /></div>}
       <div class="reach">
-        <a class="btn" href="mailto:kylexu@umich.edu">Get in touch →</a>
+        <div class="who">
+          <b>Kyle Xu<span class="cjk">徐匡泓</span></b>
+          <span class="meta">they / them</span>
+        </div>
         <ul>
           <li><a class="link" href="mailto:kylexu@umich.edu">kylexu@umich.edu</a></li>
           <li><a class="link" href="https://www.linkedin.com/in/kyle-xu-a111161a4/" rel="noopener">LinkedIn ↗</a></li>
           <li><a class="link" href="https://github.com/KyleXu0420" rel="noopener">GitHub ↗</a></li>
           <li><a class="link" href={resume} rel="noopener">Resume (PDF) ↗</a></li>
         </ul>
+        <a class="btn" href="mailto:kylexu@umich.edu">Get in touch</a>
       </div>
     </div>
     <div class="fine">
       <span>© 2026 Kyle Xu</span>
-      <span>Hand-written HTML and CSS, deployed from GitHub. No template, no tracker.</span>
-      <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source</a> · built {built} from {commit}</span>
+      <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source</a></span>
+      <span>built {built} from {commit}</span>
     </div>
   </div>
 </footer>

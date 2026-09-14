@@ -13,16 +13,14 @@ const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0a
       <b>Kyle Xu</b>
       <span>AI product designer · design engineer</span>
     </a>
-    <div class="tools">
-      <nav class="pill" aria-label="Primary">
-        {links.map((l) => (
-          <a href={href(l.to)} aria-current={isCurrent(path, l.to) ? 'page' : undefined}>{l.label}</a>
-        ))}
-        <a href={resume} target="_blank" rel="noopener">Resume ↗</a>
-      </nav>
+    <nav class="pill" aria-label="Primary">
+      {links.map((l) => (
+        <a href={href(l.to)} aria-current={isCurrent(path, l.to) ? 'page' : undefined}>{l.label}</a>
+      ))}
+      <a href={resume} target="_blank" rel="noopener">Resume ↗</a>
       <button class="theme" id="theme" type="button" aria-label="Toggle dark theme" title="Theme">
         <svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 1a6 6 0 0 1 0 12z" fill="currentColor"/></svg>
       </button>
-    </div>
+    </nav>
   </div>
 </header>
