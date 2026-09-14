@@ -21,7 +21,8 @@
 .tl .links { grid-column: 11 / -1; justify-self: end; display: grid; gap: 6px; justify-items: end; }
 .tl .links .link { grid-column: auto; padding-top: 4px; }
 .tl .links .link::after { content: none; }
-.tl li:hover .links .link { text-decoration-color: inherit; }
+.tl li:hover .links .link { text-decoration-color: transparent; }   /* row hover lights neither… */
+.tl .links .link:hover, .tl .links .link:focus-visible { text-decoration-color: currentColor; }   /* …each lights itself */
 
 
 /* responsive */
