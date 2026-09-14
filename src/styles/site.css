@@ -19,11 +19,10 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 
 /* ---- the column: 1248px inside 96px margins at 1440; twelve columns on a 24px gutter.
         Identity sits in columns 1–5, the grey reading voice in 6–10, a link in 11–12:
-        the same three positions in every row and in the footer.
+        the same three positions in every row.
         Four spacing values: --s-1 inside a row, --s-2 a row to its figure, --s-3 between
         sections, --s-4 above the footer. Sections are divided by air, rows by a hairline. ---- */
 .col { max-width: 1440px; margin: 0 auto; padding-left: clamp(20px, 6.667vw, 96px); padding-right: clamp(20px, 6.667vw, 96px); }
-.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
 .sec { margin-top: var(--s-3); }
 .hero { padding-top: var(--s-3); }
 .hero .eyebrow { margin: 0 0 var(--s-1); font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--fg-2); }
@@ -56,23 +55,24 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .theme { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; padding: 0 12px; }
 .theme svg { width: 14px; height: 14px; }
 
-/* ---- footer: the name and one line of contact in columns 1–5, the sign-off in 6–10, one small line beneath ---- */
+/* ---- footer: the close — a stance line and its argument — then a hairline and one row of contact.
+        The page opens and closes on an "I" sentence in ink; the pill is the last thing seen. ---- */
 .foot { margin-top: var(--s-4); padding: 0 0 var(--s-2); }
-.foot .grid { row-gap: var(--s-1); }
-.reach { grid-column: 1 / span 5; display: grid; gap: var(--s-1); align-content: start; justify-items: start; }
-.who { display: grid; gap: 4px; }
+.close { display: grid; gap: var(--s-1); justify-items: start; }
+.close .stance { margin: 0; font-size: clamp(28px, 2.78vw, 40px); line-height: 1.1; letter-spacing: -.02em; font-weight: 500; max-width: 34ch; text-wrap: balance; color: var(--fg); }
+.close p { color: var(--fg-2); font-size: 17px; line-height: 1.55; max-width: 58ch; }
+.reach { margin-top: 112px; padding-top: var(--s-2); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: var(--s-1) var(--s-2); flex-wrap: wrap; }
+.who { display: flex; align-items: baseline; gap: 12px; }
 .who b { font-weight: 600; letter-spacing: -.01em; }
 .who .cjk { margin-left: 6px; }
 .reach ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
-.signoff { grid-column: 6 / span 5; display: grid; gap: var(--s-1); justify-items: start; align-content: start; }
-.signoff p { color: var(--fg-2); }
 
 /* ---- responsive ---- */
 @media (max-width: 1099px) {
   .hero .lead { max-width: none; }
 }
 @media (max-width: 1023px) {
-  .reach, .signoff { grid-column: 1 / -1; }
+  .reach { margin-top: var(--s-3); }
 }
 @media (max-width: 767px) {
   .nav .col { height: 64px; }
