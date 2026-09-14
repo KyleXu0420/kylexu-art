@@ -1,56 +1,66 @@
 # kylexu.art
 
-Static mirror of the Webflow site **https://www.kylexu.art**, self-hosted on GitHub Pages.
-No request goes to Webflow or Google at runtime: all CSS/JS/images and the two web fonts
-(Lato, Manrope — OFL) are served from this repo.
+Kyle Xu's portfolio, hosted on GitHub Pages. Being rebuilt page by page as a hand-written
+[Astro](https://astro.build) static site; the Webflow-era mirror lives in `legacy/` and keeps
+serving every URL until its page is replaced.
+
+## How the build works
+
+```
+astro build            →  dist/  (only the routes that exist in src/pages)
+tools/overlay-legacy   →  copies legacy/** into dist/ where dist/ has no such path
+tools/check.py dist    →  every local href/src/srcset/url() in dist/ resolves
+```
+
+Precedence is deterministic: the moment `src/pages/<route>` exists, that URL is served by
+Astro; otherwise by the mirror. Deleting a file from `legacy/` is the last step of replacing
+a page, never the first. `.github/workflows/pages.yml` runs this on every push to `main`
+and deploys `dist/` with GitHub Actions.
+
+```bash
+npm ci
+npm run build          # dist/
+npm run check          # python3 tools/check.py dist
+npm run preview        # python3 tools/serve.py 8000 dist  — resolves /about → about.html like Pages
+npm run dev            # Astro dev server (only the new pages; legacy is not overlaid in dev)
+```
+
+`SITE_BASE=/kylexu-art` is set in CI while the preview lives at
+`https://kylexu0420.github.io/kylexu-art/`. Remove it when `www.kylexu.art` points at Pages.
 
 ## Layout
 
-| Path | URL |
-|------|-----|
-| `index.html` | `/` |
-| `about.html` | `/about` |
-| `projects/heygen.html`, `projects/eaton.html` | `/projects/…` (linked from the homepage) |
-| `portfolio.html`, `cases/*.html`, `categories/*.html` | redirect stubs (meta-refresh + canonical) for old Webflow CMS URLs that were never linked from the nav |
-| `404.html` | custom not-found page |
-| `css/` `js/` `images/` `fonts/` | assets |
-| `tools/` | mirror / check / preview scripts (not part of the site) |
+| Path | What |
+|------|------|
+| `src/pages/` | Astro routes (none yet — PR 0 is the toolchain) |
+| `legacy/` | the Webflow mirror, byte-for-byte: `index.html`, `about.html`, `projects/*`, `404.html`, `css/ js/ images/ fonts/`, and meta-refresh stubs for the old `/cases/*`, `/portfolio`, `/categories/*` URLs |
+| `tools/overlay-legacy.mjs` | the overlay step described above |
+| `tools/check.py` | reference checker (`[ROOT]` argument, default repo root) |
+| `tools/serve.py` | local preview with GitHub-Pages URL semantics (`[PORT] [DIR]`) |
+| `tools/mirror.py` | how the snapshot was taken from Webflow. Kept as a record; **do not run it** — `legacy/` is hand-maintained since 2026-09-13 |
 
-Internal links are extensionless and relative (`about`, `projects/heygen`, `../`), so the
-folder works both at `https://<user>.github.io/<repo>/` and at the root of a custom domain
-(GitHub Pages serves `about.html` for `/about`). `404.html` is the one exception: it uses
-root-absolute paths because Pages serves it for any missing URL, so it only renders
-correctly on the custom domain.
+Legacy pages use extensionless, relative links (`about`, `projects/heygen`, `../`), so they work
+at any base URL. `legacy/404.html` is root-absolute and only renders correctly on the custom
+domain; the Astro `404` replaces it in PR 1.
 
-## Maintenance
+## Replacement order
 
-Since 2026-09-13 this mirror is **hand-maintained**: the P0 fixes (stale copy, the nav duplicated
-inside every project card, the page-load overlay, dead links, viewport-scaled type on the case
-pages, oversized images, redirect stubs for the old `/cases/*` and `/portfolio` URLs) were made
-directly in these files. Do not re-run `tools/mirror.py` against Webflow — it would overwrite
-them. It is kept only as a record of how the snapshot was taken. `tools/check.py` still verifies
-that every local reference resolves; run it before pushing.
-
-The next step is a page-by-page rebuild (Astro, same URLs) with this folder kept as `legacy/`
-until each page is replaced — see the plan in `~/Desktop/kylexu-art-plan/`.
-
-## Preview locally
-
-```bash
-python3 tools/serve.py 8000
-```
-
-`tools/serve.py` resolves extensionless URLs the same way GitHub Pages does.
+PR 0 toolchain (this) → PR 1 tokens, layout, nav, footer, 404 → PR 2 home → PR 3 about →
+PR 4 `/projects/temper`, `/projects/dify` → PR 5 heygen, eaton → PR 6 redirects →
+PR 7 delete `legacy/` → PR 8 checkers in CI. Each PR leaves the site fully working; rollback
+is re-running the previous deployment.
 
 ## Moving the domain to GitHub Pages
 
-Do it in this order — the live site sends a one-year HSTS header, so returning visitors get
-a hard certificate error during the window between DNS switch and GitHub issuing the cert.
+Do it in this order — the old Webflow-hosted site sent a one-year HSTS header, so returning
+visitors get a hard certificate error during the window between DNS switch and GitHub
+issuing the cert.
 
-1. Settings → Pages → Custom domain: `www.kylexu.art` (this commits a `CNAME` file).
+1. Settings → Pages → Custom domain: `www.kylexu.art` (this commits a `CNAME` file; put it
+   in `public/` so the build keeps it).
 2. At the DNS provider: `www` → CNAME `kylexu0420.github.io`; apex `kylexu.art` → A records
    `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`
    (and AAAA `2606:50c0:8000::153` … `8003::153` if IPv6 is supported).
 3. Wait until the Pages settings page shows the certificate as issued, then tick
    **Enforce HTTPS**. Keep the Webflow site published until then so DNS can be rolled back.
-4. Only then unpublish / downgrade on Webflow.
+4. Remove `SITE_BASE` from the workflow. Only then unpublish / downgrade on Webflow.
