@@ -1,0 +1,37 @@
+---
+import { execSync } from 'node:child_process';
+import { href } from '../lib/url';
+interface Props { sheet?: string }
+const { sheet = '—' } = Astro.props;
+
+// Build stamp: the commit this page was built from, and the day. CI provides GITHUB_SHA;
+// a local build asks git. The footer is the title block of the drawing set.
+let commit = (process.env.GITHUB_SHA ?? '').slice(0, 7);
+if (!commit) { try { commit = execSync('git rev-parse --short HEAD').toString().trim(); } catch { commit = 'local'; } }
+const built = new Date().toISOString().slice(0, 10);
+const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
+---
+<footer class="foot" id="contact">
+  <dl class="tb">
+    <div>
+      <dt>drawn by</dt><dd>Kyle Xu <span class="cjk">徐匡泓</span></dd>
+      <dt>pronouns</dt><dd>they / them</dd>
+    </div>
+    <div>
+      <dt>contact</dt><dd><a href="mailto:kylexu@umich.edu">kylexu@umich.edu</a></dd>
+      <dt>links</dt><dd><a href="https://www.linkedin.com/in/kyle-xu-a111161a4/" rel="noopener">linkedin</a> · <a href="https://github.com/KyleXu0420" rel="noopener">github</a> · <a href={resume} rel="noopener">resume (pdf)</a></dd>
+    </div>
+    <div>
+      <dt>sheet</dt><dd>{sheet}</dd>
+      <dt>revision</dt><dd>built {built} · commit {commit}</dd>
+    </div>
+    <div>
+      <dt>set in</dt><dd>Newsreader · IBM Plex Mono</dd>
+      <dt>source</dt><dd><a href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">github / kylexu-art</a></dd>
+    </div>
+  </dl>
+  <div class="close">
+    <span>© 2026 Kyle Xu</span>
+    <span>hand-written html and css · deployed from github · no template, no tracker</span>
+  </div>
+</footer>

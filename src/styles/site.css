@@ -1,0 +1,97 @@
+/* site.css — the shared system: base, type, the 3/9 sheet, nav, footer title block.
+   Page-specific composition lives with the page. Colours come from roles only. */
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--serif); font-size: 18px; line-height: 28px;
+  font-optical-sizing: auto; font-variant-numeric: lining-nums;
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+}
+html.theming body, html.theming .tb { transition: background-color 200ms, color 200ms, border-color 200ms; }
+img { max-width: 100%; display: block; height: auto; }
+a { color: inherit; text-decoration: none; }
+p { margin: 0 0 1em; text-wrap: pretty; }
+h1, h2, h3 { margin: 0; font-weight: 400; }
+::selection { background: var(--selection); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+
+/* ---- type ---- */
+.mono { font-family: var(--mono); font-size: 13px; line-height: 20px; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.muted { color: var(--fg-3); }
+.cjk { font-family: var(--cjk); font-weight: 400; }
+.display-l { font-size: clamp(34px, 4vw, 56px); line-height: 1.05; letter-spacing: -.015em; text-wrap: balance; max-width: 16em; font-weight: 400; }
+.lede { font-size: 22px; line-height: 32px; max-width: 34em; text-wrap: pretty; }
+.lede a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .18em; text-decoration-color: var(--rule); transition: color var(--t), text-decoration-color var(--t); }
+.lede a:hover { color: var(--redline); text-decoration-color: var(--redline); }
+.go { font-family: var(--mono); font-size: 13px; line-height: 20px; color: var(--fg-2); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: var(--rule); transition: color var(--t), text-decoration-color var(--t); }
+.go:hover { color: var(--redline); text-decoration-color: var(--redline); }
+.label { font-family: var(--mono); font-size: 13px; line-height: 28px; letter-spacing: .01em; color: var(--fg-3); font-weight: 400; white-space: nowrap; }
+
+/* ---- the sheet: 3/9 grid, the axis is the field's left border ---- */
+.skip { position: absolute; left: -999px; top: 8px; font-family: var(--mono); font-size: 13px; background: var(--bg); padding: 8px 12px; border: 1px solid var(--rule); }
+.skip:focus { left: 8px; z-index: 9; }
+.sheet { max-width: 1360px; margin: 0 auto; padding: 0 40px; }
+.s { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); column-gap: var(--s-6); border-top: 1px solid var(--rule); }
+.rail { padding: var(--s-22) 0; }
+.rail .label { position: sticky; top: var(--s-6); }
+.field { border-left: 1px solid var(--rule); padding: var(--s-22) 0 var(--s-22) 40px; min-width: 0; }
+.field > *:last-child { margin-bottom: 0; }
+.stack > * + * { margin-top: var(--s-6); }
+
+/* ---- nav ---- */
+.nav { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: var(--s-6); align-items: center; height: 64px; border-bottom: 1px solid var(--rule); }
+.nav .brand { display: flex; align-items: baseline; gap: var(--s-3); flex-wrap: wrap; }
+.nav .brand b { font-weight: 400; font-size: 20px; letter-spacing: -.01em; white-space: nowrap; }
+.nav .links { display: flex; gap: 28px; justify-content: flex-end; align-items: center; padding-left: 40px; }
+.nav .links a { font-family: var(--mono); font-size: 13px; letter-spacing: .01em; color: var(--fg-2); position: relative; padding: 22px 0; transition: color var(--t); }
+.nav .links a:hover { color: var(--redline); }
+.nav .links a[aria-current] { color: var(--fg); }
+.nav .links a[aria-current]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--redline); }
+.theme { appearance: none; background: none; border: 1px solid var(--rule); border-radius: 50%; width: 26px; height: 26px; cursor: pointer; color: var(--fg-2); display: grid; place-items: center; padding: 0; transition: border-color var(--t), color var(--t); }
+.theme:hover { color: var(--redline); border-color: var(--redline); }
+.theme svg { width: 12px; height: 12px; }
+
+/* ---- footer: a title block ---- */
+.foot { border-top: 1px solid var(--rule); padding: var(--s-12) 0 64px; }
+.tb { border: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; font-family: var(--mono); font-size: 12.5px; line-height: 18px; margin: 0; }
+.tb > div { padding: 14px 16px; border-left: 1px solid var(--rule); min-width: 0; }
+.tb > div:first-child { border-left: 0; }
+.tb dt { color: var(--fg-3); margin: 0 0 2px; }
+.tb dt + dd + dt { margin-top: var(--s-3); }
+.tb dd { margin: 0; color: var(--fg); }
+.tb dd a { color: var(--fg); border-bottom: 1px solid var(--rule); transition: color var(--t), border-color var(--t); }
+.tb dd a:hover { color: var(--redline); border-color: var(--redline); }
+.tb .cjk { font-size: 13px; }
+.foot .close { display: flex; justify-content: space-between; gap: var(--s-6); flex-wrap: wrap; margin-top: var(--s-6); font-family: var(--mono); font-size: 12px; line-height: 18px; color: var(--fg-3); }
+
+/* ---- responsive ---- */
+@media (max-width: 1023px) {
+  .sheet { padding: 0 24px; }
+}
+@media (max-width: 899px) {
+  .s, .nav { grid-template-columns: 1fr; }
+  .rail { padding: var(--s-12) 0 var(--s-4); }
+  .rail .label { position: static; }
+  .field { border-left: 0; padding: 0 0 var(--s-14); }
+  .nav { height: auto; padding: 12px 0; }
+  .nav .links { justify-content: flex-start; padding-left: 0; gap: 20px; flex-wrap: wrap; }
+  .nav .links a { padding: 8px 0; }
+  .tb { grid-template-columns: 1fr 1fr; }
+  .tb > div:nth-child(3) { border-left: 0; border-top: 1px solid var(--rule); }
+  .tb > div:nth-child(4) { border-top: 1px solid var(--rule); }
+  .lede { font-size: 19px; line-height: 28px; }
+  body { font-size: 17px; line-height: 26px; }
+}
+@media (max-width: 639px) {
+  .sheet { padding: 0 20px; }
+  .nav .brand { flex-direction: column; gap: 2px; }
+  .lede { font-size: 18px; line-height: 26px; }
+}
+@media print {
+  .nav, .theme, .skip { display: none; }
+  .s { grid-template-columns: 1fr; }
+  .field { border-left: 0; padding-left: 0; }
+  body { background: var(--white); color: var(--ink-900); }
+}

@@ -1,0 +1,72 @@
+---
+import '../styles/fonts.css';
+import '../styles/tokens.css';
+import '../styles/site.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { href } from '../lib/url';
+
+interface Props {
+  title: string;
+  description: string;
+  sheet?: string;          // shown in the footer title block, e.g. "00 / index"
+  ogImage?: string;        // site-root path, e.g. "/og/home.png"
+  robots?: string;
+}
+const { title, description, sheet, ogImage, robots } = Astro.props;
+const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/', Astro.site);
+const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  {og && <meta property="og:image" content={og} />}
+  <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
+  {robots && <meta name="robots" content={robots} />}
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F3F0E8" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#191817" />
+  <link rel="icon" href={href('/favicon.png')} type="image/png" />
+  <link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
+  <script is:inline>
+    // Apply a remembered theme before first paint so there is no flash.
+    (function () {
+      try {
+        var t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('kx-theme');
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">skip to content</a>
+  <div class="sheet">
+    <header><Nav /></header>
+    <main id="main"><slot /></main>
+    <Footer sheet={sheet} />
+  </div>
+  <script is:inline>
+    (function () {
+      var r = document.documentElement, k = 'kx-theme', b = document.getElementById('theme');
+      if (!b) return;
+      b.addEventListener('click', function () {
+        var dark = r.getAttribute('data-theme') === 'dark' ||
+          (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+        var n = dark ? 'light' : 'dark';
+        r.classList.add('theming'); setTimeout(function () { r.classList.remove('theming'); }, 260);
+        r.setAttribute('data-theme', n);
+        try { localStorage.setItem(k, n); } catch (e) {}
+      });
+    })();
+  </script>
+</body>
+</html>

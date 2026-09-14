@@ -3,10 +3,13 @@
 
     python3 tools/check.py [ROOT]     # default: the repo root; CI passes dist/
 """
-import html, re, sys, urllib.parse
+import html, os, re, sys, urllib.parse
 from pathlib import Path
 
 ROOT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
+# Astro emits root-absolute paths under its base ("/kylexu-art/_astro/…" on the Pages preview);
+# the same SITE_BASE the build used tells us where the site root is.
+BASE = os.environ.get('SITE_BASE', '').rstrip('/')
 ATTR_RE = re.compile(r'\b(?:href|src|poster|data-src|data-poster)=["\']([^"\']+)["\']')
 SRCSET_RE = re.compile(r'\bsrcset=["\']([^"\']+)["\']')
 URL_RE = re.compile(r'url\((?:&quot;|["\'])?([^"\')]+?)(?:&quot;|["\'])?\)')
@@ -21,6 +24,8 @@ def resolve(ref, page):
         if ref: remote.add(html.unescape(ref).split("?")[0][:80])
         return None
     ref = urllib.parse.unquote(ref)
+    if BASE and (ref == BASE or ref.startswith(BASE + '/')):
+        ref = ref[len(BASE):] or '/'
     base = ROOT if ref.startswith("/") else page.parent
     target = (base / ref.lstrip("/")).resolve()
     if target.is_dir():
