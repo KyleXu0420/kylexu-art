@@ -3,268 +3,144 @@ import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';
-import heygen from '../assets/img/heygen-editor.jpg';
-import curio from '../assets/img/curio-garden.jpg';
-import eaton from '../assets/img/eaton-rapidlinkx.jpg';
-import echo from '../assets/img/echo.jpg';
+import tokensRaw from '../styles/tokens.css?raw';
+import heygen from '../assets/img/heygen-editor-card.jpg';
+import dify from '../assets/img/dify-wordmark.png';
 
-const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
 const observe = 'https://github.com/KyleXu0420/observe';
-const figSizes = '(max-width: 899px) calc(100vw - 48px), (max-width: 1023px) 48vw, 560px';
+const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
+const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
+const echo = 'https://doi.org/10.7302/29019';
+
+// The Temper tile shows this site's own tokens.css — the first lines of the light role block
+// and of the dark one — read from the file at build time, so what it shows is what runs.
+const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function paint(line: string): string {
+  const re = /(--[\w-]+)(\s*:\s*)([^;]*?)(;)|(\/\*.*?\*\/)/g;
+  let out = '', i = 0, m: RegExpExecArray | null;
+  while ((m = re.exec(line))) {
+    out += esc(line.slice(i, m.index));
+    out += m[5] ? `<span class=${m.index ? '"c t"' : '"c"'}>${esc(m[5])}</span>`   // .t: a trailing comment, hidden on a phone
+                : `<span class="k">${esc(m[1])}</span>${m[2]}<span class="v">${esc(m[3])}</span>${m[4]}`;
+    i = m.index + m[0].length;
+  }
+  return out + esc(line.slice(i));
+}
+const tokens = tokensRaw.split('\n');
+const lightAt = tokens.findIndex((l) => l.startsWith('/* @roles — light'));
+const darkAt = tokens.findIndex((l) => l.startsWith('@media (prefers-color-scheme: dark)'));
+const excerpt = [
+  ...tokens.slice(lightAt, lightAt + 9), '  …', '}', '',
+  ...tokens.slice(darkAt, darkAt + 4), '    …', '  }', '}',
+].map(paint).join('\n');
 ---
 <Sheet
   title="Kyle Xu — AI product designer · design engineer"
   description="Kyle Xu designs AI products in the codebase they ship from. Most recently Temper (a token architecture and the design-lint checkers that keep it honest) and Dify (Droploft, built end-to-end in code)."
-  sheet="00 / index"
 >
-  <div class="bubbles" aria-hidden="true">
-    <div class="br"><span class="bub">A</span></div>
-    <div class="bf"><span class="bub B">B</span><span class="bub C">C</span><span class="bub D">D</span></div>
-  </div>
-
-  <!-- 00 — hero -->
-  <section class="s hero" aria-labelledby="h1">
-    <div class="rid">
-      <div class="label"><span aria-hidden="true">// 00 — </span>kyle xu</div>
-      <div class="meta mono">
-        <span class="name">Kyle Xu <span class="cjk muted">徐匡泓</span></span>
-        <span class="role">ai product designer · design engineer</span>
-        <span class="muted pron">they / them</span>
-      </div>
-    </div>
-    <div class="field">
-      <h1 class="display-xl" id="h1">I design AI products in the codebase they ship from. <em>Not in a file that describes it.</em></h1>
-      <p class="lede">Most recently at Temper — a token architecture and the design-lint checkers that keep it honest, shipped to main — and at Dify, where I built Droploft end-to-end in code with no Figma handoff. Before that I trained as an architect, which is where most of how I think comes from.</p>
-      <div class="cta">
-        <a class="go" href="#work">↓ selected work</a>
-        <a class="go" href={observe} rel="noopener">observe on github ↗</a>
-        <a class="go" href={resume} rel="noopener">resume (pdf) ↗</a>
-        <a class="go" href="mailto:kylexu@umich.edu">kylexu@umich.edu</a>
-      </div>
-    </div>
-    <div class="rnow">
-      <dl>
-        <dt>latest</dt><dd>Temper · design engineer (contract) · 2026.07 — 2026.09</dd>
-        <dt>before</dt><dd>Dify · Curio · Infloww · Heygen · Eaton</dd>
-        <dt>trained</dt><dd>HCI, University of Michigan · architecture, XAUAT</dd>
-      </dl>
-    </div>
+  <section class="col hero" aria-labelledby="h1">
+    <h1 class="display" id="h1">I design AI products in the codebase they ship from. <span class="kicker">Not in a file that describes it.</span></h1>
+    <p class="lead">Most recently at Temper — a token architecture and the design-lint checkers that keep it honest — and at Dify, where I built Droploft end-to-end in code with no Figma handoff. Before that I trained as an architect, which is where most of how I think comes from.</p>
   </section>
 
-  <!-- 01 — work -->
-  <section class="s work" id="work" aria-labelledby="h-work">
-    <div class="rail"><h2 class="label" id="h-work"><span aria-hidden="true">// 01 — </span>work</h2></div>
-    <div class="field"><p class="gloss">three in full, three in short form. dates and numbers are the resume's; each row states one thing that can be checked.</p></div>
-  </section>
-  <div>
-    <article class="row" data-case="temper">
-      <div class="rr"><span class="n">01</span>Temper<span class="sep"> · </span><br />2026.07 — 2026.09<span class="sep"> · </span><br />Design Engineer (Contract)</div>
-      <div class="rf">
-        <div class="rt">
-          <h3 class="title">A token architecture, and the checkers that keep it honest</h3>
-          <p>Sole designer in the production repo. Two layers of tokens over 6 semantic hues, each with a stated meaning; a type and spacing scale from 3 utilities to 19; hardcoded colour down 60%; dark theme from partial to systematic. Then four zero-dependency checkers — 16 lint rules plus theme-parity, dead-class and doc-citation — every rule shipped with a control fixture.</p>
-          <a class="go" href={observe} rel="noopener">→ the method, open-sourced as observe ↗</a>
+  <section class="col sec work" id="work" aria-labelledby="h-work">
+    <h2 class="label" id="h-work">Selected work</h2>
+    <div class="grid">
+      <article class="card">
+        <div class="media code" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
+          <span class="file"><span>src/styles/tokens.css</span><span>this site, read at build time</span></span>
+          <pre><code set:html={excerpt} /></pre>
         </div>
-        <figure class="fig diagram">
-          <div class="mat">
-            <svg viewBox="0 0 520 300" role="img" aria-label="Detail drawing: a lint rule, the planted defect it must catch, the near-miss it must leave alone, and the second pass that breaks the rule on purpose to prove the fixture is load-bearing">
-              <text x="18" y="27" class="t3">detail 1 — a rule and its control fixture</text>
-              <g fill="none" stroke="currentColor" stroke-width="1">
-                <rect x="18.5" y="56.5" width="132" height="76" />
-                <rect x="196.5" y="46.5" width="150" height="42" class="accs" />
-                <rect x="196.5" y="102.5" width="150" height="42" />
-                <line x1="150.5" y1="82" x2="196.5" y2="67.5" />
-                <line x1="150.5" y1="106" x2="196.5" y2="123.5" />
-                <line x1="346.5" y1="67.5" x2="362" y2="67.5" />
-                <line x1="346.5" y1="123.5" x2="362" y2="123.5" />
-                <rect x="18.5" y="182.5" width="490" height="98" stroke-dasharray="3 3" />
-              </g>
-              <g fill="currentColor"><circle cx="150.5" cy="82" r="2" /><circle cx="150.5" cy="106" r="2" /></g>
-              <text x="30" y="82">rule</text>
-              <text x="30" y="104" class="t3">no raw hex</text>
-              <text x="30" y="122" class="t3">css + markup</text>
-              <text x="206" y="65" class="acc">planted defect</text>
-              <text x="206" y="81" class="t3">color: #hex</text>
-              <text x="206" y="121">near-miss</text>
-              <text x="206" y="137" class="t3">color: var(--fg)</text>
-              <text x="370" y="72">→ must catch</text>
-              <text x="370" y="128">→ must stay quiet</text>
-              <text x="30" y="206">second pass — break the rule on purpose</text>
-              <text x="30" y="228" class="t3">→ the planted defect must now get through</text>
-              <text x="30" y="248" class="t3">→ if it doesn't, the fixture was never load-bearing</text>
-              <text x="30" y="268" class="t3">→ and the checker refuses to say “pass”</text>
-            </svg>
+        <div class="cap">
+          <h3><a href={observe} rel="noopener">A token architecture, and the checkers that keep it honest</a></h3>
+          <span class="meta">Temper · Design Engineer (Contract) · 2026.07 — 2026.09</span>
+          <p>Sole designer in the production repo, shipped to main: two layers of tokens over 6 semantic hues, hardcoded colour down 60%, dark theme from partial to systematic — then four zero-dependency checkers, 16 lint rules, every one shipped with a control fixture. This site runs the same kind of check on itself at every build.</p>
+          <a class="link" href={observe} rel="noopener">The method, open-sourced as observe ↗</a>
+        </div>
+      </article>
+
+      <article class="card tall">
+        <a class="media" href={droploft} rel="noopener" tabindex="-1" aria-hidden="true">
+          <Picture src={dify} formats={['avif', 'webp']} widths={[408, 816, 1000]} sizes="(max-width: 767px) calc(100vw - 42px), (max-width: 1440px) 28vw, 408px" alt="The Dify wordmark" loading="eager" decoding="async" />
+        </a>
+        <div class="cap">
+          <h3><a href={droploft} rel="noopener">Droploft, a team knowledge base built end-to-end in code</a></h3>
+          <span class="meta">Dify (LangGenius) · AI Product Designer (Design Engineer) · 2026.02 — 2026.06</span>
+          <p>Designed and built with Claude Code, no Figma handoff: a 4-level information architecture, 30+ product screens, the Living Tokens design system and 8+ landing pages, partnering with engineering only at the integration layer.</p>
+          <a class="link" href={droploft} rel="noopener">Figma file, for now ↗</a>
+        </div>
+      </article>
+
+      <article class="card wide">
+        <a class="media" href={href('/projects/heygen')} tabindex="-1" aria-hidden="true">
+          <Picture src={heygen} formats={['avif', 'webp']} widths={[720, 1248, 1800, 2496]} sizes="(max-width: 1440px) 87vw, 1248px" alt="The Heygen video editor after the re-architecture: script panel on the left, avatar canvas in the centre, timeline below" loading="lazy" decoding="async" />
+        </a>
+        <div class="cap">
+          <div>
+            <h3><a href={href('/projects/heygen')}>Re-architecting the video editor around the script</a></h3>
+            <span class="meta">Heygen · Product Design Intern · 2023.06 — 2023.10</span>
           </div>
-          <figcaption><b>FIG 01</b><span>How a rule proves it still works: the fixture, drawn. The site you are reading runs the same kind of check on itself at every build.</span></figcaption>
-        </figure>
-      </div>
-    </article>
-
-    <article class="row" data-case="droploft">
-      <div class="rr"><span class="n">02</span>Dify (LangGenius)<span class="sep"> · </span><br />2026.02 — 2026.06<span class="sep"> · </span><br />AI Product Designer (Design Engineer)</div>
-      <div class="rf">
-        <div class="rt">
-          <h3 class="title">Droploft, a team knowledge base built end-to-end in code</h3>
-          <p>Designed and built with Claude Code — no Figma handoff. A 4-level information architecture, interactive knowledge-graph patterns, publish-ready HTML content flows, 30+ product screens, the Living Tokens design system and 8+ landing pages, partnering with engineering only at the integration layer. Also at Dify: Syncless, a 0→1 multi-agent workplace concept, and Skills Agent for Dify Enterprise.</p>
-          <a class="go" href="https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1" rel="noopener">→ figma file, for now ↗</a>
-        </div>
-        <figure class="fig diagram">
-          <div class="mat">
-            <svg viewBox="0 0 520 300" role="img" aria-label="Plan drawing of a four-level information architecture, each level nested inside the previous, with a knowledge graph in the innermost level and a publish exit to HTML">
-              <g fill="none" stroke="currentColor" stroke-width="1">
-                <rect x="10.5" y="10.5" width="499" height="279" />
-                <rect x="120.5" y="44.5" width="389" height="245" />
-                <rect x="230.5" y="78.5" width="279" height="211" />
-                <rect x="340.5" y="112.5" width="169" height="177" />
-                <g class="accs">
-                  <line x1="372" y1="196" x2="422" y2="168" /><line x1="422" y1="168" x2="474" y2="206" /><line x1="422" y1="168" x2="402" y2="246" /><line x1="474" y1="206" x2="402" y2="246" /><line x1="474" y1="206" x2="486" y2="252" /><line x1="372" y1="196" x2="402" y2="246" />
-                </g>
-                <g fill="var(--bg-mat)" stroke="currentColor">
-                  <circle cx="372" cy="196" r="5" /><circle cx="422" cy="168" r="5" /><circle cx="474" cy="206" r="5" /><circle cx="402" cy="246" r="5" /><circle cx="486" cy="252" r="5" />
-                </g>
-                <path d="M36 262 L36 288" stroke-dasharray="2 3" />
-                <path d="M31 283 L36 289 L41 283" />
-              </g>
-              <text x="20" y="32">level 1</text>
-              <text x="130" y="66">level 2</text>
-              <text x="240" y="100">level 3</text>
-              <text x="350" y="134">level 4</text>
-              <text x="350" y="280" class="t3">knowledge graph</text>
-              <text x="20" y="236" class="t3">publish</text>
-              <text x="20" y="252" class="t3">→ html</text>
-              <text x="500" y="32" class="t3" text-anchor="end">4 levels · 30+ screens</text>
-            </svg>
+          <div>
+            <p>Script, canvas and timeline reorganised with an updated component library: engagement +32.1% and task completion +24.3%, measured against the flow it replaced rather than a fresh baseline. Then a 0→1 iOS companion MVP in a 3-week sprint.</p>
+            <a class="link" href={href('/projects/heygen')}>Read the case →</a>
           </div>
-          <figcaption><b>FIG 02</b><span>Droploft's four-level information architecture, drawn as a plan. Product screens follow once Dify has cleared them.</span></figcaption>
-        </figure>
-      </div>
-    </article>
-
-    <article class="row" data-case="heygen">
-      <div class="rr"><span class="n">03</span>Heygen<span class="sep"> · </span><br />2023.06 — 2023.10<span class="sep"> · </span><br />Product Design Intern</div>
-      <div class="rf">
-        <div class="rt">
-          <h3 class="title"><a href={href('/projects/heygen')}>Re-architecting the video editor around the script</a></h3>
-          <p>Reorganised the editor around script, canvas and timeline with an updated component library: engagement +32.1% and task completion +24.3%, measured against the flow it replaced rather than a fresh baseline. Then a 0→1 iOS companion MVP in a 3-week sprint.</p>
-          <a class="go" href={href('/projects/heygen')}>→ read the case</a>
         </div>
-        <figure class="fig">
-          <div class="mat"><Picture src={heygen} formats={['avif', 'webp']} widths={[560, 800, 1200]} sizes={figSizes} alt="Heygen video editor after the re-architecture: script panel on the left, avatar canvas in the centre, timeline below" loading="lazy" decoding="async" /></div>
-          <figcaption><b>FIG 03</b><span>The editor after the re-architecture — script in the sidebar, canvas fixed, timeline as its own panel. 2023.</span></figcaption>
-        </figure>
-      </div>
-    </article>
-
-    <article class="row sup" data-case="curio">
-      <div class="rr"><span class="n">04</span>Curio Digital Therapeutics<span class="sep"> · </span><br />2024.11 — 2025.12<span class="sep"> · </span><br />Founding Product Designer<br /><span class="tag">short form</span></div>
-      <div class="rf">
-        <div class="rt">
-          <h3 class="title">MamaLift &amp; MenoLift, FDA-cleared digital therapeutics</h3>
-          <p>First designer on the team, under clinical review from the first screen: the design system and information architecture from zero, and the Achievement Garden — a gamified engagement framework with 100+ original assets.</p>
-          <a class="go" href="https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1" rel="noopener">→ figma file, for now ↗</a>
-        </div>
-        <figure class="fig">
-          <div class="mat"><Picture src={curio} formats={['avif', 'webp']} widths={[560, 800, 1200]} sizes={figSizes} alt="Four phone screens from the Achievement Garden: a daily garden, a relationship pool, a progress ring and a rewards shop" loading="lazy" decoding="async" /></div>
-          <figcaption><b>FIG 04</b><span>The Achievement Garden, four of its screens.</span></figcaption>
-        </figure>
-      </div>
-    </article>
-
-    <article class="row sup" data-case="eaton">
-      <div class="rr"><span class="n">05</span>Eaton Corporation<span class="sep"> · </span><br />2022.06 — 2022.08<span class="sep"> · </span><br />UX Design Intern<br /><span class="tag">short form</span></div>
-      <div class="rf">
-        <div class="rt">
-          <h3 class="title"><a href={href('/projects/eaton')}>RapidLinkX, an IoT configuration tool for airports</a></h3>
-          <p>Parameter editing and error monitoring for airport conveyor systems: operational efficiency +49.7% and error rate −36.8% in usability testing; 14 component variants added to Eaton's design system.</p>
-          <a class="go" href={href('/projects/eaton')}>→ read the case</a>
-        </div>
-        <figure class="fig">
-          <div class="mat"><Picture src={eaton} formats={['avif', 'webp']} widths={[560, 800, 1200]} sizes={figSizes} alt="RapidLinkX parameter table: linked devices on the left, a table of motor parameters with ranges and defaults" loading="lazy" decoding="async" /></div>
-          <figcaption><b>FIG 05</b><span>RapidLinkX, parameter editing view.</span></figcaption>
-        </figure>
-      </div>
-    </article>
-
-    <article class="row sup" data-case="echo">
-      <div class="rr"><span class="n">06</span>University of Michigan<span class="sep"> · </span><br />M.S. thesis · 2022 — 2025<span class="sep"> · </span><br /><span class="tag">research</span></div>
-      <div class="rf">
-        <div class="rt">
-          <h3 class="title"><a href="https://doi.org/10.7302/29019" rel="noopener">Echo, a future-self avatar for behaviour change</a></h3>
-          <p>An LLM-driven conversational agent and avatar interface for everyday health behaviour, evaluated in a 16-day pilot with 8 participants and a 12-day deployment with 36 users. It is why I'm sceptical of AI interfaces that are only demoed, never used.</p>
-          <a class="go" href="https://doi.org/10.7302/29019" rel="noopener">→ the thesis on Deep Blue ↗</a>
-        </div>
-        <figure class="fig">
-          <div class="mat"><Picture src={echo} formats={['avif', 'webp']} widths={[560, 800]} sizes={figSizes} alt="Two phone screens from Echo: an avatar introducing itself and a conversation view" loading="lazy" decoding="async" /></div>
-          <figcaption><b>FIG 06</b><span>Echo's avatar and conversation views.</span></figcaption>
-        </figure>
-      </div>
-    </article>
-
-    <article class="row also">
-      <div class="rr"><span class="n">also</span>Infloww<span class="sep"> · </span><br />2024.03 — 2024.11<span class="sep"> · </span><br />Product Designer (AI Specialist)</div>
-      <div class="rf">
-        <p>Designed and shipped an AI chat assistant MVP at 91% user satisfaction, and payment and mass-messaging tools that saved 37 minutes per outreach session — partnering with prompt engineers on the cases where the model is wrong, not only the demo path. No public capture; no case page.</p>
-      </div>
-    </article>
-  </div>
-
-  <!-- 02 — method -->
-  <section class="s method" id="method" aria-labelledby="h-method">
-    <div class="rail"><h2 class="label" id="h-method"><span aria-hidden="true">// 02 — </span>method</h2><p class="gloss">three claims, each with something to click.</p></div>
-    <div class="field">
-      <div class="cols">
-        <div class="m">
-          <span class="dbub" aria-hidden="true">1</span>
-          <h3 class="h3">I ship design as production code.</h3>
-          <p>At Temper the vocabulary existed and the code wasn't speaking it. I rebuilt the foundation as a two-layer token architecture and took it to main — code to Figma rather than the reverse. At Dify I designed and built Droploft end-to-end in code.</p>
-          <a class="go" href="#work">→ Temper · Droploft</a>
-        </div>
-        <div class="m">
-          <span class="dbub" aria-hidden="true">2</span>
-          <h3 class="h3">I make design decisions checkable.</h3>
-          <p>A rule that only lives in a document drifts. So I wrote four zero-dependency checkers — 16 lint rules plus theme parity, dead classes and doc citations. Every rule ships with a control fixture: a planted defect it must catch, a near-miss it must leave alone. A second pass breaks each rule on purpose to prove the fixtures hold.</p>
-          <a class="go" href="#tools">→ the method, open-sourced as observe</a>
-        </div>
-        <div class="m">
-          <span class="dbub" aria-hidden="true">3</span>
-          <h3 class="h3">I've studied how people actually use AI.</h3>
-          <p>Echo, my Michigan thesis: a future-self avatar driven by an LLM, built to shift everyday health behaviour, run as a 16-day pilot with 8 participants and a 12-day deployment with 36. At Infloww I designed the assistant for the cases where the model is wrong.</p>
-          <a class="go" href="https://doi.org/10.7302/29019" rel="noopener">→ Echo, on Deep Blue ↗</a>
-        </div>
-      </div>
+      </article>
     </div>
   </section>
 
-  <!-- 03 — tools -->
-  <section class="s" id="tools" aria-labelledby="h-tools">
-    <div class="rail"><h2 class="label" id="h-tools"><span aria-hidden="true">// 03 — </span>tools</h2><p class="gloss">the proof that isn't self-reported: a repo you can clone.</p></div>
-    <div class="field">
-      <div class="spec">
-        <div class="sl">
-          <h3 class="nm">observe <i>open source</i></h3>
-          <p>Tools for finding out how you and your coding agents actually work, from the transcripts you already have. Eight tools, Python 3.9, no dependencies. Every one runs a control before it reports — a planted case it must get right, and a clean case it must stay quiet on — and <code class="mono">mutate</code> breaks each tool on purpose to prove the controls notice.</p>
-          <p>It grew out of the Temper design-lint: the rules there needed control fixtures to stay trustworthy, and the method became a standalone harness.</p>
-          <a class="go" href={observe} rel="noopener">→ github.com/KyleXu0420/observe ↗</a>
-        </div>
-        <div>
-          <dl>
-            <div><dt>language</dt><dd>Python 3.9 · 0 dependencies</dd></div>
-            <div><dt>licence</dt><dd>MIT</dd></div>
-            <div><dt>tools</dt><dd>8, plus <code class="mono">mutate</code></dd></div>
-            <div><dt>selfcheck</dt><dd>8 / 8 controls ok · 2026-09-13</dd></div>
-            <div><dt>origin</dt><dd>the Temper design-lint checkers, 2026</dd></div>
-          </dl>
-        </div>
-      </div>
-    </div>
+  <section class="col sec" id="earlier" aria-labelledby="h-earlier">
+    <h2 class="label" id="h-earlier">Earlier</h2>
+    <ul class="tl">
+      <li>
+        <span class="meta">2024.11 — 2025.12</span>
+        <div class="org"><b>Curio Digital Therapeutics</b><span class="meta">Founding Product Designer</span></div>
+        <p>MamaLift and MenoLift, FDA-cleared digital therapeutics, under clinical review from the first screen: the design system and information architecture from zero, and the Achievement Garden — a gamified engagement framework with 100+ original assets.</p>
+        <a class="link" href={curio} rel="noopener">Figma file ↗</a>
+      </li>
+      <li>
+        <span class="meta">2022 — 2025</span>
+        <div class="org"><b>University of Michigan</b><span class="meta">M.S. thesis</span></div>
+        <p>Echo, a future-self avatar for behaviour change: an LLM-driven conversational agent and avatar interface for everyday health behaviour, evaluated in a 16-day pilot with 8 participants and a 12-day deployment with 36 users.</p>
+        <a class="link" href={echo} rel="noopener">Thesis on Deep Blue ↗</a>
+      </li>
+      <li>
+        <span class="meta">2024.03 — 2024.11</span>
+        <div class="org"><b>Infloww</b><span class="meta">Product Designer (AI Specialist)</span></div>
+        <p>An AI chat assistant MVP at 91% user satisfaction, and payment and mass-messaging tools that saved 37 minutes per outreach session — partnering with prompt engineers on the cases where the model is wrong, not only the demo path.</p>
+        <span class="none">No public capture</span>
+      </li>
+      <li>
+        <span class="meta">2022.06 — 2022.08</span>
+        <div class="org"><b>Eaton Corporation</b><span class="meta">UX Design Intern</span></div>
+        <p>RapidLinkX, an IoT configuration tool for airports — parameter editing and error monitoring for conveyor systems: operational efficiency +49.7% and error rate −36.8% in usability testing; 14 component variants added to Eaton's design system.</p>
+        <a class="link" href={href('/projects/eaton')}>Read the case →</a>
+      </li>
+    </ul>
   </section>
 
-  <!-- 04 — origin -->
-  <section class="s origin" id="origin" aria-labelledby="h-origin">
-    <div class="rail"><h2 class="label" id="h-origin"><span aria-hidden="true">// 04 — </span>origin</h2></div>
-    <div class="field">
-      <p class="lede">I trained as an architect — six years, undergraduate through a degree in urban renovation. Architecture is where I learned to think in constraints: a building holds because someone decided what the parts are and what each one is allowed to do, and wrote it down in a way that can be checked. A design system is the same problem in a different material.</p>
-      <a class="go" href={href('/about')}>→ about</a>
+  <section class="col sec" id="method" aria-labelledby="h-how">
+    <h2 class="label" id="h-how">How I work</h2>
+    <div class="claims">
+      <div class="claim">
+        <h3>I ship design as production code.</h3>
+        <p>At Temper the vocabulary existed and the code wasn't speaking it. I rebuilt the foundation as a two-layer token architecture and took it to main — code to Figma rather than the reverse. At Dify I designed and built Droploft end-to-end in code.</p>
+        <a class="link" href="#work">Temper · Droploft ↑</a>
+      </div>
+      <div class="claim">
+        <h3>I make design decisions checkable.</h3>
+        <p>A rule that only lives in a document drifts. So every rule I write ships with a control fixture — a planted defect it must catch, a near-miss it must leave alone — and a second pass breaks each rule on purpose to prove the fixtures hold. The method is open-sourced as observe: eight tools for finding out how you and your coding agents actually work, Python 3.9, no dependencies, MIT.</p>
+        <a class="link" href={observe} rel="noopener">observe on GitHub ↗</a>
+      </div>
+      <div class="claim">
+        <h3>I've studied how people actually use AI.</h3>
+        <p>Echo, my Michigan thesis: a future-self avatar driven by an LLM, built to shift everyday health behaviour, run as a 16-day pilot with 8 participants and a 12-day deployment with 36. At Infloww I designed the assistant for the cases where the model is wrong.</p>
+        <a class="link" href={echo} rel="noopener">Echo, on Deep Blue ↗</a>
+      </div>
+    </div>
+    <div class="origin">
+      <p class="lead">I trained as an architect — six years, undergraduate through a degree in urban renovation. Architecture is where I learned to think in constraints: a building holds because someone decided what the parts are and what each one is allowed to do, and wrote it down in a way that can be checked. A design system is the same problem in a different material.</p>
+      <a class="link" href={href('/about')}>About →</a>
     </div>
   </section>
 </Sheet>
