@@ -6,11 +6,28 @@ import '../styles/home.css';
 import tokensRaw from '../styles/tokens.css?raw';
 import before from '../assets/img/heygen-before.png';
 import after from '../assets/img/heygen-after.png';
+import cardDify from '../assets/img/card-dify.png';
+import cardHeygen from '../assets/img/card-heygen.png';
+import cardCurio from '../assets/img/card-curio.png';
+import cardEaton from '../assets/img/card-eaton.png';
+import cardEcho from '../assets/img/card-echo.png';
 
 const observe = 'https://github.com/KyleXu0420/observe';
 const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
 const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
 const echo = 'https://doi.org/10.7302/29019';
+const echoSlides = 'https://www.figma.com/slides/QK7PL9LLx7rcA96mYxw1ij/Echo?node-id=1-1016';
+
+// The five project cards of the Webflow site, in its order, with its images (each already carries
+// its own tint) and its links — Figma files stay Figma files for now.
+const card = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 92vw, 1360px', decoding: 'async' as const };
+const cards = [
+  { src: cardDify, href: droploft, ext: true, title: 'Three AI products at Dify — Droploft, Syncless, Skills Agent', sub: 'AI Product Designer (Design Engineer) at Dify, 2026', alt: 'The Dify wordmark' },
+  { src: cardHeygen, href: href('/projects/heygen'), ext: false, title: 'AI video editor revamp & mobile MVP', sub: 'Product Design Intern at Heygen, 2023', alt: 'The Heygen video editor: script panel, avatar canvas and timeline' },
+  { src: cardCurio, href: curio, ext: true, title: 'AI therapeutic UX & gamification design', sub: 'Founding Product Designer at Curio, 2024–2025', alt: 'Four MenoLift phone screens with the daily garden' },
+  { src: cardEaton, href: href('/projects/eaton'), ext: false, title: 'Airport parameter editing tool', sub: 'UX Design Intern at Eaton, 2022', alt: 'The RapidLinkX dashboard with parameter charts' },
+  { src: cardEcho, href: echoSlides, ext: true, title: 'AI health companion', sub: 'M.S. thesis, University of Michigan', alt: 'Two phones showing the Echo avatar' },
+];
 
 // The band under the claim shows this site's own tokens.css — the first lines of the light role
 // block and of the dark one — read from the file at build time, so what it shows is what runs.
@@ -46,6 +63,19 @@ const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1036, 2066], si
     <h1 class="display" id="h1">I design AI products <br class="br" />in the codebase they ship from. <br class="br" /><span class="pivot">Not in a file that describes it.</span></h1>
   </section>
 
+  <section class="col sec" id="work" aria-label="Selected work">
+    <ul class="cards">
+      {cards.map((c) => (
+        <li class="card">
+          <a href={c.href} rel={c.ext ? 'noopener' : undefined}>
+            <Picture src={c.src} {...card} alt={c.alt} loading={c === cards[0] ? 'eager' : 'lazy'} />
+            <span class="cap"><b>{c.title}</b><span>{c.sub}</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
   <section aria-label="The codebase: this site's own colour tokens">
     <div class="band" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
       <div class="col grid">
@@ -56,7 +86,7 @@ const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1036, 2066], si
     <p class="col meta cap">src/styles/tokens.css · this site's own, read at build time</p>
   </section>
 
-  <section class="col sec" id="work" aria-label="Work">
+  <section class="col sec" id="history" aria-label="Work, in order">
     <ul class="tl">
       <li>
         <span class="meta when">2026.07 – 2026.09</span>
