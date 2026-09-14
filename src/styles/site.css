@@ -9,7 +9,7 @@ body {
   letter-spacing: -.01em; font-variant-numeric: lining-nums;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: clip;
 }
-html.theming body, html.theming .pill, html.theming .band { transition: background-color 200ms, color 200ms, border-color 200ms; }
+html.theming body, html.theming .pill { transition: background-color 200ms, color 200ms, border-color 200ms; }
 img { max-width: 100%; display: block; height: auto; }
 a { color: inherit; text-decoration: none; }
 p { margin: 0; text-wrap: pretty; }
@@ -33,7 +33,6 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 
 /* ---- type: four sizes — 86 for the claim, 20 for a title, 15 for everything read, 14 for everything noted ---- */
 .display { font-size: clamp(40px, 5.97vw, 86px); line-height: 1.02; letter-spacing: -.035em; font-weight: 600; text-wrap: balance; }
-.display .pivot { color: var(--fg-2); }   /* the counter-claim: the sentence's pivot, visible */
 .lead { color: var(--fg-2); }
 .meta { font-size: 14px; line-height: 1.5; color: var(--fg-3); font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .cjk { font-family: var(--cjk); font-weight: 400; }
@@ -45,8 +44,6 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .btn:hover { transform: translateY(-2px); }
 
 /* ---- media: a hairline-framed figure on the page ground, one radius ---- */
-.media { display: block; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-media); }
-.media picture, .media img { width: 100%; height: auto; display: block; }
 
 /* ---- nav: the name left, one outlined pill right, the theme toggle inside it ---- */
 .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }

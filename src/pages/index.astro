@@ -3,9 +3,6 @@ import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';
-import tokensRaw from '../styles/tokens.css?raw';
-import before from '../assets/img/heygen-before.png';
-import after from '../assets/img/heygen-after.png';
 import cardDify from '../assets/img/card-dify.png';
 import cardHeygen from '../assets/img/card-heygen.png';
 import cardCurio from '../assets/img/card-curio.png';
@@ -29,38 +26,13 @@ const cards = [
   { src: cardEcho, href: echoSlides, ext: true, title: 'AI health companion', sub: 'M.S. thesis, University of Michigan', alt: 'Two phones showing the Echo avatar' },
 ];
 
-// The band under the claim shows this site's own tokens.css — the first lines of the light role
-// block and of the dark one — read from the file at build time, so what it shows is what runs.
-// Two tones: a token's name in the code colour, everything else muted. The two hyphens of a
-// custom property are wrapped so they can be kept apart in a mono face whose hyphen is wide.
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-const dd = (s: string) => s.replace(/^--/, '<span class="dd">--</span>');
-function paint(line: string): string {
-  const re = /(--[\w-]+)(?=\s*:)|(\/\*.*?\*\/)|(--)/g;
-  let out = '', i = 0, m: RegExpExecArray | null;
-  while ((m = re.exec(line))) {
-    out += esc(line.slice(i, m.index));
-    out += m[2] ? `<span class=${m.index ? '"t"' : '"h"'}>${esc(m[2])}</span>`   // .t: a trailing comment, hidden when narrow; .h: a heading comment, wrapped on a phone
-        : m[1] ? `<span class="k">${dd(esc(m[1]))}</span>`
-               : '<span class="dd">--</span>';
-    i = m.index + m[0].length;
-  }
-  return out + esc(line.slice(i));
-}
-const tokens = tokensRaw.split('\n');
-const lightAt = tokens.findIndex((l) => l.startsWith('/* @roles — light'));
-const darkAt = tokens.findIndex((l) => l.startsWith('/* @roles — dark'));
-// fourteen lines each: the light block opens with one selector line, the dark with two
-const light = [...tokens.slice(lightAt, lightAt + 12), '  …', '}'].map(paint).join('\n');
-const dark = [...tokens.slice(darkAt, darkAt + 11), '    …', '  }', '}'].map(paint).join('\n');
-const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1036, 2066], sizes: '(max-width: 767px) 960px, (max-width: 1440px) 72vw, 1036px', loading: 'lazy' as const, decoding: 'async' as const };
 ---
 <Sheet
-  title="Kyle Xu — AI product designer · design engineer"
-  description="Kyle Xu designs AI products in the codebase they ship from. Most recently Temper (a token architecture and the design-lint checkers that keep it honest) and Dify (Droploft, built end-to-end in code)."
+  title="Kyle Xu - AI Product Designer & Design Engineer"
+  description="Kyle Xu, AI product designer — designing clear, scalable AI experiences for complex workflows. Dify, Curio Digital Therapeutics, Heygen, Eaton."
 >
   <section class="col hero" aria-labelledby="h1">
-    <h1 class="display" id="h1">I design AI products <br class="br" />in the codebase they ship from. <br class="br" /><span class="pivot">Not in a file that describes it.</span></h1>
+    <h1 class="display" id="h1">Designing clear, scalable AI experiences for complex workflows.</h1>
   </section>
 
   <section class="col sec" id="work" aria-label="Selected work">
@@ -74,16 +46,6 @@ const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1036, 2066], si
         </li>
       ))}
     </ul>
-  </section>
-
-  <section aria-label="The codebase: this site's own colour tokens">
-    <div class="band" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
-      <div class="col grid">
-        <pre><code set:html={light} /></pre>
-        <pre><code set:html={dark} /></pre>
-      </div>
-    </div>
-    <p class="col meta cap">src/styles/tokens.css · this site's own, read at build time</p>
   </section>
 
   <section class="col sec" id="history" aria-label="Work, in order">
@@ -131,13 +93,6 @@ const shot = { formats: ['avif', 'webp'] as const, widths: [640, 1036, 2066], si
           <p>Script, canvas and timeline reorganised with an updated component library; then a 0→1 iOS companion MVP in three weeks.</p>
         </div>
         <a class="link" href={href('/projects/heygen')} aria-describedby="t-heygen">Case →</a>
-        <div class="fig" role="group" aria-label="The editor timeline, before and after">
-          <span class="meta lab">Before</span>
-          <div class="media"><Picture src={before} {...shot} alt="The Heygen editor timeline before the re-architecture: unlabelled clips on one track, no playback bar" /></div>
-          <span class="meta lab">After</span>
-          <div class="media"><Picture src={after} {...shot} alt="The Heygen editor timeline after the re-architecture: a playback bar, time markers and numbered clips" /></div>
-          <span class="meta cap">Heygen, 2023 · editor timeline</span>
-        </div>
       </li>
       <li>
         <span class="meta when">2022 – 2025</span>
