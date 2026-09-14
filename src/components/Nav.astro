@@ -13,6 +13,9 @@ const links = [
       {links.map((l) => (
         <a href={href(l.to)} aria-current={isCurrent(path, l.to) ? 'page' : undefined}>{l.label}</a>
       ))}
+      <button class="theme" id="theme" type="button" aria-label="Toggle dark theme" title="Theme">
+        <svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 1a6 6 0 0 1 0 12z" fill="currentColor"/></svg>
+      </button>
     </nav>
   </div>
 </header>

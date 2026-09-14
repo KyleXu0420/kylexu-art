@@ -2,15 +2,15 @@
    Layer 1 (@primitives) is the only place a colour literal may appear; tools/check-site.py
    enforces that, and that every colour role authored in light is authored again in dark.
    The light palette is the site's own (the Webflow build: whitesmoke ground, the grey ramp,
-   --black); the dark palette is its counterpart on the same ink. The index page shows six of
-   the roles below, read from this file at build time, each beside the colour it resolves to. */
+   --black); the dark palette is its counterpart on the same ink. The index page shows the
+   first lines of the two role blocks below, read from this file at build time. */
 
 /* @primitives */
 :root {
   --white: #FFFFFF;
   --grey-5: #F5F5F5;   --grey-15: #ECEDF1;  --grey-20: #CFD1D7;  --grey-40: #9FA0A3;
-  --grey-70: #66676B;  --grey-80: #4D4E50;
-  --ink: #131417;      --ink-700: #2C2D33;  --ink-600: #3B3C43;
+  --grey-60: #828283;  --grey-70: #66676B;  --grey-80: #4D4E50;
+  --ink: #131417;      --ink-950: #0E0F12;  --ink-700: #2C2D33;  --ink-600: #3B3C43;
 }
 /* @end-primitives */
 
@@ -23,6 +23,9 @@
   --line: var(--grey-20);       /* hairlines */
   --fill: var(--ink);           /* the filled pill */
   --fill-fg: var(--white);      /* text on the fill */
+  --code-bg: var(--ink);        /* the code window */
+  --code-fg: var(--grey-5);     /* a token's name */
+  --code-muted: var(--grey-40); /* the rest of the window */
   --focus: var(--ink);
   --selection: var(--grey-15);
 
@@ -31,7 +34,7 @@
   --cjk: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
 
   --r-media: 12px;                /* every framed figure */
-  --r-pill: 999px;                /* the two pills: the nav and the email */
+  --r-pill: 999px;                /* the two pills */
   --gutter: 24px;                 /* the grid gutter */
   --s-1: 24px;                    /* inside a row */
   --s-2: 48px;                    /* a row to its figure; the hero to its lede */
@@ -52,6 +55,9 @@
     --line: var(--ink-600);       /* hairlines */
     --fill: var(--grey-5);        /* the filled pill */
     --fill-fg: var(--ink);        /* text on the fill */
+    --code-bg: var(--ink-950);    /* the code window */
+    --code-fg: var(--grey-15);    /* a token's name */
+    --code-muted: var(--grey-60); /* the rest of the window */
     --focus: var(--grey-5);
     --selection: var(--ink-700);
     color-scheme: dark;
@@ -65,6 +71,9 @@
   --line: var(--ink-600);
   --fill: var(--grey-5);
   --fill-fg: var(--ink);
+  --code-bg: var(--ink-950);
+  --code-fg: var(--grey-15);
+  --code-muted: var(--grey-60);
   --focus: var(--grey-5);
   --selection: var(--ink-700);
   color-scheme: dark;

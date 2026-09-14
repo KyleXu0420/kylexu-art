@@ -9,7 +9,7 @@ body {
   letter-spacing: -.01em; font-variant-numeric: lining-nums;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: clip;
 }
-html.theming body, html.theming .pill, html.theming .sw { transition: background-color 200ms, color 200ms, border-color 200ms; }
+html.theming body, html.theming .pill, html.theming .band { transition: background-color 200ms, color 200ms, border-color 200ms; }
 img { max-width: 100%; display: block; height: auto; }
 a { color: inherit; text-decoration: none; }
 p { margin: 0; text-wrap: pretty; }
@@ -18,8 +18,8 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 
 /* ---- the column: 1248px inside 96px margins at 1440; twelve columns on a 24px gutter.
-        Identity sits in columns 1–5 and the reading voice from column 6: the same two
-        positions in the tokens table, in every work row and in the footer.
+        Identity sits in columns 1–5, the grey reading voice in 6–10, a link in 11–12:
+        the same three positions in every row and in the footer.
         Four spacing values: --s-1 inside a row, --s-2 a row to its figure, --s-3 between
         sections, --s-4 above the footer. Sections are divided by air, rows by a hairline. ---- */
 .col { max-width: 1440px; margin: 0 auto; padding-left: clamp(20px, 6.667vw, 96px); padding-right: clamp(20px, 6.667vw, 96px); }
@@ -31,7 +31,7 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .skip { position: absolute; left: -999px; top: 12px; z-index: 20; background: var(--bg); padding: 8px 14px; border-radius: var(--r-pill); font-size: 14px; }
 .skip:focus { left: 16px; }
 
-/* ---- type: four sizes — 86 for the claim, 22 for a title, 15 for everything read, 14 for everything noted ---- */
+/* ---- type: four sizes — 86 for the claim, 20 for a title, 15 for everything read, 14 for everything noted ---- */
 .display { font-size: clamp(40px, 5.97vw, 86px); line-height: 1.02; letter-spacing: -.035em; font-weight: 600; text-wrap: balance; }
 .display .pivot { color: var(--fg-2); }   /* the counter-claim: the sentence's pivot, visible */
 .lead { color: var(--fg-2); }
@@ -48,16 +48,17 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .media { display: block; position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: var(--r-media); }
 .media picture, .media img { width: 100%; height: auto; display: block; }
 
-/* ---- nav: the name left, one outlined pill right ---- */
+/* ---- nav: the name left, one outlined pill right, the theme toggle inside it ---- */
 .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .nav .col { display: flex; justify-content: space-between; align-items: center; height: 72px; gap: 16px; }
 .brand { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
 .pill { display: flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: var(--r-pill); }
-.pill a { display: flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; line-height: 1; color: var(--fg-3); white-space: nowrap; transition: color var(--t); }
-.pill a:hover, .pill a[aria-current] { color: var(--fg); }
+.pill a, .pill .theme { display: flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; line-height: 1; color: var(--fg-3); white-space: nowrap; transition: color var(--t); }
+.pill a:hover, .pill .theme:hover, .pill a[aria-current] { color: var(--fg); }
+.theme { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; padding: 0 12px; }
+.theme svg { width: 14px; height: 14px; }
 
-/* ---- footer: the name and one line of contact in columns 1–5, the sign-off in 6–10, one small line beneath
-        (©, the source, and the theme switch — a utility, so it lives here and not in the nav) ---- */
+/* ---- footer: the name and one line of contact in columns 1–5, the sign-off in 6–10, one small line beneath ---- */
 .foot { margin-top: var(--s-4); padding: 0 0 var(--s-2); }
 .foot .grid { row-gap: var(--s-1); }
 .reach { grid-column: 1 / span 5; display: grid; gap: var(--s-1); align-content: start; justify-items: start; }
@@ -70,9 +71,6 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .fine { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: var(--s-2); font-size: 14px; color: var(--fg-3); }
 .fine span + span::before { content: '·'; margin-right: 8px; }
 .fine .link { font-weight: 400; }
-.theme { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; color: inherit; padding: 0; display: inline-flex; align-items: center; gap: 6px; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: transparent; transition: text-decoration-color var(--t); }
-.theme:hover { text-decoration-color: currentColor; }
-.theme svg { width: 12px; height: 12px; }
 
 /* ---- responsive ---- */
 @media (max-width: 1099px) {
@@ -83,7 +81,8 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 }
 @media (max-width: 767px) {
   .nav .col { height: 64px; }
-  .pill a { padding: 0 12px; }
+  .pill a, .pill .theme { padding: 0 12px; }
+  .theme { padding: 0 10px; }
   .hero .lead { margin-top: var(--s-1); }
   .fine { flex-direction: column; }
   .fine span + span::before { content: none; }
@@ -92,5 +91,5 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
   .pill a { padding: 0 10px; font-size: 13px; }
 }
 @media print {
-  .nav, .skip, .fine span:has(> .theme) { display: none; }
+  .nav, .theme, .skip { display: none; }
 }
