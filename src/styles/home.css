@@ -22,7 +22,7 @@
 .tl .links .link { grid-column: auto; padding-top: 4px; }
 .tl .links .link::after { content: none; }
 .tl li:hover .links .link { text-decoration-color: transparent; }   /* row hover lights neither… */
-.tl .links .link:hover, .tl .links .link:focus-visible { text-decoration-color: currentColor; }   /* …each lights itself */
+.tl li:hover .links .link:hover, .tl li .links .link:focus-visible { text-decoration-color: currentColor; }   /* …each lights itself (outranks the row rule) */
 
 
 /* responsive */
@@ -55,3 +55,7 @@
 @media (hover: none) { .card .cap { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .card .cap { transition: none; } }
 @media (max-width: 767px) { .card, .card:first-child { flex-basis: 100%; } .card a { height: 62vw; } }
+
+/* the earlier-work strip, as the Webflow site had it: full-bleed under the cards */
+.strip { margin-top: var(--s-3); }
+.strip picture, .strip img { display: block; width: 100%; height: auto; }
