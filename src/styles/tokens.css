@@ -2,8 +2,8 @@
    Layer 1 (@primitives) is the only place a colour literal may appear; tools/check-site.py
    enforces that, and that every colour role authored in light is authored again in dark.
    The light palette is the site's own (the Webflow build: whitesmoke ground, the grey ramp,
-   --black); the dark palette is its counterpart on the same ink. The footer's colophon shows six
-   of the roles below, read from this file at build time, each beside the colour it resolves to. */
+   --black); the dark palette is its counterpart on the same ink. The index page shows six of
+   the roles below, read from this file at build time, each beside the colour it resolves to. */
 
 /* @primitives */
 :root {
@@ -21,7 +21,7 @@
   --fg-2: var(--grey-80);       /* secondary text */
   --fg-3: var(--grey-70);       /* meta, captions */
   --line: var(--grey-20);       /* hairlines */
-  --fill: var(--ink);           /* the call to action */
+  --fill: var(--ink);           /* the filled pill */
   --fill-fg: var(--white);      /* text on the fill */
   --focus: var(--ink);
   --selection: var(--grey-15);
@@ -33,9 +33,10 @@
   --r-media: 12px;                /* every framed figure */
   --r-pill: 999px;                /* the two pills: the nav and the email */
   --gutter: 24px;                 /* the grid gutter */
-  --s-1: 24px;                    /* inside a section: a row's padding, a footer cluster */
-  --s-2: 48px;                    /* two rows' worth: figure to figure, the footer's fine line */
-  --s-3: clamp(72px, 7.78vw, 112px);   /* the one section break, the footer included */
+  --s-1: 24px;                    /* inside a row */
+  --s-2: 48px;                    /* a row to its figure; the hero to its lede */
+  --s-3: clamp(72px, 7.78vw, 112px);   /* between sections */
+  --s-4: clamp(104px, 12.2vw, 176px);  /* the page break above the footer */
   --ease: cubic-bezier(.2, .7, .2, 1);
   --t: 320ms var(--ease);
   color-scheme: light;
