@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
+import { href } from '../lib/url';
 import '../styles/home.css';   // the same rows and the same card treatment as the index
 import '../styles/about.css';
 import portrait from '../assets/img/about-portrait.png';
@@ -13,14 +14,14 @@ import home2 from '../assets/img/about-home-2.png';
 import michigan from '../assets/img/about-michigan.jpg';
 
 // The same eight pictures the Webflow About page used, framed like the project cards on the
-// index: 24px radius, no hairline, the image covering the frame. Each is sized by what it is —
-// the portrait full width at its own 3:2; in a chapter, the author small under the date
-// (columns 1–3) and the place under the words (6–12) at its own proportion, or the street across
-// all twelve; the group photo small under its date, the last chapter standing on its text.
-// No hairline in the body: sections are parted by air and by the change of scale.
+// index: 24px radius, no hairline, the image covering the frame. Two rules. The person is one
+// block under the claim — the portrait full width, then the four snapshots in one strip of
+// identical 3:2 frames, oldest first. The places follow the story: each architecture chapter ends
+// on one photograph at the width of its words; the product chapters carry none and point to the
+// Work page. No hairline in the body: sections are parted by air and by the change of scale.
 const wide = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2036], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 92vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
 const column = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1440, 2048], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 84vw, (max-width: 1440px) 50vw, 718px', loading: 'lazy' as const, decoding: 'async' as const };
-const small = { formats: ['avif', 'webp'] as const, widths: [480, 800, 1200], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 42vw, (max-width: 1440px) 21vw, 294px', loading: 'lazy' as const, decoding: 'async' as const };
+const small = { formats: ['avif', 'webp'] as const, widths: [480, 800, 1200], sizes: '(max-width: 767px) 46vw, (max-width: 1440px) 21vw, 294px', loading: 'lazy' as const, decoding: 'async' as const };
 
 const facts = [
   { label: 'Worked with', items: ['Temper', 'Dify (LangGenius)', 'Curio Digital Therapeutics', 'Infloww', 'Heygen', 'Eaton Corporation'] },
@@ -37,12 +38,17 @@ const facts = [
 >
   <section class="col hero" aria-labelledby="h1">
     <h1 class="display" id="h1">At fifteen I was sketching buildings instead of studying for the gaokao.</h1>
-    <p class="lead deck">Product designer for AI systems, trained as an architect.</p>
-    <p class="lead">Xi'an, then a master's in HCI at the University of Michigan. Enterprise tools and AI products since 2022, most recently on contract at Temper.</p>
+    <p class="lead">Product designer for AI systems. Architecture in Xi'an, then a master's in HCI at the University of Michigan; enterprise tools and AI products since 2022, most recently on contract at Temper.</p>
   </section>
 
-  <section class="col sec" aria-label="Portrait">
+  <section class="col sec" aria-label="Portrait and snapshots">
     <div class="photo"><Picture src={portrait} {...wide} loading="eager" alt="Kyle in kendo uniform, holding a helmet, in front of a wall of labelled equipment shelves" /></div>
+    <ul class="strip" aria-label="Four snapshots, oldest first">
+      <li class="photo"><Picture src={sketch1} {...small} alt="Kyle as a student, sitting on the steps of a rooftop garden" /></li>
+      <li class="photo"><Picture src={sketch2} {...small} alt="Kyle's reflection in the window of a brick building, camera raised" /></li>
+      <li class="photo up"><Picture src={home1} {...small} alt="Kyle at a workbench in a workshop" /></li>
+      <li class="photo"><Picture src={michigan} {...small} alt="Kyle with classmates at the University of Michigan" /></li>
+    </ul>
   </section>
 
   <section class="col sec" aria-label="Organisations, skills, tools and languages">
@@ -59,60 +65,48 @@ const facts = [
   <section class="col sec" aria-label="How I got here">
     <ul class="tl story">
       <li>
-        <div class="side">
-          <span class="meta when">2013 – 2018</span>
-          <div class="photo me"><Picture src={sketch1} {...small} alt="Kyle as a student, sitting on the steps of a rooftop garden" /></div>
-        </div>
+        <span class="meta when">2013 – 2018</span>
         <div class="what">
-          <h2>Workshops in Hangzhou, a studio at eighteen</h2>
-          <p>In 2013, at fifteen, I was in volunteer building workshops in Hangzhou, making small physical improvements for people the city had overlooked. By 2017 I was designing spaces and art pieces for my father's business associates, and the hobby paid for itself. At eighteen a local design studio took me on for my first professional project.</p>
-          <div class="photo place pano"><Picture src={studio1} {...column} alt="A small studio interior: a long wooden table and a glass partition" /></div>
+          <h2>The hobby paid for itself</h2>
+          <p>In 2013 I was in volunteer building workshops in Hangzhou, making small physical improvements for people the city had overlooked. By 2017 I was designing spaces and art pieces for my father's business associates, and being paid for it; at eighteen a local design studio took me on for my first professional project. I got into architecture school in Xi'an all the same.</p>
         </div>
+        <div class="photo place pano"><Picture src={studio1} {...column} alt="A small studio interior: a long wooden table and a glass partition" /></div>
       </li>
       <li>
-        <div class="side">
-          <span class="meta when">2019</span>
-          <div class="photo me"><Picture src={sketch2} {...small} alt="Kyle's reflection in the window of a brick building, camera raised" /></div>
-        </div>
+        <span class="meta when">2019</span>
         <div class="what">
-          <h2>A year at an <span class="nb">urban-design</span> practice</h2>
+          <h2>Cost decides more than the drawing</h2>
           <p>In 2019 I worked part-time as a junior architect at an <span class="nb">urban-design</span> practice, and learned that cost and construction decide more of a building than the drawing does. Outside the field nobody wanted a junior architect, so I found my own clients while still a student.</p>
         </div>
-        <div class="photo place pano full"><Picture src={studio2} {...wide} alt="A narrow city street lined with shop signs" /></div>
+        <div class="photo place right"><Picture src={studio2} {...column} alt="A narrow city street lined with shop signs" /></div>
       </li>
       <li>
-        <div class="side">
-          <span class="meta when">2020 – 2022</span>
-          <div class="photo me up"><Picture src={home1} {...small} alt="Kyle at a workbench in a workshop" /></div>
-        </div>
+        <span class="meta when">2020 – 2022</span>
         <div class="what">
-          <h2>Three years at home</h2>
-          <p>From 2020 I worked from home. There were UI and UX projects with partners in several Chinese cities, and a digital platform for a community in Xi'an's Muslim Quarter, a joint project between my university and the city. The one I remember best is the app a few of us from a film community built and launched in a stretch of long days.</p>
-          <div class="photo place up"><Picture src={home2} {...column} alt="A night-market kitchen in Xi'an's Muslim Quarter, cooks at the grills" /></div>
+          <h2>The drawings became screens</h2>
+          <p>From 2020 I worked from home, on UI and UX projects with partners in several Chinese cities and on a digital platform for a community in Xi'an's Muslim Quarter, a joint project between my university and the city. The one I remember best is the app a few of us from a film community built and launched. By the end of those years the drawings I cared about were screens, and the constraint I cared about was what the software would let a person do.</p>
         </div>
+        <div class="photo place mid"><Picture src={home2} {...column} alt="A night-market kitchen in Xi'an's Muslim Quarter, cooks at the grills" /></div>
       </li>
       <li>
-        <div class="side">
-          <span class="meta when">2022 – 2025</span>
-          <div class="photo me"><Picture src={michigan} {...small} alt="Kyle with classmates at the University of Michigan" /></div>
-        </div>
+        <span class="meta when">2022 – 2025</span>
         <div class="what">
-          <h2>Eaton, Michigan, and the first AI products</h2>
-          <p>In 2022 I interned at Eaton on an IoT configuration tool for airport clients, then began a master's in HCI at the University of Michigan. At Heygen I <span class="nb">re-architected</span> the AI video editor around the script. At Infloww I designed a chat assistant for a B2B CRM and, with the prompt engineers, the payment and messaging tools around it, for the cases where the model is wrong. At Curio Digital Therapeutics I was the founding product designer on MamaLift and MenoLift, two <span class="nb">FDA-cleared</span> products; the design system, the information architecture and the Achievement Garden all went through clinical review.</p>
+          <h2>For the cases where the model is wrong</h2>
+          <p>In 2022 I interned at Eaton on an IoT configuration tool for airport clients, then began the master's in HCI at the University of Michigan. The first AI products followed. At Infloww the product was a chat assistant for a B2B CRM, and most of the design turned out to sit around the model rather than in it. With the prompt engineers I designed the payment and messaging tools for the cases where it is wrong. Before that I had <span class="nb">re-architected</span> Heygen's AI video editor around the script; after it I was the founding product designer at Curio Digital Therapeutics on MamaLift and MenoLift, two <span class="nb">FDA-cleared</span> products, where the design system, the information architecture and a feature called the Achievement Garden all went through clinical review.</p>
         </div>
       </li>
       <li>
         <span class="meta when">2026</span>
         <div class="what">
-          <h2>Three products at Dify, and Temper's codebase</h2>
-          <p>At Dify, an AI application platform, I designed three products: Droploft, a team knowledge base; Syncless, a <span class="nb">multi-agent</span> workplace concept; and Skills Agent, for Dify Enterprise. The contract at Temper that followed was a different kind of work. I was inside the production codebase, on the <span class="nb">design-token</span> architecture and the checks that enforce it.</p>
+          <h2>Inside the codebase</h2>
+          <p>Dify is an AI application platform, and I designed three products for it: Droploft, a team knowledge base, Syncless, a <span class="nb">multi-agent</span> workplace concept, and Skills Agent for Dify Enterprise. Then a contract at Temper, inside the production codebase, on the <span class="nb">design-token</span> architecture and the checks that enforce it. All of it, from Eaton to Temper, is on the <a class="link inline" href={href('/')}>Work</a> page.</p>
         </div>
       </li>
     </ul>
   </section>
 
   <Fragment slot="signoff">
-    <p class="stance">I am most useful to teams whose product is technically complex and whose interaction model is still being worked out.</p>
-    <p>Architecture taught me to decide what the parts are and what each is allowed to do; on an agent product that is most of the job. If that is your product, write to me at the address below.</p>
+    <p class="stance">Architecture taught me to decide what the parts are and what each is allowed to do; on an agent product that is most of the job.</p>
+    <p>I do my best work where the model is already capable and the interaction around it is not yet decided. If that is your product, write to me at <a class="link inline" href="mailto:kylexu@umich.edu">kylexu@umich.edu</a>.</p>
   </Fragment>
 </Sheet>
