@@ -55,7 +55,3 @@
 @media (hover: none) { .card .cap { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .card .cap { transition: none; } }
 @media (max-width: 767px) { .card, .card:first-child { flex-basis: 100%; } .card a { height: 62vw; } }
-
-/* the earlier-work strip, as the Webflow site had it: full-bleed under the cards */
-.strip { margin-top: var(--s-3); }
-.strip picture, .strip img { display: block; width: 100%; height: auto; }
