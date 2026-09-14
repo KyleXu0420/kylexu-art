@@ -11,7 +11,7 @@ No request goes to Webflow or Google at runtime: all CSS/JS/images and the two w
 | `index.html` | `/` |
 | `about.html` | `/about` |
 | `projects/heygen.html`, `projects/eaton.html` | `/projects/…` (linked from the homepage) |
-| `portfolio.html`, `cases/*.html`, `categories/*.html` | published on Webflow but not linked from the nav — kept so old links / search results keep working; delete the files if you do not want them |
+| `portfolio.html`, `cases/*.html`, `categories/*.html` | redirect stubs (meta-refresh + canonical) for old Webflow CMS URLs that were never linked from the nav |
 | `404.html` | custom not-found page |
 | `css/` `js/` `images/` `fonts/` | assets |
 | `tools/` | mirror / check / preview scripts (not part of the site) |
@@ -22,23 +22,17 @@ folder works both at `https://<user>.github.io/<repo>/` and at the root of a cus
 root-absolute paths because Pages serves it for any missing URL, so it only renders
 correctly on the custom domain.
 
-## Re-sync from Webflow
+## Maintenance
 
-Edit in the Webflow Designer, publish, then:
+Since 2026-09-13 this mirror is **hand-maintained**: the P0 fixes (stale copy, the nav duplicated
+inside every project card, the page-load overlay, dead links, viewport-scaled type on the case
+pages, oversized images, redirect stubs for the old `/cases/*` and `/portfolio` URLs) were made
+directly in these files. Do not re-run `tools/mirror.py` against Webflow — it would overwrite
+them. It is kept only as a record of how the snapshot was taken. `tools/check.py` still verifies
+that every local reference resolves; run it before pushing.
 
-```bash
-python3 tools/mirror.py https://www.kylexu.art . https://www.kylexu.art /portfolio
-python3 tools/check.py
-git add -A && git commit -m "Sync from Webflow" && git push
-```
-
-Arguments: `SITE_ORIGIN OUT_DIR CANONICAL_ORIGIN [extra seed paths…]`. If the Webflow
-project is moved to the free Starter plan and publishes to `xxx.webflow.io`, pass that as
-`SITE_ORIGIN`; `CANONICAL_ORIGIN` stays `https://www.kylexu.art` (used for `og:image`
-URLs, for recognising absolute links to the custom domain, and to keep the Webflow badge
-script from firing). Extra seed paths are for pages that are published but not linked from
-anywhere. The script prunes files it wrote on a previous run that are no longer needed,
-exits non-zero if anything still points at Webflow, and writes `tools/mirror-report.json`.
+The next step is a page-by-page rebuild (Astro, same URLs) with this folder kept as `legacy/`
+until each page is replaced — see the plan in `~/Desktop/kylexu-art-plan/`.
 
 ## Preview locally
 
