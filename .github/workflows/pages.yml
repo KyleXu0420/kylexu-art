@@ -1,5 +1,9 @@
 name: Build and deploy
 
+# Every push to main deploys the site. Every pull request from this repo deploys
+# main + a preview of the PR at /preview/pr-<number>/ (one Pages site per repo, so
+# previews live inside it; merging the PR redeploys main without the preview).
+
 on:
   push:
     branches: [main]
@@ -10,34 +14,57 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  pull-requests: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
+env:
+  # Preview lives at https://kylexu0420.github.io/kylexu-art/ for now.
+  # Change to "/" once www.kylexu.art points at GitHub Pages.
+  SITE_BASE: /kylexu-art
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # Preview lives at https://kylexu0420.github.io/kylexu-art/ for now.
-      # Delete this line once www.kylexu.art points at GitHub Pages (base becomes "/").
-      SITE_BASE: /kylexu-art
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout main (what the site serves)
+        uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Every local reference in dist/ resolves
-        run: python3 tools/check.py dist
+      - run: npm run check
+
+      - name: Checkout the PR
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: pr
+      - name: Build the PR into a preview subpath
+        if: github.event_name == 'pull_request'
+        working-directory: pr
+        env:
+          SITE_BASE: ${{ env.SITE_BASE }}/preview/pr-${{ github.event.pull_request.number }}
+        run: |
+          npm ci
+          npm run build
+          npm run check
+          mkdir -p ../dist/preview
+          mv dist ../dist/preview/pr-${{ github.event.pull_request.number }}
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -46,3 +73,11 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Leave the preview link on the PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          URL: ${{ steps.deployment.outputs.page_url }}preview/pr-${{ github.event.pull_request.number }}/
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --repo ${{ github.repository }} \
+            --body "Preview deployed: $URL (rebuilt on every push to this PR; gone once merged)."
