@@ -1,0 +1,24 @@
+---
+import { href, isCurrent } from '../lib/url';
+const path = Astro.url.pathname;
+const links = [
+  { label: 'work', to: '/' },
+  { label: 'about', to: '/about' },
+];
+const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
+---
+<nav class="nav" aria-label="Primary">
+  <div class="brand">
+    <b><a href={href('/')}>Kyle Xu <span class="cjk muted">徐匡泓</span></a></b>
+    <span class="mono muted"><span aria-hidden="true">// </span>ai product designer · design engineer</span>
+  </div>
+  <div class="links">
+    {links.map((l) => (
+      <a href={href(l.to)} aria-current={isCurrent(path, l.to) ? 'page' : undefined}>{l.label}</a>
+    ))}
+    <a href={resume} target="_blank" rel="noopener">resume ↗</a>
+    <button class="theme" id="theme" type="button" aria-label="Toggle dark theme" title="theme">
+      <svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor"/><path d="M6 1a5 5 0 0 1 0 10z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</nav>

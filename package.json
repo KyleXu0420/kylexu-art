@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build && node tools/overlay-legacy.mjs",
-    "check": "python3 tools/check.py dist",
+    "check": "python3 tools/check.py dist && python3 tools/check-site.py dist",
     "preview": "python3 tools/serve.py 8000 dist"
   },
   "dependencies": {
