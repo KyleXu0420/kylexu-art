@@ -4,14 +4,14 @@ import Sheet from '../layouts/Sheet.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';
 import tokensRaw from '../styles/tokens.css?raw';
-import heygen from '../assets/img/heygen-editor.jpg';
+import timeline from '../assets/img/heygen-timeline.png';
 
 const observe = 'https://github.com/KyleXu0420/observe';
 const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
 const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
 const echo = 'https://doi.org/10.7302/29019';
 
-// The Temper card shows this site's own tokens.css — the first lines of the light role block
+// The Temper row shows this site's own tokens.css — the first lines of the light role block
 // and of the dark one — read from the file at build time, so what it shows is what runs.
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 function paint(line: string): string {
@@ -37,89 +37,87 @@ const dark = [...tokens.slice(darkAt, darkAt + 9), '    …', '  }', '}'].map(pa
 >
   <section class="col hero grid" aria-labelledby="h1">
     <h1 class="display" id="h1">I design AI products in the codebase they ship from. <span class="kicker">Not in a file that describes it.</span></h1>
-    <p class="lead">Most recently at Temper — a token architecture and the design-lint checkers that keep it honest — and at Dify, where I built Droploft end-to-end in code with no Figma handoff. Before that I trained as an architect, which is where most of how I think comes from.</p>
+    <p class="lead">Most recently at Temper — a token architecture and the design-lint checkers that keep it honest — and at Dify, where I built Droploft end-to-end in code, with no Figma handoff.</p>
   </section>
 
-  <section class="col sec" id="work" aria-labelledby="h-work">
-    <h2 class="label" id="h-work">Selected work</h2>
-
-    <article class="card">
-      <div class="media" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
-        <div class="win code">
+  <section class="col sec" id="work" aria-label="Work">
+    <ul class="tl">
+      <li class="show">
+        <div class="media code" role="img" aria-label="An excerpt of this site's tokens.css: colour roles authored in light and authored again in dark">
           <span class="file"><span>src/styles/tokens.css</span><span>this site, read at build time</span></span>
           <div class="two">
             <pre><code set:html={light} /></pre>
             <pre><code set:html={dark} /></pre>
           </div>
         </div>
-      </div>
-      <div class="cap grid">
-        <div class="head">
-          <span class="meta">Temper · Design Engineer (Contract) · 2026.07 — 2026.09</span>
-          <h3><a href={observe} rel="noopener">A token architecture, and the checkers that keep it honest</a></h3>
+        <span class="meta when">2026.07 — 2026.09</span>
+        <div class="org"><b>Temper</b><span class="meta">Design Engineer (Contract)</span></div>
+        <div class="what">
+          <h2>A token architecture, and the checkers that keep it honest</h2>
+          <p>Sole designer in the production repo, shipped to main; hardcoded colour down 60%. Every checker rule ships with a control fixture — a planted defect it must catch, a near-miss it must leave alone — open-sourced as observe.</p>
         </div>
-        <div class="body">
-          <p>Sole designer in the production repo, shipped to main: two layers of tokens over the semantic hues, hardcoded colour down 60%, dark theme from partial to systematic — then the checkers, zero dependencies, every rule shipped with a control fixture: a planted defect it must catch, a near-miss it must leave alone. The method is open-sourced as observe.</p>
-          <a class="link" href={observe} rel="noopener">observe on GitHub ↗</a>
-        </div>
-      </div>
-    </article>
-
-    <article class="card">
-      <a class="media" href={href('/projects/heygen')} tabindex="-1" aria-hidden="true">
-        <div class="win">
-          <Picture src={heygen} formats={['avif', 'webp']} widths={[640, 1136, 1700, 2194]} sizes="(max-width: 1440px) 80vw, 1136px" alt="The Heygen video editor after the re-architecture: script panel on the left, avatar canvas in the centre, timeline below" loading="lazy" decoding="async" />
-        </div>
-      </a>
-      <div class="cap grid">
-        <div class="head">
-          <span class="meta">Heygen · Product Design Intern · 2023.06 — 2023.10</span>
-          <h3><a href={href('/projects/heygen')}>Re-architecting the video editor around the script</a></h3>
-        </div>
-        <div class="body">
-          <p>Script, canvas and timeline reorganised with an updated component library: engagement +32.1%, measured against the flow it replaced rather than a fresh baseline. Then a 0→1 iOS companion MVP in a three-week sprint.</p>
-          <a class="link" href={href('/projects/heygen')}>Read the case</a>
-        </div>
-      </div>
-    </article>
-  </section>
-
-  <section class="col sec" id="more" aria-label="More work">
-    <ul class="tl">
+        <a class="link" href={observe} rel="noopener">observe ↗</a>
+      </li>
       <li>
         <span class="meta when">2026.02 — 2026.06</span>
         <div class="org"><b>Dify (LangGenius)</b><span class="meta">AI Product Designer (Design Engineer)</span></div>
-        <p>Droploft, a team knowledge base designed and built end-to-end in code with Claude Code, no Figma handoff: the information architecture, 30+ product screens, the Living Tokens design system and the landing pages, partnering with engineering only at the integration layer.</p>
-        <a class="link" href={droploft} rel="noopener">Figma file ↗</a>
+        <div class="what">
+          <h2>Droploft</h2>
+          <p>A team knowledge base, designed and built end-to-end in code — 30+ screens, no Figma handoff.</p>
+        </div>
+        <a class="link" href={droploft} rel="noopener">Figma ↗</a>
       </li>
       <li>
         <span class="meta when">2024.11 — 2025.12</span>
         <div class="org"><b>Curio Digital Therapeutics</b><span class="meta">Founding Product Designer</span></div>
-        <p>MamaLift and MenoLift, FDA-cleared digital therapeutics, under clinical review from the first screen: the design system and information architecture from zero, and the Achievement Garden, a gamified engagement framework with its own original assets.</p>
-        <a class="link" href={curio} rel="noopener">Figma file ↗</a>
-      </li>
-      <li>
-        <span class="meta when">2022 — 2025</span>
-        <div class="org"><b>University of Michigan</b><span class="meta">M.S. thesis</span></div>
-        <p>Echo, a future-self avatar for behaviour change: an LLM-driven conversational agent and avatar interface for everyday health behaviour, evaluated in a pilot and then a 12-day deployment with 36 users.</p>
-        <a class="link" href={echo} rel="noopener">Thesis on Deep Blue ↗</a>
+        <div class="what">
+          <h2>MamaLift and MenoLift</h2>
+          <p>FDA-cleared digital therapeutics: design system and information architecture from zero, under clinical review.</p>
+        </div>
+        <a class="link" href={curio} rel="noopener">Figma ↗</a>
       </li>
       <li>
         <span class="meta when">2024.03 — 2024.11</span>
         <div class="org"><b>Infloww</b><span class="meta">Product Designer (AI Specialist)</span></div>
-        <p>An AI chat assistant MVP at 91% user satisfaction, and payment and mass-messaging tools that cut the length of every outreach session — partnering with prompt engineers on the cases where the model is wrong, not only the demo path.</p>
+        <div class="what">
+          <h2>An AI chat assistant</h2>
+          <p>The MVP reached 91% user satisfaction; then payment and mass-messaging tools that shortened every outreach session.</p>
+        </div>
+      </li>
+      <li class="show">
+        <a class="media shot" href={href('/projects/heygen')} tabindex="-1" aria-hidden="true">
+          <Picture src={timeline} formats={['avif', 'webp']} widths={[640, 1248, 2066]} sizes="(max-width: 1440px) 87vw, 1248px" alt="The Heygen editor timeline before and after the re-architecture: the new one adds a playback bar, time markers and numbered clips" loading="lazy" decoding="async" />
+        </a>
+        <span class="meta when">2023.06 — 2023.10</span>
+        <div class="org"><b>Heygen</b><span class="meta">Product Design Intern</span></div>
+        <div class="what">
+          <h2>The video editor, re-architected around the script</h2>
+          <p>Script, canvas and timeline reorganised — the timeline above, before and after. Engagement +32.1%; then a 0→1 iOS companion MVP in three weeks.</p>
+        </div>
+        <a class="link" href={href('/projects/heygen')}>Case</a>
+      </li>
+      <li>
+        <span class="meta when">2022 — 2025</span>
+        <div class="org"><b>University of Michigan</b><span class="meta">M.S. thesis</span></div>
+        <div class="what">
+          <h2>Echo, a future-self avatar for behaviour change</h2>
+          <p>An LLM-driven agent for everyday health behaviour: a pilot, then a 12-day deployment with 36 users.</p>
+        </div>
+        <a class="link" href={echo} rel="noopener">Thesis ↗</a>
       </li>
       <li>
         <span class="meta when">2022.06 — 2022.08</span>
         <div class="org"><b>Eaton Corporation</b><span class="meta">UX Design Intern</span></div>
-        <p>RapidLinkX, an IoT configuration tool for airports — parameter editing and error monitoring for conveyor systems: operational efficiency +49.7% in usability testing, and a set of new components added to Eaton's design system.</p>
-        <a class="link" href={href('/projects/eaton')}>Read the case</a>
+        <div class="what">
+          <h2>RapidLinkX</h2>
+          <p>An IoT configuration tool for airport conveyor systems: operational efficiency +49.7% in usability testing.</p>
+        </div>
+        <a class="link" href={href('/projects/eaton')}>Case</a>
       </li>
     </ul>
   </section>
 
   <Fragment slot="signoff">
-    <p>I ship design as production code and make my design decisions checkable; I've studied how people actually use AI. I trained as an architect — six years, undergraduate through a degree in urban renovation. Architecture is where I learned to think in constraints: a building holds because someone decided what the parts are and what each one is allowed to do, and wrote it down in a way that can be checked. A design system is the same problem in a different material.</p>
-    <a class="link" href={href('/about')}>About</a>
+    <p>I ship design as production code and make my design decisions checkable; I've studied how people actually use AI. Before that I trained as an architect — six years, undergraduate through a degree in urban renovation — which is where I learned to think in constraints: a building holds because someone decided what the parts are and what each one is allowed to do, and wrote it down in a way that can be checked. A design system is the same problem in a different material.</p>
   </Fragment>
 </Sheet>

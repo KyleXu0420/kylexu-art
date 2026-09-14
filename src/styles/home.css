@@ -1,22 +1,26 @@
 /* home.css — composition of the index only. Shared rules live in site.css. */
 
-/* hero: the claim across the whole column, the lede in seven of its twelve */
+/* hero: the claim across the whole column, the lede in the reading columns beneath it */
 .hero .display { grid-column: 1 / -1; }
-.hero .lead { grid-column: 1 / span 7; }
+.hero .lead { grid-column: 6 / span 5; }
 
-/* the two cards, stacked; the caption is a pair with its card, the cards are siblings */
-.card { min-width: 0; }
-.card + .card { margin-top: var(--s-2); }
-.cap { margin-top: var(--s-1); row-gap: var(--s-1); }
-.cap .head { grid-column: 1 / span 5; display: grid; gap: 8px; align-content: start; }
-.cap .body { grid-column: 6 / -1; display: grid; gap: 12px; align-content: start; justify-items: start; }
-.cap h3 { font-size: 24px; line-height: 1.2; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
-.cap h3 a { transition: color var(--t); }
-.cap h3 a:hover { color: var(--fg-2); }
-.cap p { color: var(--fg-2); max-width: 62ch; }
+/* the work: one hairline list, strictly by date. Every row is date / org / what / link on the
+   twelve columns (2 / 3 / 5 / 2); a row with something to show carries it, full width, above. */
+.tl { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+.tl li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px var(--gutter); padding: var(--s-1) 0; border-bottom: 1px solid var(--line); align-items: start; }
+.tl .show { padding-top: var(--s-2); }
+.tl .media { grid-column: 1 / -1; margin-bottom: 20px; }
+.tl .when { grid-column: 1 / span 2; padding-top: 2px; }
+.tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; }
+.tl .org b { font-weight: 600; }
+.tl .what { grid-column: 6 / span 5; display: grid; gap: 2px; }
+.tl h2 { font-size: inherit; font-weight: 500; line-height: inherit; text-wrap: balance; }
+.tl p { color: var(--fg-2); }
+.tl .link { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
 
-/* the Temper artefact: this site's own tokens.css, read at build time, in a window */
-.code { display: flex; flex-direction: column; gap: 14px; padding: 22px 28px 26px; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 13px; line-height: 1.6; font-variant-ligatures: none; }
+/* the Temper artefact: this site's own tokens.css, read at build time */
+.code { display: flex; flex-direction: column; gap: 16px; padding: 24px 32px 28px; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 13px; line-height: 1.6; font-variant-ligatures: none; }
+.code { outline-color: color-mix(in srgb, var(--code-fg) 10%, transparent); }
 .code .file { display: flex; justify-content: space-between; gap: 16px; color: var(--code-muted); font-family: var(--sans); font-size: 14px; letter-spacing: 0; }
 .code .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px var(--gutter); }
 .code pre { margin: 0; min-width: 0; overflow: hidden; white-space: pre; font: inherit; }
@@ -25,22 +29,12 @@
 .code .c { color: var(--code-muted); }
 .code .t, .code .h { white-space: pre; }
 
-/* the index: hairline rows on the same twelve columns — 2 / 3 / 5 / 2 */
-.tl { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.tl li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px var(--gutter); padding: var(--s-1) 0; border-bottom: 1px solid var(--line); align-items: start; }
-.tl .when { grid-column: 1 / span 2; }
-.tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; }
-.tl .org b { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.tl p { grid-column: 6 / span 5; color: var(--fg-2); }
-.tl .link { grid-column: 11 / -1; font-size: 15px; white-space: nowrap; justify-self: end; }
-
 /* responsive */
 @media (max-width: 1023px) {
   .hero .lead { grid-column: 1 / -1; }
-  .cap .head, .cap .body { grid-column: 1 / -1; }
   .tl li { grid-template-columns: 136px minmax(0, 1fr); }
   .tl .when { grid-column: 1; }
-  .tl .org, .tl p, .tl .link { grid-column: 2; justify-self: start; }
+  .tl .org, .tl .what, .tl .link { grid-column: 2; justify-self: start; }
 }
 @media (max-width: 767px) {
   .code { font-size: 12px; padding: 16px 18px 20px; }
@@ -48,5 +42,9 @@
   .code .t, .code .file span + span { display: none; }
   .code .h { white-space: normal; display: inline-block; vertical-align: top; max-width: 100%; }
   .tl li { grid-template-columns: 1fr; gap: 6px; padding: 20px 0; }
-  .tl .when, .tl .org, .tl p, .tl .link { grid-column: 1; }
+  .tl .show { padding-top: 32px; }
+  /* a timeline pans sideways by nature: on a phone it keeps a readable scale inside its slab */
+  .tl .shot { overflow-x: auto; }
+  .tl .shot picture, .tl .shot img { width: 960px; max-width: none; }
+  .tl .when, .tl .org, .tl .what, .tl .link { grid-column: 1; }
 }
