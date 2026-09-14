@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
-"""Verify the mirrored site is self-contained: every local reference in HTML/CSS resolves to a file."""
+"""Verify a built site is self-contained: every local reference in HTML/CSS resolves to a file.
+
+    python3 tools/check.py [ROOT]     # default: the repo root; CI passes dist/
+"""
 import html, re, sys, urllib.parse
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
 ATTR_RE = re.compile(r'\b(?:href|src|poster|data-src|data-poster)=["\']([^"\']+)["\']')
 SRCSET_RE = re.compile(r'\bsrcset=["\']([^"\']+)["\']')
 URL_RE = re.compile(r'url\((?:&quot;|["\'])?([^"\')]+?)(?:&quot;|["\'])?\)')
@@ -28,7 +31,7 @@ def resolve(ref, page):
 
 
 for page in sorted(list(ROOT.rglob("*.html")) + list(ROOT.rglob("*.css"))):
-    if any(p in page.parts for p in ("tools", ".git", ".claude")):
+    if any(p in page.relative_to(ROOT).parts for p in ("tools", ".git", ".claude", "node_modules", "legacy", "src")):
         continue
     text = page.read_text("utf-8", "replace")
     refs = ATTR_RE.findall(text) + URL_RE.findall(text)

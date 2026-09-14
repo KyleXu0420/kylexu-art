@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Local preview that resolves extensionless URLs like GitHub Pages does (/about -> about.html)."""
+"""Local preview that resolves extensionless URLs like GitHub Pages does (/about -> about.html).
+
+    python3 tools/serve.py [PORT] [DIR]    # DIR defaults to dist/ if built, else legacy/
+"""
 import http.server, os, sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parent.parent
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
+ROOT = Path(sys.argv[2]).resolve() if len(sys.argv) > 2 else ((REPO / "dist") if (REPO / "dist").is_dir() else (REPO / "legacy"))
 
 
 class H(http.server.SimpleHTTPRequestHandler):
