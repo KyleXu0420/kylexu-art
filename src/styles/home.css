@@ -1,50 +1,55 @@
 /* home.css — composition of the index only. Shared rules live in site.css. */
 
-/* hero: the claim across the whole column, the lede in the reading columns beneath it */
-.hero .display { grid-column: 1 / -1; }
-.hero .lead { grid-column: 6 / span 5; }
+/* hero: the claim across the whole column, the lede beneath it on the same left edge (site.css) */
+.nb { white-space: nowrap; }   /* a hyphenated compound never breaks on its hyphen */
 
 /* the work: one hairline list, strictly by date. Every row is date / org / what / link on the
-   twelve columns (2 / 3 / 5 / 2); a row with something to show carries it, full width, above. */
-.tl { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
-.tl li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px var(--gutter); padding: var(--s-1) 0; border-bottom: 1px solid var(--line); align-items: start; }
-.tl .show { padding-top: var(--s-2); }
-.tl .media { grid-column: 1 / -1; margin-bottom: 20px; }
+   twelve columns (2 / 3 / 5 / 2). The whole row is the link. A row with something to show
+   carries it beneath its text, full width, with one meta line under it. */
+.tl { list-style: none; margin: 0; padding: 0; }
+.tl li { position: relative; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); padding: calc(var(--s-1) / 2) 0; border-bottom: 1px solid var(--line); align-items: start; }
+.tl li:first-child { padding-top: 0; }   /* the section gap alone separates the hero from the first row */
 .tl .when { grid-column: 1 / span 2; padding-top: 2px; }
-.tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; }
-.tl .org b { font-weight: 600; }
+.tl .org { grid-column: 3 / span 3; display: grid; gap: 2px; padding-top: 2px; font-size: 14px; line-height: 1.5; letter-spacing: 0; color: var(--fg-3); }
+.tl .org b { font-weight: 500; color: var(--fg-2); }
 .tl .what { grid-column: 6 / span 5; display: grid; gap: 2px; }
 .tl h2 { font-size: inherit; font-weight: 500; line-height: inherit; text-wrap: balance; }
 .tl p { color: var(--fg-2); }
-.tl .link { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
+.tl .link, .tl .none { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
+.tl .none { padding-top: 2px; }
+.tl .link::after { content: ''; position: absolute; inset: 0; }
+.tl li:hover .link { text-decoration-color: currentColor; }
+.tl .media { grid-column: 1 / -1; margin-top: var(--s-1); }
+.tl .code { z-index: 1; }   /* above the row's link overlay, so the code stays selectable */
+.tl .cap { grid-column: 1 / -1; margin-top: 12px; }
 
-/* the Temper artefact: this site's own tokens.css, read at build time */
-.code { display: flex; flex-direction: column; gap: 16px; padding: 24px 32px 28px; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 13px; line-height: 1.6; font-variant-ligatures: none; }
-.code { outline-color: color-mix(in srgb, var(--code-fg) 10%, transparent); }
-.code .file { display: flex; justify-content: space-between; gap: 16px; color: var(--code-muted); font-family: var(--sans); font-size: 14px; letter-spacing: 0; }
-.code .two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px var(--gutter); }
+/* the Temper artefact: this site's own tokens.css, read at build time; the dark column
+   starts on the page's sixth column, so the block sits on the page grid */
+.code { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); padding: 24px 0 28px; background: var(--code-bg); color: var(--code-muted); font-family: var(--mono); font-size: 13px; line-height: 1.6; font-variant-ligatures: none; }
 .code pre { margin: 0; min-width: 0; overflow: hidden; white-space: pre; font: inherit; }
-.code .k { color: var(--code-key); }
-.code .v { color: var(--code-val); }
-.code .c { color: var(--code-muted); }
+.code pre:first-child { grid-column: 1 / span 5; padding-left: 32px; }
+.code pre:last-child { grid-column: 6 / -1; padding-right: 32px; }
+.code .k { color: var(--code-fg); }
 .code .t, .code .h { white-space: pre; }
 
 /* responsive */
+@media (max-width: 1279px) {
+  .code .t { display: none; }
+}
 @media (max-width: 1023px) {
-  .hero .lead { grid-column: 1 / -1; }
   .tl li { grid-template-columns: 136px minmax(0, 1fr); }
   .tl .when { grid-column: 1; }
-  .tl .org, .tl .what, .tl .link { grid-column: 2; justify-self: start; }
+  .tl .org, .tl .what, .tl .link, .tl .none { grid-column: 2; justify-self: start; }
+  .tl .media, .tl .cap { grid-column: 1 / -1; }
 }
 @media (max-width: 767px) {
-  .code { font-size: 12px; padding: 16px 18px 20px; }
-  .code .two { grid-template-columns: 1fr; }
-  .code .t, .code .file span + span { display: none; }
+  .display .br, .lead .br { display: none; }
+  .code { font-size: 12px; padding: 16px 0 20px; grid-template-columns: 1fr; row-gap: 14px; }
+  .code pre:first-child, .code pre:last-child { grid-column: 1; padding: 0 18px; }
   .code .h { white-space: normal; display: inline-block; vertical-align: top; max-width: 100%; }
-  .tl li { grid-template-columns: 1fr; gap: 6px; padding: 20px 0; }
-  .tl .show { padding-top: 32px; }
+  .tl li { grid-template-columns: 1fr; row-gap: 6px; }
   /* a timeline pans sideways by nature: on a phone it keeps a readable scale inside its slab */
   .tl .shot { overflow-x: auto; }
   .tl .shot picture, .tl .shot img { width: 960px; max-width: none; }
-  .tl .when, .tl .org, .tl .what, .tl .link { grid-column: 1; }
+  .tl .when, .tl .org, .tl .what, .tl .link, .tl .none { grid-column: 1; }
 }

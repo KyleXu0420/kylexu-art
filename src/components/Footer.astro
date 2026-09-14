@@ -20,16 +20,16 @@ const { signoff = false } = Astro.props;
         </div>
         <a class="btn" href="mailto:kylexu@umich.edu">kylexu@umich.edu</a>
         <ul>
-          <li><a class="link" href="https://www.linkedin.com/in/kyle-xu-a111161a4/" rel="noopener">LinkedIn</a></li>
-          <li><a class="link" href="https://github.com/KyleXu0420" rel="noopener">GitHub</a></li>
-          <li><a class="link" href={resume} rel="noopener">Resume (PDF)</a></li>
+          <li><a class="link" href="https://www.linkedin.com/in/kyle-xu-a111161a4/" rel="noopener">LinkedIn ↗</a></li>
+          <li><a class="link" href="https://github.com/KyleXu0420" rel="noopener">GitHub ↗</a></li>
+          <li><a class="link" href={resume} rel="noopener">Resume (PDF) ↗</a></li>
         </ul>
       </div>
       {signoff && <div class="signoff"><slot name="signoff" /></div>}
     </div>
     <div class="fine">
       <span>© 2026 Kyle Xu</span>
-      <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source</a></span>
+      <span><a class="link" href="https://github.com/KyleXu0420/kylexu-art" rel="noopener">Source ↗</a></span>
       <span>built {built} from {commit}</span>
     </div>
   </div>

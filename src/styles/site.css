@@ -18,20 +18,21 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 
 /* ---- the column: 1248px inside 96px margins at 1440; twelve columns on a 24px gutter.
-        Identity sits in columns 1–5, the grey reading voice in 6–10, a link in 11–12 —
-        the same three positions in every row, in the hero and in the footer. ---- */
+        Identity sits in columns 1–5, the grey reading voice in 6–10, a link in 11–12:
+        the same three positions in every row and in the footer.
+        Three spacing values only: --s-1 inside a section, --s-2 between sections,
+        --s-3 above the footer. Sections are divided by air, rows by a hairline. ---- */
 .col { max-width: 1440px; margin: 0 auto; padding-left: clamp(20px, 6.667vw, 96px); padding-right: clamp(20px, 6.667vw, 96px); }
 .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); }
-.sec { margin-top: var(--s-3); }
-.hero { padding-top: clamp(40px, 5vw, 64px); }
-.hero .lead { margin-top: var(--s-2); max-width: 36em; }
-.hero .lead + .lead { margin-top: var(--s-1); }
+.sec { margin-top: var(--s-2); }
+.hero { padding-top: var(--s-2); }
+.hero .lead { margin-top: var(--s-1); max-width: calc(8 / 12 * (100% - 11 * var(--gutter)) + 7 * var(--gutter)); }   /* two thirds of the claim's measure */
+.hero .lead + .lead { margin-top: 24px; }
 .skip { position: absolute; left: -999px; top: 12px; z-index: 20; background: var(--bg); padding: 8px 14px; border-radius: var(--r-pill); font-size: 14px; }
 .skip:focus { left: 16px; }
 
-/* ---- type: three sizes — 80 for the claim, 17 for everything read, 14 for everything noted ---- */
-.display { font-size: clamp(40px, 5.55vw, 80px); line-height: 1.02; letter-spacing: -.035em; font-weight: 600; text-wrap: balance; }
-.display .kicker { display: block; }
+/* ---- type: three sizes — 76 for the claim, 17 for everything read, 14 for everything noted ---- */
+.display { font-size: clamp(40px, 5.28vw, 76px); line-height: 1.02; letter-spacing: -.035em; font-weight: 600; text-wrap: balance; }
 .lead { color: var(--fg-2); }
 .meta { font-size: 14px; line-height: 1.5; color: var(--fg-3); font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .cjk { font-family: var(--cjk); font-weight: 400; }
@@ -42,9 +43,8 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .btn { display: inline-flex; align-items: center; height: 40px; padding: 0 18px; background: var(--fill); color: var(--fill-fg); border-radius: var(--r-pill); font-size: 14px; font-weight: 600; letter-spacing: 0; transition: transform var(--t); }
 .btn:hover { transform: translateY(-2px); }
 
-/* ---- media: one rounded surface, sitting on the page ground; an edge, no field around it ---- */
-.media { display: block; position: relative; overflow: hidden; border-radius: var(--r-media); outline: 1px solid var(--line); outline-offset: -1px; }
-.media:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+/* ---- media: one rounded surface on the page ground, one radius, no border, no field ---- */
+.media { display: block; position: relative; overflow: hidden; border-radius: var(--r-media); }
 .media picture, .media img { width: 100%; height: auto; display: block; }
 
 /* ---- nav: the name left, one outlined pill right, the theme toggle inside it ---- */
@@ -58,20 +58,23 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .theme svg { width: 14px; height: 14px; }
 
 /* ---- footer: the contact facts in columns 1–5, the sign-off in 6–10, one small line beneath ---- */
-.foot { margin-top: var(--s-3); border-top: 1px solid var(--line); padding: var(--s-2) 0 40px; }
-.foot .grid { row-gap: var(--s-2); }
-.reach { grid-column: 1 / span 5; display: grid; gap: var(--s-1); align-content: start; justify-items: start; }
+.foot { margin-top: var(--s-3); padding: 0 0 var(--s-1); }
+.foot .grid { row-gap: var(--s-1); }
+.reach { grid-column: 1 / span 5; display: grid; gap: 24px; align-content: start; justify-items: start; }
 .who { display: grid; gap: 2px; }
 .who b { font-weight: 600; letter-spacing: -.01em; }
 .who .cjk { margin-left: 6px; }
 .reach ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 20px; }
-.signoff { grid-column: 6 / span 5; display: grid; gap: var(--s-1); justify-items: start; align-content: start; }
+.signoff { grid-column: 6 / span 5; display: grid; gap: 24px; justify-items: start; align-content: start; }
 .signoff p { color: var(--fg-2); }
-.fine { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: var(--s-2); font-size: 14px; color: var(--fg-3); }
+.fine { display: flex; flex-wrap: wrap; gap: 6px 8px; margin-top: var(--s-1); font-size: 14px; color: var(--fg-3); }
 .fine span + span::before { content: '·'; margin-right: 8px; }
 .fine .link { font-weight: 400; }
 
 /* ---- responsive ---- */
+@media (max-width: 1099px) {
+  .hero .lead { max-width: none; }
+}
 @media (max-width: 1023px) {
   .reach, .signoff { grid-column: 1 / -1; }
 }
@@ -79,7 +82,7 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
   .nav .col { height: 64px; }
   .pill a, .pill .theme { padding: 0 12px; }
   .theme { padding: 0 10px; }
-  .hero .lead { margin-top: var(--s-1); }
+  .hero .lead { margin-top: 24px; }
   .fine { flex-direction: column; }
   .fine span + span::before { content: none; }
 }

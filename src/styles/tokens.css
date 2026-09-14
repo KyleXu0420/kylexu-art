@@ -11,11 +11,10 @@
   --grey-5: #F5F5F5;   --grey-15: #ECEDF1;  --grey-20: #CFD1D7;  --grey-40: #9FA0A3;
   --grey-60: #828283;  --grey-70: #66676B;  --grey-80: #4D4E50;
   --ink: #131417;      --ink-950: #0E0F12;  --ink-700: #2C2D33;  --ink-600: #3B3C43;
-  --mint-200: #C0E3D1; --mint-300: #9CD1B6; --linen-100: #F9F3EE; --linen-300: #E6D9C9;
 }
 /* @end-primitives */
 
-/* @roles — light. One job each. */
+/* @roles — light */
 :root {
   --bg: var(--grey-5);          /* the page */
   --fg: var(--ink);             /* reading text */
@@ -25,10 +24,8 @@
   --fill: var(--ink);           /* the filled pill */
   --fill-fg: var(--white);      /* text on the fill */
   --code-bg: var(--ink);        /* the code window */
-  --code-fg: var(--grey-5);     /* code text */
-  --code-key: var(--mint-200);  /* a token's name */
-  --code-val: var(--linen-100); /* its value */
-  --code-muted: var(--grey-40); /* a comment */
+  --code-fg: var(--grey-5);     /* a token's name */
+  --code-muted: var(--grey-40); /* everything else in the window */
   --focus: var(--ink);
   --selection: var(--grey-15);
 
@@ -39,15 +36,15 @@
   --r-media: 20px;                /* every piece of media */
   --r-pill: 999px;                /* every pill */
   --gutter: 24px;                 /* the grid gutter */
-  --s-1: 24px;                    /* a pair: a row's padding, media and its row */
-  --s-2: 48px;                    /* siblings; the air around a piece of media */
-  --s-3: clamp(80px, 8.9vw, 128px); /* between sections */
+  --s-1: 40px;                    /* inside a section */
+  --s-2: clamp(64px, 6.667vw, 96px);  /* between sections */
+  --s-3: clamp(96px, 11.1vw, 160px);  /* above the footer */
   --ease: cubic-bezier(.2, .7, .2, 1);
   --t: 320ms var(--ease);
   color-scheme: light;
 }
 
-/* @roles — dark: the same names, remapped. */
+/* @roles — dark */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: var(--ink);             /* the page */
@@ -58,10 +55,8 @@
     --fill: var(--grey-5);        /* the filled pill */
     --fill-fg: var(--ink);        /* text on the fill */
     --code-bg: var(--ink-950);    /* the code window */
-    --code-fg: var(--grey-15);    /* code text */
-    --code-key: var(--mint-300);  /* a token's name */
-    --code-val: var(--linen-300); /* its value */
-    --code-muted: var(--grey-60); /* a comment */
+    --code-fg: var(--grey-15);    /* a token's name */
+    --code-muted: var(--grey-60); /* everything else in the window */
     --focus: var(--grey-5);
     --selection: var(--ink-700);
     color-scheme: dark;
@@ -77,8 +72,6 @@
   --fill-fg: var(--ink);
   --code-bg: var(--ink-950);
   --code-fg: var(--grey-15);
-  --code-key: var(--mint-300);
-  --code-val: var(--linen-300);
   --code-muted: var(--grey-60);
   --focus: var(--grey-5);
   --selection: var(--ink-700);
