@@ -14,6 +14,8 @@ import michigan from '../assets/img/about-michigan.jpg';
 
 // The same eight pictures the Webflow About page used, in the same places, framed like the
 // project cards on the index: 24px radius, no hairline, the image covering the frame.
+// Hairlines are held to two — above the intro row and above the chapters; the facts sit as one
+// block under the intro, and the chapters are parted by air and their photographs.
 const wide = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2036], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 92vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
 const half = { formats: ['avif', 'webp'] as const, widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 45vw, 612px', loading: 'lazy' as const, decoding: 'async' as const };
 
@@ -40,7 +42,7 @@ const facts = [
   </section>
 
   <section class="col sec" aria-label="Introduction">
-    <ul class="tl">
+    <ul class="tl intro">
       <li>
         <span class="meta when">Now</span>
         <div class="what">
@@ -48,13 +50,15 @@ const facts = [
           <p>Trained as an architect, then in HCI at the University of Michigan. Since 2022 I have designed for enterprise IoT at Eaton, AI video creation at Heygen, a B2B CRM and its AI assistant at Infloww, two FDA-cleared digital therapeutics at Curio, and an AI application platform at Dify — most recently on contract at Temper, working inside the production codebase. I design 0→1 features, rebuild existing systems, and help teams make technical products easier to understand and scale.</p>
         </div>
       </li>
-      {facts.map((f) => (
-        <li>
-          <span class="meta when">{f.label}</span>
-          <div class="what"><p>{f.value}</p></div>
-        </li>
-      ))}
     </ul>
+    <dl class="facts">
+      {facts.map((f) => (
+        <div>
+          <dt class="meta">{f.label}</dt>
+          <dd>{f.value}</dd>
+        </div>
+      ))}
+    </dl>
   </section>
 
   <section class="col sec" aria-label="How I got here">

@@ -1,17 +1,38 @@
-/* about.css — the About page reuses the index's rows (.tl) and its card treatment.
-   Only the photo frames are its own: the same 24px radius and cover crop as the cards. */
+/* about.css — the About page reuses the index's rows (.tl) and its card treatment. Its own
+   rules: the photo frames (the cards' 24px radius and cover crop), and the hairlines held to
+   the two that mark a change of section — one above the intro, one above the chapters. The
+   facts sit under the intro as one block on the same columns; the chapters are parted by air
+   and their photographs. */
 
 .photo { border-radius: 24px; overflow: hidden; background: var(--selection); }
 .photo picture, .photo img { display: block; width: 100%; height: clamp(220px, 27vw, 390px); object-fit: cover; }
 .photo.tall picture, .photo.tall img { height: clamp(280px, 34vw, 490px); }
 .photos { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); margin-top: var(--s-2); }
 .photos .tall { grid-column: 1 / -1; }
+
+/* the intro: one ruled row; the facts follow as a block — label at column 1, value at column 6 */
+.tl.intro li:last-child { border-bottom: 0; padding-bottom: 0; }
+.facts { margin: var(--s-2) 0 0; display: grid; gap: 12px; }
+.facts > div { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+.facts dt { grid-column: 1 / span 2; padding-top: 1px; }
+.facts dd { grid-column: 6 / span 5; margin: 0; color: var(--fg-2); }
+
+/* the chapters: ruled once at the top, then parted by air and their photographs */
+.tl.story { border-top: 1px solid var(--line); padding-top: var(--s-1); }
+.tl.story li, .tl.story li:last-child { border: 0; padding: 0; }
+.tl.story li + li { margin-top: var(--s-3); }
 .story .what p { max-width: 64ch; }
 
 @media (max-width: 1023px) {
   .photos { grid-column: 2; }
+  .facts > div { grid-template-columns: 136px minmax(0, 1fr); }
+  .facts dt { grid-column: 1; }
+  .facts dd { grid-column: 2; }
 }
 @media (max-width: 767px) {
   .photos { grid-column: 1; grid-template-columns: 1fr; }
   .photo picture, .photo img, .photo.tall picture, .photo.tall img { height: 62vw; }
+  .facts { gap: 16px; }
+  .facts > div { grid-template-columns: 1fr; row-gap: 4px; }
+  .facts dt, .facts dd { grid-column: 1; }
 }
