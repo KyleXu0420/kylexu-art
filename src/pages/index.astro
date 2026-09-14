@@ -13,7 +13,7 @@ const observe = 'https://github.com/KyleXu0420/observe';
 const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
 const curio = 'https://www.figma.com/design/BiXcn2d7kNwzXtuw1aUGDx/Curio-Work?node-id=0-1';
 const echo = 'https://doi.org/10.7302/29019';
-const echoSlides = 'https://www.figma.com/slides/QK7PL9LLx7rcA96mYxw1ij/Echo?node-id=1-1016';
+const echoSlides = 'https://www.figma.com/slides/QK7PL9LLx7rcA96mYxw1ij/Echo?node-id=1-1016&t=ThNdmY0SvqYmQacn-0';
 
 // The five project cards of the Webflow site, in its order, with its images (each already carries
 // its own tint) and its links — Figma files stay Figma files for now.
@@ -102,7 +102,10 @@ const cards = [
           <h2 id="t-echo">Echo, a future-self avatar for behaviour change</h2>
           <p>An LLM-driven agent for everyday health behaviour, piloted and then deployed for 12 days with 36 users.</p>
         </div>
-        <a class="link" href={echo} rel="noopener" aria-describedby="t-echo">Thesis ↗</a>
+        <div class="links">
+          <a class="link" href={echo} rel="noopener" aria-describedby="t-echo">Thesis ↗</a>
+          <a class="link" href={echoSlides} rel="noopener" aria-describedby="t-echo">Slides ↗</a>
+        </div>
       </li>
       <li>
         <span class="meta when">2022.06 – 2022.08</span>

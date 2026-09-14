@@ -17,6 +17,11 @@
 .tl .link { grid-column: 11 / -1; justify-self: end; white-space: nowrap; padding-top: 4px; }
 .tl .link::after { content: ''; position: absolute; inset: 0; }
 .tl li:hover .link { text-decoration-color: currentColor; }
+/* a row with two links: the links sit together and neither claims the whole row */
+.tl .links { grid-column: 11 / -1; justify-self: end; display: grid; gap: 6px; justify-items: end; }
+.tl .links .link { grid-column: auto; padding-top: 4px; }
+.tl .links .link::after { content: none; }
+.tl li:hover .links .link { text-decoration-color: inherit; }
 
 
 /* responsive */
@@ -26,12 +31,13 @@
   .tl li { grid-template-columns: 136px minmax(0, 1fr); }
   .tl li { row-gap: 8px; }
   .tl .when { grid-column: 1; }
-  .tl .org, .tl .what, .tl .link { grid-column: 2; justify-self: start; }
+  .tl .org, .tl .what, .tl .link, .tl .links { grid-column: 2; justify-self: start; }
+  .tl .links { grid-auto-flow: column; gap: 16px; justify-items: start; }
 }
 @media (max-width: 767px) {
   .tl li { grid-template-columns: 1fr; row-gap: 6px; }
   /* a timeline pans sideways by nature: on a phone it keeps a readable scale inside its frame */
-  .tl .when, .tl .org, .tl .what, .tl .link { grid-column: 1; }
+  .tl .when, .tl .org, .tl .what, .tl .link, .tl .links { grid-column: 1; }
 }
 
 /* ---- the project cards, as the Webflow site had them: 24px radius, first card full width, then pairs,
