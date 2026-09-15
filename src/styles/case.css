@@ -39,7 +39,7 @@
 .chap .head { grid-column: 1 / span 5; }
 .chap .head h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; }
 .chap .head h2 .n { display: block; color: var(--fg-3); font-variant-numeric: tabular-nums; }
-.chap .body { grid-column: 6 / span 5; }
+.chap .body { grid-column: 6 / span 6; }   /* the words: 6–11, about 66 characters a line, so a long chapter is not a tall narrow column */
 .chap .body p { font-size: 17px; line-height: 1.55; color: var(--fg); }
 .chap .body p + p { margin-top: 12px; }
 .chap .figs { grid-column: 1 / -1; margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); }
@@ -47,6 +47,7 @@
 /* a figure: label line, frame, caption, 8px apart, the frame at the image's own ratio. On the full
    row, or on the words' column to the row's edge (`narrow`) */
 .fig { margin: 0; grid-column: 1 / -1; display: grid; gap: 8px; align-content: start; }
+.chap .figs .fig { grid-column: 6 / -1; }   /* a chapter's figures share the words' left edge (6 to the row's edge): text and image read as one unit */
 .fig.narrow { grid-column: 6 / -1; }
 .frame { border-radius: var(--r-media); overflow: hidden; background: var(--sheet); padding: 12px; }   /* the owner's originals, whole: a light sheet in both themes so transparent PNGs read, inset so the radius never clips text at a bitmap's edge */
 .frame picture, .frame img { display: block; width: 100%; height: auto; }
