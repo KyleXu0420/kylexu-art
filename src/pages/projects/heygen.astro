@@ -7,38 +7,40 @@ import layout1 from '../../assets/img/heygen-layout-1.png';
 import layout2 from '../../assets/img/heygen-layout-2.png';
 import layout3 from '../../assets/img/heygen-layout-3.png';
 import layout4 from '../../assets/img/heygen-layout-4.png';
+import panelStates from '../../assets/img/heygen-panel-states.png';
 import timelineBefore from '../../assets/img/heygen-timeline-before.png';
 import timelineAfter from '../../assets/img/heygen-timeline-after.png';
 import playbarFloating from '../../assets/img/heygen-playbar-floating.png';
 import playbarNone from '../../assets/img/heygen-playbar-none.png';
 import playbarRow from '../../assets/img/heygen-playbar-row.png';
 
-// One screenshot, taken apart three times. The shipped editor has the first screen to itself and
-// its caption names the three regions the decisions are about; each later figure is a region of
-// one of the Webflow case page's own images, cut so the deck's annotations stay out of the picture:
-// the image shows, the label names, the words argue. The page is short, then short, then long:
-// the layout decision is one paragraph and a row of four small frames, the timeline a stacked pair,
-// the play bar three full-width bands with the words continuing after them, and the close ends
-// the page. The way to the other case is one line in the footer.
+// One screenshot, taken apart three times. The shipped editor has the first screen to itself;
+// each later figure is a region of one of the Webflow case page's own images, cut so the deck's
+// annotations stay out of the picture: the image shows, the label names, the words argue. Each
+// decision is its words, then its evidence: four small diagrams across the row with the one
+// that shipped at full colour, the timeline before and after the test stacked on the row, and
+// the play bar as three thin bands of the canvas column under the words, the shipped one cut
+// from the same capture as the hero. The close is the decisions' own row. The way to the other
+// case is one line in the footer.
 ---
 <Case
   title="Heygen — Kyle Xu"
-  description="Product Design Intern at Heygen, June–October 2023. The AI video editor re-architected around the script, with an updated component library: engagement +32.1% and task completion +24.3% against the one-page flow it replaced. Three decisions, the last of them reversed after a usability test."
+  description="Product Design Intern at Heygen, June–October 2023. The AI video editor re-architected around the script, with an updated component library: engagement +32.1% and task completion +24.3% against the one-page flow it replaced. Three decisions, the last of them settled by a usability test."
   ogImage="/og-heygen.jpg"
   eyebrow="Heygen · Product Design Intern · June – October 2023"
-  deck="Customers were making videos of several scenes in an editor built for one script on one page. I rebuilt it around the script. Three decisions carried it, and the last was a play bar I had to put back."
+  deck="Customers were making videos of several scenes in an editor built for one script on one page. I rebuilt it around the script. Three decisions carried it, and a usability test settled the third."
   next={{ title: 'RapidLinkX', to: '/projects/eaton' }}
 >
   <Fragment slot="claim">The video editor, <span class="nb">re-architected</span> around the script.</Fragment>
-  <Figure slot="hero" src={editor} evidence="Shipped" loading="eager"
+  <Figure slot="hero" src={editor} name="The new editor" evidence="Shipped" loading="eager"
     alt="The Heygen video editor as shipped: two script cards in a dark panel on the left, an avatar on a white canvas, and below them a transport row and a timeline with a ruler and playhead"
-    caption="Three decisions on this screen: 1, the script in the sidebar; 2, a timeline with a ruler and the current time on the playhead; 3, the transport row between canvas and timeline." />
+    caption="Script in the sidebar, a transport row under the canvas, a ruler on the timeline." />
 
-  <section class="col sec" aria-label="In thirty seconds">
+  <section class="col sec snap" aria-label="In thirty seconds">
     <dl class="facts">
       <div>
         <dt class="meta">Scope</dt>
-        <dd>The desktop editor, as its only designer: the script panel, the timeline and an updated component library. Then, in the last three weeks, an iOS MVP for recording an avatar. It stayed a prototype, indefinitely postponed once early validation showed less growth potential than the company's other initiatives.</dd>
+        <dd>The desktop editor, as its only designer: the script panel, the timeline and an updated component library. Then, in the last three weeks, an iOS MVP for recording an avatar, which stayed a prototype: early validation showed less growth potential than other initiatives, and it was postponed indefinitely.</dd>
       </div>
       <div>
         <dt class="meta">Outcome</dt>
@@ -55,9 +57,8 @@ import playbarRow from '../../assets/img/heygen-playbar-row.png';
       <p>Everything happened on one page: one box for the whole script, one voice for the whole video, and a timeline that was a card, a play button and a readout. That was the point, nothing to learn. It held until customers were making videos of several scenes, each with its own lines, and one box with one voice couldn't hold them. <span class="nb">Text-to-speech</span> was still the core of the product, so whatever replaced the page had to give the script more room, not less.</p>
     </div>
     <div class="figs">
-      <Figure src={onePage} evidence="Shipped"
-        alt="The old editor's working panel: a script box with one sentence in it, a voice card with a speed slider and a Play Scripts button, and beneath them a timeline holding a play button, a single scene card and a plus"
-        caption="The page I started from: one script box, one voice, and a timeline of one card with a play button and a readout." />
+      <Figure narrow src={onePage} name="Before" note="the editor in June 2023" evidence="Shipped"
+        alt="The old editor's working panel: a script box with one sentence in it, and beneath it a timeline holding a play button, a single scene card and a plus" />
     </div>
   </section>
 
@@ -66,16 +67,19 @@ import playbarRow from '../../assets/img/heygen-playbar-row.png';
       <h2 id="c-script"><span class="n">1</span>Where the script lives</h2>
     </div>
     <div class="body">
-      <p>The timeline needed the bottom of the page, which freed the script's old spot. Of the four layouts I drew, two put the script in a new panel on the right, where tools could keep arriving for years, and two kept it in the sidebar as a tab beside Avatar, Text and Element. I chose the sidebar and moved nothing else. A tab has less room for whatever comes next, and I knew it, but an existing user could open the new editor and still know where they were. The panel went to engineering drawn state by state, from the empty card to a script over the word limit, together with the updated component library.</p>
+      <p>The timeline needed the bottom of the page, which freed the script's old spot. Of the four layouts I drew, two put the script in a new panel on the right, with room for tools to keep arriving, and two kept it in the sidebar as a tab beside Avatar, Text and Element. I chose the sidebar and moved nothing else: less room for whatever comes next, but an existing user could open the new editor and still know where they were. It went to engineering drawn state by state, from the empty card to a script over the word limit, with the updated component library.</p>
     </div>
     <div class="figs">
-      <Figure set="four" caption="Four layouts: two move the script to the right edge, two keep it in the sidebar."
+      <Figure set="four"
         items={[
-          { src: layout1, evidence: 'Concept', name: 'Right panel, script and actions', alt: 'A block diagram: sidebar on the left, canvas in the middle, script and action panels stacked on the right, timeline along the bottom' },
-          { src: layout2, evidence: 'Concept', name: 'Right panel, floating actions', alt: 'A block diagram: sidebar on the left, canvas in the middle with an action panel floating over its lower half, script on the right, timeline along the bottom' },
-          { src: layout3, evidence: 'Concept', name: 'Sidebar, actions below', alt: 'A block diagram: sidebar and script together on the left, canvas in the middle with an action panel beneath it, timeline along the bottom' },
-          { src: layout4, evidence: 'Concept', name: 'Sidebar alone', note: 'chosen', alt: 'A block diagram: sidebar and script together on the left, canvas in the middle, timeline along the bottom, nothing else' },
+          { src: layout1, evidence: 'Concept', name: 'Right panel, script and actions', dim: true, alt: 'A block diagram: sidebar on the left, canvas in the middle, script and action panels stacked on the right, timeline along the bottom' },
+          { src: layout2, evidence: 'Concept', name: 'Right panel, floating actions', dim: true, alt: 'A block diagram: sidebar on the left, canvas in the middle with an action panel floating over its lower half, script on the right, timeline along the bottom' },
+          { src: layout3, evidence: 'Concept', name: 'Sidebar, actions below', dim: true, alt: 'A block diagram: sidebar and script together on the left, canvas in the middle with an action panel beneath it, timeline along the bottom' },
+          { src: layout4, evidence: 'Shipped', name: 'Sidebar alone', note: 'chosen', alt: 'A block diagram: sidebar and script together on the left, canvas in the middle, timeline along the bottom, nothing else' },
         ]} />
+      <Figure narrow src={panelStates} name="The panel, state by state" evidence="Supporting state"
+        alt="A dark sheet of the script panel's parts: the panel with two cards and a pause, the voice model and voice setting panels with a tooltip reading Pitch setting not supported for this voice, script cards empty, mid-sentence, selected and over the word limit, recording rows, pause controls and the icon set"
+        caption="Empty, typing, selected, over the word limit, and a voice that can't take a pitch." />
     </div>
   </section>
 
@@ -84,11 +88,10 @@ import playbarRow from '../../assets/img/heygen-playbar-row.png';
       <h2 id="c-timeline"><span class="n">2</span>A timeline that shows time</h2>
     </div>
     <div class="body">
-      <p>My first pass gave the timeline three tracks, for the avatar, the scenes and the script, with a mark every fifteen seconds, and that's what we put in front of agencies and individual creators. People couldn't tell what they had selected, and a scene's place in time was still a guess between the marks.</p>
-      <p>So the shipped timeline reads as time first, with a ruler and the current time on the playhead, and whatever appears in two panels stays in sync: select a scene in the timeline and it lights up on the canvas.</p>
+      <p>My first pass gave the timeline three tracks, for the avatar, the scenes and the script, with a mark every fifteen seconds, and that's what we put in front of agencies and individual creators. People couldn't tell what they had selected, and a scene's place in time was still a guess between the marks. So the shipped timeline reads as time first, with a ruler and the current time on the playhead, and whatever appears in two panels stays in sync: select a scene in the timeline and it lights up on the canvas.</p>
     </div>
     <div class="figs">
-      <Figure set="stack" caption="The timeline before and after the usability test, cut from the same editor."
+      <Figure set="stack" caption="Marks every fifteen seconds, then a ruler with the time on the playhead."
         items={[
           { src: timelineBefore, name: 'Before testing', evidence: 'Prototype', alt: 'The first timeline: a play button, then three rows of cards for the avatar, the script and the scenes, with a mark at 0, 15, 30 and 45 seconds' },
           { src: timelineAfter, name: 'After testing', evidence: 'Shipped', alt: 'The shipped timeline: an expand toggle, transport buttons, a ruler marked every ten seconds, a playhead reading 00:38:88, and the avatar, scene and script tracks in a fixed order' },
@@ -101,23 +104,21 @@ import playbarRow from '../../assets/img/heygen-playbar-row.png';
       <h2 id="c-playbar"><span class="n">3</span>The play bar, three times</h2>
     </div>
     <div class="body">
-      <p>In the first round I drew a play bar floating just under the canvas, and the round turned it down as too complex. So I went the other way and proposed dropping it altogether. The timeline had a playhead and a play button of its own, and one control fewer would read as simpler. That's the version we tested.</p>
+      <p>In the first round I drew a play bar floating just under the canvas, and the round turned it down as too complex. So I went the other way and proposed dropping it altogether. The timeline had a playhead and a play button of its own, and one control fewer would read as simpler. That's the version we tested, and people went looking for a play control above the timeline and didn't find one.</p>
+      <p>Previewing is constant in this editor, fix a line, play it back, fix the next, and a play button down beside the tracks sat too far from where they were looking. I put the bar back as a slim row between canvas and timeline, the transport buttons in the middle of it and the zoom controls at its right. That's the version Heygen measured against the <span class="nb">one-page</span> flow it replaced: engagement up 32.1%, task completion up 24.3%.</p>
     </div>
     <div class="figs">
-      <Figure set="stack" caption="The same band of the editor in each state, sidebar to right edge, the canvas ending on the same line, cut from my comparison sheet, which blurred everything but the control in question in the first two."
+      <Figure narrow set="stack" caption="The same band under the canvas, three ways."
         items={[
-          { src: playbarFloating, name: 'Floating', note: 'round one, turned down', evidence: 'Concept', alt: 'The editor from the script panel to the right edge, canvas bottom to the timeline tracks, with a play bar floating under the canvas: play, a progress line, 00:00 of 00:30, zoom' },
-          { src: playbarNone, name: 'None', note: 'round two, my proposal', evidence: 'Concept', alt: 'The same band with no play bar: the canvas ends, a strip of empty ground, and the timeline begins with a lone play button beside its tracks' },
-          { src: playbarRow, name: 'A row', note: 'after the test', evidence: 'Shipped', alt: 'The same band with a slim row between canvas and timeline: an expand toggle, previous, play and next buttons, and zoom controls' },
+          { src: playbarFloating, name: 'Round one', note: 'floating, turned down', evidence: 'Concept', alt: 'The canvas column from its bottom edge to the first timeline track, with a play bar floating under the canvas: play, a progress line, 00:00 of 00:30, zoom' },
+          { src: playbarNone, name: 'Round two', note: 'none, my proposal', evidence: 'Concept', alt: 'The same band with no play bar: the canvas ends, a strip of empty ground, and the timeline begins with a lone play button beside its tracks' },
+          { src: playbarRow, name: 'After the test', note: 'a row', evidence: 'Shipped', alt: 'The same band with a slim row between canvas and timeline: a collapse toggle, previous, play and next buttons, the elapsed time, the playhead reading 00:38:88, and zoom controls' },
         ]} />
-    </div>
-    <div class="body">
-      <p>In the test, people went looking for a play control above the timeline and didn't find one. Previewing is constant in this editor: fix a line, play it back, fix the next. A play button down beside the tracks sat too far from where they were looking. I put the bar back as a slim row between canvas and timeline, the transport buttons in the middle of it and the zoom controls at its right.</p>
     </div>
   </section>
 
   <Fragment slot="close">
     <p class="stance">The best decision in this project is the one I reversed.</p>
-    <p>Dropping the bar was the tidier layout, and I'd argued for it. What shipped has it back in, and that's the version Heygen measured: engagement up 32.1% and task completion up 24.3% against the <span class="nb">one-page</span> flow it replaced. The test outranked the argument. The bar is the preview control, previewing is what people do most in this editor, and they reached for it whether it was there or not.</p>
+    <p>I'd argued from the layout, where one control fewer looked like a gain. Watching people use the editor was the better argument, and I should have started there.</p>
   </Fragment>
 </Case>

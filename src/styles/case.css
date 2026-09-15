@@ -1,22 +1,30 @@
 /* case.css — composition of a case page (Heygen, Eaton). A case is the About page's chapters
    told in the owner's grammar: a hero (eyebrow, claim, deck, then the shipped thing on the full
-   row), the thirty-second snapshot on the facts list (site.css), then chapters, each the index's
-   row — the chapter's name at column 1 at the title size (the decisions numbered in the label
-   grey, as the About page's years), the words on the index's reading column from 6, the figures
-   beneath on the full row. The page has two right edges: the words' measure and the row's. The
-   figures change register from chapter to chapter — one strip, four small frames across, two
-   strips stacked, three strips stacked with the words continuing after them — so the weight of a
-   chapter is its figure's height and the words around it, never a label. Every frame is a 24px
-   frame at its own ratio (a screenshot is never stretched) with one caption: what to look at,
-   then the evidence label, on the caption for a single and on each frame's own label line for a
-   set. The page ends on its close (the stance line and the paragraph that earns it, site.css);
-   the way to the other case is one line in the footer. */
+   row), the thirty-second snapshot on the facts list (site.css) ruled as the index's rows are,
+   then chapters, each the index's row — the chapter's name at column 1 at the title size (the
+   decisions numbered in the label grey, as the About page's years), the words on the index's
+   reading column from 6, the figures beneath: on the full row, or on the words' column from 6 to
+   the row's edge, as the About page's singles. The page has two right edges: the words' measure
+   and the row's. The figures change register from chapter to chapter — a strip under the words,
+   four small frames across the row, two strips stacked on the row, three thin bands under the
+   words — so the weight of a chapter is its figure's size and the words around it, never a label.
+   Every frame is a 24px frame at its own ratio (a screenshot is never stretched) with a label line
+   above it (what it is, then the evidence label) and, when there is one thing to look at, a
+   caption beneath. The page ends on its close — the stance line at column 1 and the paragraph
+   that earns it on the reading column, the decisions' own row — and the way to the other case is
+   one line in the footer. */
 
 /* the hero's figure: --s-2 below the deck, as the About portrait */
 .hero .fig { margin-top: var(--s-2); }
 
-/* a chapter: the index's row, unruled. The name at 1–5, the words at 6–10, the figures on the
-   full row beneath, and the words may continue after them, every step --s-2 */
+/* the snapshot: the facts list, each row ruled above as the index's rows are and the last ruled
+   beneath, so a label at column 1 and its value at 6 read as one row */
+.snap .facts { gap: 0; }
+.snap .facts > div { padding: var(--s-1) 0; border-top: 1px solid var(--line); }
+.snap .facts > div:last-child { border-bottom: 1px solid var(--line); }
+
+/* a chapter: the index's row, unruled. The name at 1–5, the words at 6–10, the figures beneath,
+   every step --s-2 */
 .chap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
 .chap .head { grid-column: 1 / span 5; }
 .chap .head h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; }
@@ -25,31 +33,36 @@
 .chap .body p { font-size: 17px; line-height: 1.55; color: var(--fg); }
 .chap .body p + p { margin-top: 12px; }
 .chap .figs { grid-column: 1 / -1; margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); }
-.chap .figs + .body { margin-top: var(--s-2); }
 
-/* a figure: the frame at the image's own ratio on the full row; the caption beneath in the noted
-   voice — what to look at, then, for a single, the evidence label after the eyebrow's dot */
-.fig { margin: 0; grid-column: 1 / -1; }
+/* a figure: label line, frame, caption, 8px apart, the frame at the image's own ratio. On the full
+   row, or on the words' column to the row's edge (`narrow`) */
+.fig { margin: 0; grid-column: 1 / -1; display: grid; gap: 8px; align-content: start; }
+.fig.narrow { grid-column: 6 / -1; }
 .frame { border-radius: 24px; overflow: hidden; background: var(--selection); }
 .frame picture, .frame img { display: block; width: 100%; height: auto; }
-.fig figcaption { margin-top: 12px; max-width: 72ch; }
-.fig figcaption b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the evidence label, after the eyebrow's dot; wraps as one word */
+.fig figcaption { margin-top: 4px; max-width: 72ch; }
+.fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the name and the evidence label; the label wraps as one word */
 
-/* a set of frames under one caption: strips stacked on the row, or four frames across it. Each
-   frame carries its own label line above it — the name in the secondary weight, a note, then its
-   evidence label */
-.fig .frames { display: grid; column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
-.fig.stack .frames { grid-template-columns: minmax(0, 1fr); }
+/* a set of frames: strips stacked, or four across the row at one height. A dimmed item is an
+   option that lost, beside the one that shipped at full colour */
+.fig .frames { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
 .fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }   /* frames share a bottom edge even when a label wraps */
 .fig .item { display: grid; gap: 8px; align-content: start; }
-.fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }
+.fig .item.dim .frame { opacity: .55; }
+
+/* the close: the decisions' row — the stance at 1–5 at the site's stance size, the paragraph at
+   6–10 — so the page's last row keeps the grid every row above it used */
+.sec.close { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); justify-items: stretch; align-items: start; }
+.sec.close .stance { grid-column: 1 / span 5; max-width: none; }
+.sec.close p:not(.stance) { grid-column: 6 / span 5; max-width: none; }
 
 @media (max-width: 1023px) {
-  .chap { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
-  .chap .head, .chap .body, .chap .figs { grid-column: 1; }
-  .chap .body { max-width: 612px; }   /* the words keep their measure once the row is one column */
+  .chap, .sec.close { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .chap .head, .chap .body, .chap .figs, .sec.close .stance, .sec.close p:not(.stance) { grid-column: 1; }
+  .chap .body, .sec.close p:not(.stance) { max-width: 612px; }   /* the words keep their measure once the row is one column */
+  .sec.close { row-gap: var(--s-1); }
   .chap .figs { margin-top: calc(var(--s-2) - 12px); }
-  .chap .figs + .body { margin-top: calc(var(--s-2) - 12px); }
+  .fig.narrow { grid-column: 1 / -1; }
   .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* two by two once the row is one column */
 }
 @media (max-width: 767px) {

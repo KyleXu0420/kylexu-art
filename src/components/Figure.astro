@@ -1,49 +1,52 @@
 ---
 // A case figure: one frame, or a set of frames under one caption. Every frame is the image in a
 // 24px frame at its own ratio (never cropped by the frame, never stretched), served as avif + webp
-// at the widths it is shown at. The caption is one sentence saying what to look at. The evidence
-// label has one rule: a single carries it in the caption, after the eyebrow's middle dot; a set
-// carries it on each frame's own label line above the frame, with the frame's name and note, set
-// in the page's type, never in the bitmap. A set lays out as strips stacked on the full row
-// (`stack`) or as four frames across the row at one height (`four`). Every figure sits on the
-// full row: one right edge for the page's images, the words' measure for its text.
+// at the widths it is shown at. One system for the words around a frame: a label line above it
+// carries what it is and its evidence — the frame's name, a note, then the evidence label after
+// the eyebrow's middle dot, set in the page's type, never in the bitmap — and the caption beneath,
+// when there is one, carries the one thing to look at. A set lays out as strips stacked (`stack`)
+// or as four frames across the row at one height (`four`); an item may be `dim` (the options
+// that lost beside the one that shipped). A figure sits on the full row, or, `narrow`, on the
+// words' column from 6 to the row's edge, so a page has two right edges: the words' measure and
+// the row's.
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 export type Evidence = 'Shipped' | 'Prototype' | 'Concept' | 'Supporting state';
-export interface Item { src: ImageMetadata; alt: string; evidence: Evidence; name?: string; note?: string }
+export interface Item { src: ImageMetadata; alt: string; evidence: Evidence; name?: string; note?: string; dim?: boolean }
 interface Props {
   src?: ImageMetadata;
   alt?: string;
   evidence?: Evidence;
+  name?: string;
+  note?: string;
   items?: Item[];
   set?: 'stack' | 'four';
-  caption: string;
+  narrow?: boolean;
+  caption?: string;
   loading?: 'eager' | 'lazy';
 }
-const { src, alt = '', evidence, items, set = 'stack', caption, loading = 'lazy' } = Astro.props;
-if (!items && !evidence) throw new Error(`Figure "${caption.slice(0, 40)}…": no evidence label`);
+const { src, alt = '', evidence, name, note, items, set = 'stack', narrow = false, caption, loading = 'lazy' } = Astro.props;
+if (!items && !evidence) throw new Error(`Figure "${name ?? caption ?? alt}": no evidence label`);
 
 const full = { widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px' };
+const half = { widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 87vw, (max-width: 1440px) 50.5vw, 718px' };
 const quarter = { widths: [300, 480, 640], sizes: '(max-width: 767px) 48vw, (max-width: 1440px) 21vw, 294px' };
-const p = items && set === 'four' ? quarter : full;
+const p = items && set === 'four' ? quarter : narrow ? half : full;
 // never ask for a width the source does not have; the source's own width is always the last
 const widthsFor = (im: ImageMetadata) => [...p.widths.filter((w) => w < im.width), im.width];
+const single = items ? [] : [{ src: src as ImageMetadata, alt, evidence: evidence as Evidence, name, note }];
 ---
-<figure class:list={['fig', { stack: items && set === 'stack', four: items && set === 'four' }]}>
-  {items ? (
-    <div class="frames">
-      {items.map((it) => (
-        <div class="item">
-          <span class="meta lab">
-            {it.name && <b>{it.name}</b>}{it.name && it.note && ' — '}{it.note}{(it.name || it.note) && ' '}<b>· {it.evidence}</b>
-          </span>
-          <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src)} sizes={p.sizes} alt={it.alt} loading={loading} decoding="async" /></div>
-        </div>
-      ))}
-    </div>
-  ) : (
-    <div class="frame"><Picture src={src as ImageMetadata} formats={['avif', 'webp']} widths={widthsFor(src as ImageMetadata)} sizes={p.sizes} alt={alt} loading={loading} decoding="async" /></div>
-  )}
-  <figcaption class="meta">{caption}{evidence && !items && <Fragment> <b>· {evidence}</b></Fragment>}</figcaption>
+<figure class:list={['fig', { four: items && set === 'four', narrow }]}>
+  <div class="frames">
+    {(items ?? single).map((it) => (
+      <div class:list={['item', { dim: it.dim }]}>
+        <span class="meta lab">
+          {it.name && <b>{it.name}</b>}{it.name && it.note && ' — '}{it.note}{(it.name || it.note) && ' '}<b>· {it.evidence}</b>
+        </span>
+        <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src)} sizes={p.sizes} alt={it.alt} loading={loading} decoding="async" /></div>
+      </div>
+    ))}
+  </div>
+  {caption && <figcaption class="meta">{caption}</figcaption>}
 </figure>
