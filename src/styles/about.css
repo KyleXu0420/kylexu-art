@@ -1,14 +1,12 @@
 /* about.css — the About page reuses the index's rows (.tl) and its card treatment. Its own
    rules: the photo frames (the cards' 24px radius and cover crop) at one ratio, 3:2, in the cards'
    two widths; the portrait as the hero's figure, cropped half-length; the deck under the claim at
-   the title size; the facts on the row's columns, parted by --s-1; the chapters, unruled, each the
+   the title size; the facts list (site.css) for the organisations and skills; the chapters, unruled, each the
    index's row — the years at column 1 at the title size in the label grey, the words on the index's
    reading column from 6, the chapter's pictures beneath the words as the index's rows carry their
    figures; and the links the story makes to the work. No hairline in the body. */
 
-/* the hero: the claim, its deck (the site's lede: --s-2 below, two thirds of the measure) at the
-   title size, then the portrait as the hero's figure */
-.hero .deck { font-size: 20px; line-height: 1.4; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
+/* the hero: the claim, its deck (site.css), then the portrait as the hero's figure */
 .hero .portrait { margin-top: var(--s-2); }
 
 /* the frames: one ratio. The portrait is drawn larger than its frame and offset so the frame holds
@@ -22,15 +20,6 @@
 .photo.up img { object-position: 50% 8%; }
 .photo.mid img { object-position: 50% 35%; }
 .photo.right img { object-position: 100% 50%; }
-
-/* the facts: label at column 1, value from column 6 to the edge where the portrait ends, rows
-   parted by --s-1 measured from the value; each entry unbreakable so a list wraps between
-   entries and never inside one */
-.facts { margin: 0; display: grid; gap: var(--s-1); }
-.facts > div { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
-.facts dt { grid-column: 1 / span 2; padding-top: 1px; }
-.facts dd { grid-column: 6 / -1; margin: 0; color: var(--fg-2); }
-.facts dd .line { display: block; }   /* degrees: one per line, never joined */
 
 /* the chapters: unruled, parted by air. Each is the index's row — the years at column 1 at the
    title size in the label grey, on the paragraph's first baseline; the words in the reading voice
@@ -61,16 +50,10 @@
   .story .pics { margin-top: calc(var(--s-2) - 8px); }   /* the row's 8px gap makes it --s-2 */
   .story .pics + .what { margin-top: calc(var(--s-2) - 8px); }
   .story .pics > :only-child { grid-column: 1 / -1; }
-  .facts > div { grid-template-columns: 136px minmax(0, 1fr); }
-  .facts dt { grid-column: 1; }
-  .facts dd { grid-column: 2; }
 }
 @media (max-width: 767px) {
   .claim .nb { white-space: normal; }   /* on a phone the claim balances on its own */
   .story .pics { margin-top: calc(var(--s-2) - 6px); }   /* the row's 6px gap */
   .story .pics + .what { margin-top: calc(var(--s-2) - 6px); }
   .story .pics > :first-child, .story .pics > :last-child, .story .pics > :only-child { grid-column: 1 / -1; }
-  .facts { gap: 16px; }
-  .facts > div { grid-template-columns: 1fr; row-gap: 4px; }
-  .facts dt, .facts dd { grid-column: 1; }
 }

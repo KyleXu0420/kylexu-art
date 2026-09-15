@@ -1,0 +1,46 @@
+---
+// A case page: Sheet, with the case's hero (eyebrow, claim, deck, the hero figure), the page's
+// chapters, then the index's row for the other case. The composition is case.css; the row is the
+// index's own (home.css). Pass a `signoff` slot only when the page has something to say there.
+import Sheet from './Sheet.astro';
+import { href } from '../lib/url';
+import '../styles/home.css';
+import '../styles/case.css';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  eyebrow: string;
+  deck?: string;
+  next: { when: string; org: string; role: string; title: string; sub: string; to: string };
+}
+const { title, description, ogImage, eyebrow, deck, next } = Astro.props;
+---
+<Sheet {title} {description} {ogImage}>
+  <section class="col hero" aria-labelledby="h1">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="display" id="h1"><slot name="claim" /></h1>
+    {deck && <p class="lead deck">{deck}</p>}
+    <slot name="hero" />
+  </section>
+
+  <slot />
+
+  <section class="col sec next" aria-label="The other case">
+    <p class="meta">The other case</p>
+    <ul class="tl">
+      <li>
+        <span class="meta when">{next.when}</span>
+        <div class="org"><b>{next.org}</b><span>{next.role}</span></div>
+        <div class="what">
+          <h2 id="t-next">{next.title}</h2>
+          <p>{next.sub}</p>
+        </div>
+        <a class="link" href={href(next.to)} aria-describedby="t-next">Case →</a>
+      </li>
+    </ul>
+  </section>
+
+  {Astro.slots.has('signoff') && <Fragment slot="signoff"><slot name="signoff" /></Fragment>}
+</Sheet>

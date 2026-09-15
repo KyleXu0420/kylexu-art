@@ -1,0 +1,213 @@
+---
+import Case from '../../layouts/Case.astro';
+import Figure from '../../components/Figure.astro';
+import editor from '../../assets/img/heygen-editor.png';
+import editorBefore from '../../assets/img/heygen-editor-before.png';
+import regions from '../../assets/img/heygen-regions.png';
+import layouts from '../../assets/img/heygen-layouts.png';
+import timeline from '../../assets/img/heygen-timeline.png';
+import scriptStates from '../../assets/img/heygen-script-states.png';
+import playbar from '../../assets/img/heygen-playbar.png';
+import components from '../../assets/img/heygen-components.png';
+import flows from '../../assets/img/heygen-flows.png';
+import ios from '../../assets/img/heygen-ios.png';
+import iosFlows from '../../assets/img/heygen-ios-flows.png';
+import iterations from '../../assets/img/heygen-iterations.png';
+import menus from '../../assets/img/heygen-menus.png';
+import finalStates from '../../assets/img/heygen-final-states.png';
+import desktopPieces from '../../assets/img/heygen-desktop-pieces.png';
+import iosScope from '../../assets/img/heygen-ios-scope.png';
+import iosMetrics from '../../assets/img/heygen-ios-metrics.png';
+
+// The frames are the Webflow case page's own images, flattened on white where they were
+// transparent, at their original 2600px. Ten on the reading path, seven in "more states".
+const eaton = {
+  when: '2022.06 – 2022.08', org: 'Eaton Corporation', role: 'UX Design Intern', title: 'RapidLinkX',
+  sub: 'An IoT configuration tool for airport conveyor systems, with parameter editing and error monitoring.',
+  to: '/projects/eaton',
+};
+---
+<Case
+  title="Heygen — Kyle Xu"
+  description="Product Design Intern at Heygen, June–October 2023. The AI video editor re-architected around the script with an updated component library — engagement +32.1%, task completion +24.3% against the flow it replaced — then a 0→1 iOS companion MVP for avatar creation."
+  ogImage="/og-heygen.jpg"
+  eyebrow="Heygen · Product Design Intern · June – October 2023"
+  deck="Script, canvas and timeline reorganised for customers who'd outgrown a one-page editor; then a 0→1 iOS companion in three weeks."
+  next={eaton}
+>
+  <Fragment slot="claim">The video editor, <span class="nb">re-architected</span> around the script.</Fragment>
+  <Figure slot="hero" src={editor} evidence="Shipped" loading="eager"
+    alt="The Heygen video editor: a dark script panel on the left with two script cards and an open voice-setting menu, an avatar on a white canvas, and a timeline with a ruler and playhead below"
+    caption="The editor as it shipped: the script panel in the sidebar with a voice setting open, the canvas, and the timeline under its own transport row." />
+
+  <section class="col sec" aria-label="In thirty seconds">
+    <dl class="facts">
+      <div>
+        <dt class="meta">Role</dt>
+        <dd>Product Design Intern at Heygen, June – October 2023; the only designer on the editor project.</dd>
+      </div>
+      <div>
+        <dt class="meta">Scope</dt>
+        <dd>The desktop video editor — script panel, timeline, component library — then the iOS companion MVP for avatar creation, a <span class="nb">3-week</span> sprint.</dd>
+      </div>
+      <div>
+        <dt class="meta">Shipped</dt>
+        <dd>The <span class="nb">re-architected</span> editor with its updated component library. The iOS MVP reached a <span class="nb">mid-fidelity</span> prototype and early validation, then was postponed.</dd>
+      </div>
+      <div>
+        <dt class="meta">Outcome</dt>
+        <dd>Engagement +32.1% and task completion +24.3%, measured against the editor flow it replaced.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-hard">
+    <div class="head">
+      <h2 id="c-hard">Why it was hard</h2>
+    </div>
+    <div class="body">
+      <p>Heygen started with one job, an avatar reading a script, and the editor was built for it: the script box under the canvas, a row of scene cards for a timeline, everything on one page so there was nothing to learn. By 2023 the customers were small studios, individual creators and businesses making <span class="nb">multi-scene</span> videos, and the one page had become the ceiling: no room for a second script, no way to see time.</p>
+      <p><span class="nb">Text-to-speech</span> was still the core of the product, so whatever came next had to give the script more room. Product and engineering read the scope differently and I was the only designer on it, so I proposed a <span class="nb">one-week</span> design sprint to get everyone to the same starting layout.</p>
+    </div>
+    <div class="figs">
+      <Figure src={editorBefore} evidence="Supporting state" half
+        alt="The old Heygen editor, blurred, with the script box and a one-card timeline lifted out in focus beneath a large arrow"
+        caption="The one-scene editor: the script box beneath the canvas, and a timeline of one card." />
+      <Figure src={regions} evidence="Supporting state" half
+        alt="The old editor with its regions labelled: Sidebar, Action, Canvas, Script and Timeline"
+        caption="The editor as I found it, by region: sidebar, action bar, canvas, then the script panel and the timeline sharing the bottom of the page." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-script">
+    <div class="head">
+      <p class="meta">Decision</p>
+      <h2 id="c-script">Where the script lives</h2>
+    </div>
+    <div class="body">
+      <p>The timeline needed the bottom of the page, which freed the script's old spot and raised the question of where it should go. I drew four layouts. Two added a <span class="nb">right-hand</span> property panel, easy to extend, but it pushed the script to the side and behind a click. Two moved it into the left sidebar, as a tab beside Template, Avatar, Text, Element and Asset.</p>
+      <p>I chose the plainest: the sidebar carries the script and nothing else moves. It was the least extensible option, and the sheet said so, but an existing user would open the new editor and still know where they were. With a customer base to keep, that mattered more.</p>
+    </div>
+    <div class="figs">
+      <Figure src={layouts} evidence="Concept"
+        alt="Four layout plans as coloured block diagrams over blurred mock-ups, each with a list of pros and cons; the fourth is marked selected"
+        caption="Four layouts from the sprint, each with its pros and cons: an action panel as a new module, the script as a permanent right panel, the script in the sidebar with an action panel, and the one that shipped — the script in the sidebar, nothing else moved." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-timeline">
+    <div class="head">
+      <p class="meta">Decision</p>
+      <h2 id="c-timeline">A timeline that shows time</h2>
+    </div>
+    <div class="body">
+      <p>The old timeline showed cards, not time: no ruler, no playhead, and state changes so quiet that people weren't sure what they'd selected. A full <span class="nb">multi-track</span> suite would have been too much for the beginners who were most of the base.</p>
+      <p>I kept the three tracks — avatar, script, audio — and gave them a ruler, a playhead, an expand toggle and clearer drag states, under three rules: each panel has a visible boundary; every element is one attribute, with no hidden binding to another; and whatever appears in two panels stays in sync, so a scene selected in the timeline lights up on the canvas. We tested it with agencies and individual creators, and what changed afterwards was mostly text: stronger state cues on the script cards, hotkey hints where a tooltip had been.</p>
+    </div>
+    <div class="figs">
+      <Figure src={timeline} evidence="Shipped"
+        alt="The timeline before, a row of cards with no ruler, and after, with a time ruler, a playhead showing the current time and an expand toggle"
+        caption="The timeline before and after: a ruler, a playhead with the current time, an expand toggle, and the three tracks in a fixed order." />
+      <Figure src={scriptStates} evidence="Shipped"
+        alt="Six script cards: the old normal, hover and error states above the new ones, where the error card turns red and says to type a script"
+        caption="A script card in its normal, hover and error states, before and after: the new states differ visibly, and the error says what to do." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-playbar">
+    <div class="head">
+      <p class="meta">Decision</p>
+      <h2 id="c-playbar">The play bar, twice</h2>
+    </div>
+    <div class="body">
+      <p>In the first round I drew a play bar floating over the canvas. It didn't get through — too much on the canvas — so I went the other way and proposed dropping the play bar altogether: the timeline had a playhead now, and one control fewer would read as simpler. In testing, people kept reaching for it. Preview is the loop this tool runs on — play, watch, fix a line, play again — and the timeline's small transport was too far from their eyes. Engineering had run into trouble of its own with that version.</p>
+      <p>So I put it back, as a slim transport row between canvas and timeline. The assumption had been mine and it was wrong; the test caught it before anyone built on it.</p>
+    </div>
+    <div class="figs">
+      <Figure src={playbar} evidence="Shipped"
+        alt="Three editor screens side by side: one with a play bar floating over the canvas, one with only a play button beside the timeline, and one with a slim transport row above the timeline"
+        caption="Three states of the play bar: the floating bar from the first round, which was turned down; the version without one; and the transport row that shipped — expand, previous, play, next, time and zoom." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-shipped">
+    <div class="head">
+      <h2 id="c-shipped">How it shipped</h2>
+    </div>
+    <div class="body">
+      <p>The editor went to engineering as two flow maps, Text to Script and Timeline Editor, with every edge case drawn as a state: an empty script, a generation error, a pause between lines, a recorded clip on its own track. With a small team, each change had to be incremental and checkable on its own; the maps doubled as the review list. The component library was updated alongside: script cards in their three states, the voice settings, context menus carrying the GPT script writer and Translate, and the timeline's controls.</p>
+    </div>
+    <div class="figs">
+      <Figure src={components} evidence="Shipped"
+        alt="A component sheet: the script panel in its initial and final states, a column of script-card variants, buttons and menus, voice-setting panels and timeline controls"
+        caption="The updated component library: the script panel from initial to final state, the card and menu variants, the voice settings and the timeline's controls." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-ios">
+    <div class="head">
+      <p class="meta">0→1 MVP</p>
+      <h2 id="c-ios">The iOS companion</h2>
+    </div>
+    <div class="body">
+      <p>Avatar creation was <span class="nb">desktop-only</span>, and its weakest link was the webcam. A phone's camera is better, so in a <span class="nb">three-week</span> sprint at the end of the internship I led a 0→1 iOS MVP for recording an avatar: scope set with the CPO and product team, 10+ user interviews, six internal evaluation rounds, and a <span class="nb">mid-fidelity</span> prototype of three flows — manage, record, consent.</p>
+      <p>The decision inside it was the recording screen: most people freeze without a script, so the teleprompter offers a topic — freestyle, tell us about yourself, a product update — and paces a <span class="nb">thirty-second</span> take, then a <span class="nb">two-minute</span> one. Consent is a spoken sentence recorded in the same session, so the footage carries its own authorisation.</p>
+      <p>Early validation was positive. Against Heygen's other services the MVP showed less growth potential, and it was indefinitely postponed — the right call, and a lesson in telling an experience that works from a product worth scaling.</p>
+    </div>
+    <div class="figs">
+      <Figure src={ios} evidence="Prototype" narrow
+        alt="Three iPhone screens: a teleprompter over a selfie camera, a list of topics to talk about, and a footage review with a checklist"
+        caption="Three screens of the prototype: the teleprompter over the camera, the topic picker for a take without a script, and the footage check." />
+      <Figure src={iosFlows} evidence="Prototype"
+        alt="Fifteen iPhone screens in a grid: splash, sign-in, the avatar list, how it works, good and bad footage examples, the topic picker, recording, consent, review and processing"
+        caption="The mid-fidelity prototype end to end: sign-in, the avatar list, how it works, good and bad footage, the topic picker, recording, consent, and processing." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-outcome">
+    <div class="head">
+      <h2 id="c-outcome">Outcome</h2>
+    </div>
+    <div class="body">
+      <ul class="nums">
+        <li><b>+32.1%</b><span>engagement</span></li>
+        <li><b>+24.3%</b><span>task completion</span></li>
+      </ul>
+      <p>Both measured against the flow this editor replaced, the <span class="nb">one-page</span> version in the first two frames. The editor shipped with its updated component library; the iOS MVP stayed a prototype.</p>
+    </div>
+  </section>
+
+  <section class="col sec" aria-label="More states">
+    <details class="more">
+      <summary><span class="link">More states</span><span class="meta">seven frames</span></summary>
+      <div class="grid">
+        <Figure src={iterations} evidence="Concept"
+          alt="Three editor screens from left to right, each with the script in the sidebar and a different timeline"
+          caption="Three passes at the editor during the sprint week, from the first sidebar script to the version taken into testing." />
+        <Figure src={menus} evidence="Shipped" half
+          alt="Guides and two context menus before and after: a pronunciation tip becomes hotkey hints, and the menus gain GPT script writer, Translate and Apply to all avatars"
+          caption="Guides and the two context menus, before and after: hotkey hints replace the pronunciation tip, and the menus carry the GPT script writer, Translate and Apply to all avatars." />
+        <Figure src={finalStates} evidence="Shipped" half
+          alt="Two full editor screens above a spread of their parts: script cards, the voice setting, context menus and the timeline expanded and collapsed"
+          caption="The shipped editor with its states laid out: script cards, the voice setting, the context menus, and the timeline expanded and collapsed." />
+        <Figure src={flows} evidence="Supporting state" half
+          alt="Two flow maps of small screens headed Text to Script and Timeline Editor, with each branch labelled"
+          caption="The two flow maps handed to engineering, Text to Script and Timeline Editor, each edge case drawn as a screen." />
+        <Figure src={desktopPieces} evidence="Supporting state" half
+          alt="Six desktop screens: a usage chart, a cancellation survey, a video page, a script list, avatar pickers and a translation view"
+          caption="Smaller desktop pieces from the same summer, with the other designers: usage charts, a cancellation survey, the video page and script translation." />
+        <Figure src={iosScope} evidence="Concept" half
+          alt="A scope map in two columns, a two-month scope and a one-year scope, each a tree of features"
+          caption="The MVP's scope in two horizons: what ships in two months, and what a year could hold." />
+        <Figure src={iosMetrics} evidence="Concept" half
+          alt="A funnel map of metrics in six stages: awareness, interest, retention, decision, action and feedback"
+          caption="Funnel metrics handed to the product managers: awareness, interest, decision, action, retention, feedback." />
+      </div>
+    </details>
+  </section>
+
+  <Fragment slot="signoff">
+    <p class="stance">The play bar is the part of this project I'd show first.</p>
+    <p>It's the clearest record I have of a test changing my mind, early enough that engineering never built on the wrong assumption. I've tried to work that way since.</p>
+  </Fragment>
+</Case>

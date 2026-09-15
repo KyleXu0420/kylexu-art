@@ -28,6 +28,7 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .hero .eyebrow { margin: 0 0 var(--s-1); font-size: 17px; line-height: 1.4; font-weight: 500; color: var(--fg-2); }
 .hero .lead { margin-top: var(--s-2); max-width: calc(8 / 12 * (100% - 11 * var(--gutter)) + 7 * var(--gutter)); }   /* two thirds of the claim's measure */
 .hero .lead + .lead { margin-top: var(--s-1); }
+.hero .deck { font-size: 20px; line-height: 1.4; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }   /* the lede at the title size: About, the cases */
 .skip { position: absolute; left: -999px; top: 12px; z-index: 20; background: var(--bg); padding: 8px 14px; border-radius: var(--r-pill); font-size: 14px; }
 .skip:focus { left: 16px; }
 
@@ -44,6 +45,15 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .btn:hover { transform: translateY(-2px); }
 
 /* ---- media: a hairline-framed figure on the page ground, one radius ---- */
+
+/* ---- the facts: a label at column 1, its value from column 6 to the edge, rows parted by --s-1
+        measured from the value; each entry unbreakable so a list wraps between entries and never
+        inside one. The About page's organisations and skills; a case's thirty-second snapshot. ---- */
+.facts { margin: 0; display: grid; gap: var(--s-1); }
+.facts > div { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+.facts dt { grid-column: 1 / span 2; padding-top: 1px; }
+.facts dd { grid-column: 6 / -1; margin: 0; color: var(--fg-2); }
+.facts dd .line { display: block; }   /* degrees: one per line, never joined */
 
 /* ---- nav: the name left, one outlined pill right, the theme toggle inside it ---- */
 .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
@@ -73,12 +83,18 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 }
 @media (max-width: 1023px) {
   .reach { margin-top: var(--s-3); }
+  .facts > div { grid-template-columns: 136px minmax(0, 1fr); }
+  .facts dt { grid-column: 1; }
+  .facts dd { grid-column: 2; }
 }
 @media (max-width: 767px) {
   .nav .col { height: 64px; }
   .pill a, .pill .theme { padding: 0 12px; }
   .theme { padding: 0 10px; }
   .hero .lead { margin-top: var(--s-1); }
+  .facts { gap: 16px; }
+  .facts > div { grid-template-columns: 1fr; row-gap: 4px; }
+  .facts dt, .facts dd { grid-column: 1; }
 }
 @media (max-width: 400px) {
   .pill a { padding: 0 10px; font-size: 13px; }
