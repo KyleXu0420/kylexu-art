@@ -1,27 +1,52 @@
 ---
-// A case figure: the image in a 24px frame at its own ratio (never cropped, never stretched),
-// served as avif + webp at the row's widths, with one caption — the evidence label first, then
-// what the frame shows. `half` puts it on six columns for a pair; `narrow` on the words' column.
+// A case figure: one frame, or a set of frames under one caption. Every frame is the image in a
+// 24px frame at its own ratio (never cropped by the frame, never stretched), served as avif + webp
+// at the widths it is shown at. The caption is one sentence saying what to look at; the evidence
+// label sits at the row's far side. A set lays out as strips stacked on the full row (`stack`), a
+// pair or three screens across the words' column (`pair`, `row`) or four frames across the row
+// (`four`); an item
+// may carry a short label of its own — a name and a note — set in the page's type, never in the
+// bitmap; `dim` fades the frames the argument passes over. `half` puts a single on six columns for
+// a pair; `narrow` on the words' column.
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 export type Evidence = 'Shipped' | 'Prototype' | 'Concept' | 'Supporting state';
+export interface Item { src: ImageMetadata; alt: string; name?: string; note?: string; dim?: boolean }
 interface Props {
-  src: ImageMetadata;
-  alt: string;
+  src?: ImageMetadata;
+  alt?: string;
+  items?: Item[];
+  set?: 'stack' | 'pair' | 'row' | 'four';
   caption: string;
   evidence: Evidence;
   half?: boolean;
   narrow?: boolean;
   loading?: 'eager' | 'lazy';
 }
-const { src, alt, caption, evidence, half = false, narrow = false, loading = 'lazy' } = Astro.props;
+const { src, alt = '', items, set = 'stack', caption, evidence, half = false, narrow = false, loading = 'lazy' } = Astro.props;
 const full = { widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px' };
 const pair = { widths: [480, 720, 1100, 1300], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 42vw, 612px' };
 const words = { widths: [720, 1100, 1440], sizes: '(max-width: 1023px) 100vw, (max-width: 1440px) 50vw, 718px' };
-const p = half ? pair : narrow ? words : full;
+const twin = { widths: [360, 720, 1100], sizes: '(max-width: 1023px) 46vw, (max-width: 1440px) 24vw, 348px' };
+const third = { widths: [240, 480, 720], sizes: '(max-width: 1023px) 31vw, (max-width: 1440px) 16vw, 224px' };
+const quarter = { widths: [320, 640, 960], sizes: '(max-width: 1023px) 46vw, (max-width: 1440px) 20vw, 294px' };
+const p = items ? (set === 'pair' ? twin : set === 'row' ? third : set === 'four' ? quarter : full) : half ? pair : narrow ? words : full;
+// never ask for a width the source does not have; the source's own width is always the last
+const widthsFor = (im: ImageMetadata) => [...p.widths.filter((w) => w < im.width), im.width];
 ---
-<figure class:list={['fig', { half, narrow }]}>
-  <div class="frame"><Picture src={src} formats={['avif', 'webp']} widths={p.widths} sizes={p.sizes} alt={alt} loading={loading} decoding="async" /></div>
-  <figcaption class="meta"><b>{evidence}</b> · {caption}</figcaption>
+<figure class:list={['fig', { half, narrow, stack: items && set === 'stack', pair: items && set === 'pair', row: items && set === 'row', four: items && set === 'four' }]}>
+  {items ? (
+    <div class="frames">
+      {items.map((it) => (
+        <div class:list={['item', { dim: it.dim }]}>
+          <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src)} sizes={p.sizes} alt={it.alt} loading={loading} decoding="async" /></div>
+          {it.name && <span class="meta lab"><b>{it.name}</b>{it.note && <span> — {it.note}</span>}</span>}
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div class="frame"><Picture src={src as ImageMetadata} formats={['avif', 'webp']} widths={widthsFor(src as ImageMetadata)} sizes={p.sizes} alt={alt} loading={loading} decoding="async" /></div>
+  )}
+  <figcaption class="meta"><span>{caption}</span><b>{evidence}</b></figcaption>
 </figure>

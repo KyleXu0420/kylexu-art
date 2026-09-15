@@ -1,20 +1,23 @@
 /* case.css — composition of a case page (Heygen, Eaton). A case is the About page's chapters
    told in the owner's grammar: a hero (eyebrow, claim, deck, the shipped thing as the hero's
    figure), the thirty-second snapshot on the facts list (site.css), then chapters, each the
-   index's row — the chapter's name at column 1 at the title size, a "Decision" note above it
-   where the chapter is one, the words on the index's reading column from 6, the figures beneath
-   on the full row. Every figure is a 24px frame at its own ratio (a screenshot is never cropped
-   or stretched) with one caption: its evidence label, then what it shows. A collapsed "more
-   states" gallery holds the frames that are not on the reading path. The page ends on the
-   index's row for the other case, then the site's contact row. No hairline in the body. */
+   index's row — the chapter's name at column 1 at the title size, the words on the index's
+   reading column from 6, the figures beneath. The figures change register from chapter to
+   chapter: a single on the words' column, strips stacked on the full row, three screens across
+   the words' column, four frames across the row, a pair — so the weight of a chapter is its
+   figure's width, never a label. Every frame is a 24px frame at its own ratio (a screenshot is
+   never stretched) with one caption: what to look at, then the evidence label at the far side.
+   The closing lives in the last chapter, at the title size; a ruled row opens the collapsed
+   "more states" gallery; the page ends on the index's row for the other case, then the site's
+   contact row. */
 
 /* the hero's figure: --s-2 below the deck, as the About portrait */
 .hero .fig { margin-top: var(--s-2); }
 
-/* a chapter: the index's row, unruled. The head (a note and the name) at 1–5, the words at 6–10,
-   the figures on the full row beneath, and the words may continue after them, every step --s-2 */
+/* a chapter: the index's row, unruled. The name at 1–5, the words at 6–10, the figures on the
+   full row beneath, and the words may continue after them, every step --s-2 */
 .chap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
-.chap .head { grid-column: 1 / span 5; display: grid; gap: 4px; align-content: start; }
+.chap .head { grid-column: 1 / span 5; }
 .chap .head h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; max-width: 22ch; }
 .chap .body { grid-column: 6 / span 5; }
 .chap .body p { font-size: 17px; line-height: 1.55; color: var(--fg); }
@@ -22,24 +25,46 @@
 .chap .figs { grid-column: 1 / -1; margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); }
 .chap .figs + .body { margin-top: var(--s-2); }
 
-/* a figure: the frame at the image's own ratio, the caption beneath in the noted voice — the
-   evidence label in the secondary weight, then what the frame shows */
+/* the closing, inside the last chapter: a stance line at the title size, then its argument */
+.chap .body .stance { margin-top: var(--s-2); font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; max-width: 34ch; text-wrap: balance; }
+
+/* a figure: the frame at the image's own ratio; the caption beneath in the noted voice — what to
+   look at on the left, the evidence label on the right, wrapping under it when the row is short */
 .fig { margin: 0; grid-column: 1 / -1; }
 .fig.half { grid-column: span 6; }
 .fig.narrow { grid-column: 6 / -1; }   /* a single on the words' column, as the About page's */
 .frame { border-radius: 24px; overflow: hidden; background: var(--selection); }
 .frame picture, .frame img { display: block; width: 100%; height: auto; }
-.fig figcaption { margin-top: 12px; max-width: 72ch; }
-.fig figcaption b { font-weight: 500; color: var(--fg-2); }
+.fig figcaption { margin-top: 12px; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 4px var(--s-1); }
+.fig figcaption span { max-width: 72ch; }
+.fig figcaption b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }
+
+/* a set of frames under one caption: strips stacked on the full row, a pair or three screens
+   across the words' column, or four frames across the row. Each frame may carry its own short label — the
+   name in the secondary weight, then a note; a dimmed frame is one the argument passes over */
+.fig .frames { display: grid; column-gap: var(--gutter); row-gap: var(--s-1); }
+.fig.stack .frames { grid-template-columns: minmax(0, 1fr); }
+.fig.pair, .fig.row { grid-column: 6 / -1; }
+.fig.pair .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.fig.row .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.fig .item { display: grid; gap: 8px; align-content: start; }
+.fig .item.dim .frame { opacity: .45; }
+.fig .lab b { font-weight: 500; color: var(--fg-2); }
 
 /* the outcome's two numbers, on the reading column at the title size */
 .nums { list-style: none; margin: 0 0 var(--s-1); padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
 .nums b { display: block; font-size: clamp(28px, 2.78vw, 40px); line-height: 1.1; letter-spacing: -.02em; font-weight: 500; font-variant-numeric: tabular-nums; }
 .nums span { display: block; margin-top: 4px; color: var(--fg-2); }
 
-/* more states: a collapsed gallery. The summary is the site's link; its arrow turns when open */
-.more summary { cursor: pointer; list-style: none; display: inline-flex; align-items: baseline; gap: 12px; }
+/* more states: a collapsed gallery behind one of the index's ruled rows — the name at 1–5, what
+   the gallery holds at 6–10, the link at 11–12; the link's arrow turns when the row is open */
+.more summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; padding: var(--s-1) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .more summary::-webkit-details-marker { display: none; }
+.more summary h2 { grid-column: 1 / span 5; font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; }
+.more summary .what { grid-column: 6 / span 5; padding-top: 3px; color: var(--fg-2); }
+.more summary .link { grid-column: 11 / -1; justify-self: end; white-space: nowrap; padding-top: 4px; }
+.more summary:hover .link { text-decoration-color: currentColor; }
 .more summary .link::after { content: ' ↓'; }
 .more[open] summary .link::after { content: ' ↑'; }
 .more .grid { margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); }
@@ -51,11 +76,17 @@
   .chap { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
   .chap .head, .chap .body, .chap .figs { grid-column: 1; }
   .chap .body { max-width: 612px; }   /* the words keep their measure once the row is one column */
-  .fig.narrow { grid-column: 1 / -1; }
+  .fig.narrow, .fig.pair, .fig.row { grid-column: 1 / -1; }
+  .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .chap .figs { margin-top: calc(var(--s-2) - 12px); }
   .chap .figs + .body { margin-top: calc(var(--s-2) - 12px); }
+  .more summary { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+  .more summary h2, .more summary .what, .more summary .link { grid-column: 1; }
+  .more summary .what { padding-top: 0; max-width: 612px; }
+  .more summary .link { justify-self: start; padding-top: 0; }
 }
 @media (max-width: 767px) {
   .fig.half { grid-column: 1 / -1; }
+  .fig.row .frames { column-gap: 12px; }
   .nums { grid-template-columns: 1fr; gap: 16px; }
 }
