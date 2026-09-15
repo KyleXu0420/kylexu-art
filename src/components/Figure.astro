@@ -5,8 +5,8 @@
 // carries what it is and its evidence — the frame's name, a note, then the evidence label after
 // the eyebrow's middle dot, set in the page's type, never in the bitmap — and the caption beneath,
 // when there is one, carries the one thing to look at. A set lays out as strips stacked (`stack`),
-// three across (`three`, the states of one screen side by side) or four across at one height
-// (`four`); an item may be `dim` (the options that lost beside the one that shipped). A figure
+// two across at one width (`pair`, the same region of two screens side by side) or four across at
+// one height (`four`); an item may be `dim` (the options that lost beside the one that shipped). A figure
 // sits on the full row, or, `narrow`, on the words' column from 6 to the row's edge, so a page has
 // two right edges: the words' measure and the row's.
 import { Picture } from 'astro:assets';
@@ -21,7 +21,7 @@ interface Props {
   name?: string;
   note?: string;
   items?: Item[];
-  set?: 'stack' | 'three' | 'four';
+  set?: 'stack' | 'pair' | 'four';
   narrow?: boolean;
   caption?: string;
   loading?: 'eager' | 'lazy';
@@ -31,14 +31,14 @@ if (!items && !evidence) throw new Error(`Figure "${name ?? caption ?? alt}": no
 
 const full = { widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px' };
 const half = { widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 87vw, (max-width: 1440px) 50.5vw, 718px' };
-const third = { widths: [400, 640, 800, 1000], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 28vw, 400px' };
+const pair = { widths: [480, 720, 1100, 1300], sizes: '(max-width: 1023px) 87vw, (max-width: 1440px) 42.5vw, 612px' };
 const quarter = { widths: [300, 480, 640], sizes: '(max-width: 767px) 48vw, (max-width: 1440px) 21vw, 294px' };
-const p = items && set === 'four' ? quarter : items && set === 'three' ? third : narrow ? half : full;
+const p = items && set === 'four' ? quarter : items && set === 'pair' ? pair : narrow ? half : full;
 // never ask for a width the source does not have; the source's own width is always the last
 const widthsFor = (im: ImageMetadata) => [...p.widths.filter((w) => w < im.width), im.width];
 const single = items ? [] : [{ src: src as ImageMetadata, alt, evidence: evidence as Evidence, name, note }];
 ---
-<figure class:list={['fig', { three: items && set === 'three', four: items && set === 'four', narrow }]}>
+<figure class:list={['fig', { pair: items && set === 'pair', four: items && set === 'four', narrow }]}>
   <div class="frames">
     {(items ?? single).map((it) => (
       <div class:list={['item', { dim: it.dim }]}>

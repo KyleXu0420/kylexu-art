@@ -6,8 +6,10 @@
    reading column from 6, the figures beneath: on the full row, or on the words' column from 6 to
    the row's edge, as the About page's singles. The page has two right edges: the words' measure
    and the row's. The figures change register from chapter to chapter — a strip under the words,
-   four small frames across the row, two strips stacked on the row, three bands under the words —
-   so the weight of a chapter is its figure's size and the words around it, never a label.
+   four small frames across the row, two strips stacked on the row, three bands under the words,
+   two frames across the row —
+   so the weight of a chapter is its figure's size and the words around it, never a label; a
+   chapter whose evidence is the hero above it carries no figure at all.
    Every frame is a 24px frame at its own ratio (a screenshot is never stretched) with a label line
    above it (what it is, then the evidence label) and, when there is one thing to look at, a
    caption beneath. The page ends on its close — the stance line at column 1 and the paragraph
@@ -46,11 +48,11 @@
 .fig figcaption { margin-top: 4px; max-width: 72ch; }
 .fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the name and the evidence label; the label wraps as one word */
 
-/* a set of frames: strips stacked, three across (the states of one screen side by side), or four
-   across at one height. A dimmed item is an option that lost, beside the one that shipped at full
-   colour */
+/* a set of frames: strips stacked, two across at one width (the same region of two screens side
+   by side), or four across at one height. A dimmed item is an option that lost, beside the one
+   that shipped at full colour */
 .fig .frames { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
-.fig.three .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.fig.pair .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }   /* frames share a bottom edge even when a label wraps */
 .fig .item { display: grid; gap: 8px; align-content: start; }
 .fig .item.dim .frame { opacity: .55; }
@@ -70,9 +72,9 @@
   .snap .facts dd { grid-column: 2; }
   .fig.narrow { grid-column: 1 / -1; }
   .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* two by two once the row is one column */
+  .fig.pair .frames { grid-template-columns: minmax(0, 1fr); }   /* a pair stacks once the row is one column, each frame at the row's width */
 }
 @media (max-width: 767px) {
   .snap .facts dd { grid-column: 1; }
   .fig.four .frames { column-gap: 12px; }
-  .fig.three .frames { grid-template-columns: minmax(0, 1fr); }   /* thirds stack on a phone */
 }
