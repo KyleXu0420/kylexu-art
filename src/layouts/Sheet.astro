@@ -12,8 +12,9 @@ interface Props {
   ogImage?: string;        // site-root path, e.g. "/og/home.png"
   robots?: string;
   next?: { title: string; to: string; line?: string };   // a case's way to the other case: a row in the footer
+  caseId?: string;         // the case this page is about: sets its hue as the page's accent (tokens.css)
 }
-const { title, description, ogImage, robots, next } = Astro.props;
+const { title, description, ogImage, robots, next, caseId } = Astro.props;
 // the index passes its closing paragraph to the footer. A slot handed down through a layout's own
 // <slot> still counts as present when it is empty, so the test is on the rendered content, not on
 // the slot's existence: a page with nothing to say gets no close.
@@ -55,7 +56,7 @@ const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <Nav />
-  <main id="main"><slot /></main>
+  <main id="main" data-case={caseId}><slot /></main>
   <Footer signoff={signoff} {next}><Fragment slot="signoff" set:html={signoffHtml} /></Footer>
   <script is:inline>
     (function () {

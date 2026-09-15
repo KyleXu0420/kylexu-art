@@ -16,7 +16,9 @@
 .tl p { color: var(--fg-2); }
 .tl .link { grid-column: 11 / -1; justify-self: end; white-space: nowrap; padding-top: 4px; }
 .tl .link::after { content: ''; position: absolute; inset: 0; }
+.tl li[data-case] .link { color: var(--accent); }   /* the row's own hue, on its link */
 .tl li:hover .link { text-decoration-color: currentColor; }
+.tl li[data-case]:hover h2 { color: var(--accent); }
 /* a row with two links: the links sit together and neither claims the whole row */
 .tl .links { grid-column: 11 / -1; justify-self: end; display: grid; gap: 6px; justify-items: end; }
 .tl .links .link { grid-column: auto; padding-top: 4px; }
