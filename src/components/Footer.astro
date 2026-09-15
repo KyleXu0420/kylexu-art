@@ -1,11 +1,16 @@
 ---
+import { href } from '../lib/url';
 const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
-interface Props { signoff?: boolean }   // whether the page passed a sign-off paragraph
-const { signoff = false } = Astro.props;
+interface Props {
+  signoff?: boolean;                      // whether the page passed a sign-off paragraph
+  next?: { title: string; to: string };   // a case page's other case: one line above the contact row
+}
+const { signoff = false, next } = Astro.props;
 ---
 <footer class="foot" id="contact">
   <div class="col">
     {signoff && <div class="close"><slot name="signoff" /></div>}
+    {next && <p class="meta next">Next case <a class="link" href={href(next.to)}>{next.title} →</a></p>}
     <div class="reach">
       <div class="who">
         <b>Kyle Xu<span class="cjk">徐匡泓</span></b>

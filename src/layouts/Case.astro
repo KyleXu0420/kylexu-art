@@ -1,12 +1,10 @@
 ---
 // A case page: Sheet, with the case's hero (eyebrow, claim, deck, the hero figure), the page's
-// chapters, the page's close (`close` slot: the line it ends on at the site's stance size and the
-// paragraph that earns it, before the reader is shown the way out), then the index's row for the
-// other case, then — `coda` slot — anything the page tells after the way out, in the label voice
-// (a side project of the same job). The composition is case.css; the row is the index's own
-// (home.css). Pass a `signoff` slot only when the page has something to say in the footer as well.
+// chapters, then the page's close (`close` slot: the line it ends on at the site's stance size
+// and the paragraph that earns it). The page ends there. The way to the other case is one line in
+// the footer, above the contact row (Sheet passes `next` down to it). The composition is case.css.
+// Pass a `signoff` slot only when the page has something to say in the footer as well.
 import Sheet from './Sheet.astro';
-import { href } from '../lib/url';
 import '../styles/home.css';
 import '../styles/case.css';
 
@@ -16,11 +14,11 @@ interface Props {
   ogImage?: string;
   eyebrow: string;
   deck?: string;
-  next: { when: string; org: string; role: string; title: string; sub: string; to: string };
+  next: { title: string; to: string };
 }
 const { title, description, ogImage, eyebrow, deck, next } = Astro.props;
 ---
-<Sheet {title} {description} {ogImage}>
+<Sheet {title} {description} {ogImage} {next}>
   <section class="col hero" aria-labelledby="h1">
     <p class="eyebrow">{eyebrow}</p>
     <h1 class="display" id="h1"><slot name="claim" /></h1>
@@ -31,23 +29,6 @@ const { title, description, ogImage, eyebrow, deck, next } = Astro.props;
   <slot />
 
   {Astro.slots.has('close') && <section class="col sec close" aria-label="In one line"><slot name="close" /></section>}
-
-  <section class="col sec next" aria-label="The other case">
-    <p class="meta">The other case</p>
-    <ul class="tl">
-      <li>
-        <span class="meta when">{next.when}</span>
-        <div class="org"><b>{next.org}</b><span>{next.role}</span></div>
-        <div class="what">
-          <h2 id="t-next">{next.title}</h2>
-          <p>{next.sub}</p>
-        </div>
-        <a class="link" href={href(next.to)} aria-describedby="t-next">Case →</a>
-      </li>
-    </ul>
-  </section>
-
-  <slot name="coda" />
 
   <slot name="signoff" slot="signoff" />
 </Sheet>

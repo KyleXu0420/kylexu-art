@@ -3,62 +3,46 @@ import Case from '../../layouts/Case.astro';
 import Figure from '../../components/Figure.astro';
 import editor from '../../assets/img/heygen-editor.png';
 import onePage from '../../assets/img/heygen-one-page.png';
-import layoutRight from '../../assets/img/heygen-layout-1.png';
-import layoutSidebar from '../../assets/img/heygen-layout-4.png';
-import panelError from '../../assets/img/heygen-panel-error.png';
-import panelHappy from '../../assets/img/heygen-panel-happy.png';
+import layout1 from '../../assets/img/heygen-layout-1.png';
+import layout2 from '../../assets/img/heygen-layout-2.png';
+import layout3 from '../../assets/img/heygen-layout-3.png';
+import layout4 from '../../assets/img/heygen-layout-4.png';
 import timelineBefore from '../../assets/img/heygen-timeline-before.png';
 import timelineAfter from '../../assets/img/heygen-timeline-after.png';
 import playbarFloating from '../../assets/img/heygen-playbar-floating.png';
 import playbarNone from '../../assets/img/heygen-playbar-none.png';
 import playbarRow from '../../assets/img/heygen-playbar-row.png';
-import iosConsent from '../../assets/img/heygen-ios-consent.png';
 
-// Every frame is a region of one of the Webflow case page's own images, cut so that the deck's
-// annotations stay out of the picture: the image shows, the label names, the words argue. The
-// shipped editor has the first screen to itself; the one page it replaced sits with the chapter
-// that argues against it; the play bar's three states are one rect — sidebar edge to editor edge,
-// the canvas ending on the same line in each — stacked on the words' column. The hand-off is told
-// where it belongs, as the consequence of the panel's design. The page ends on the reversal and
-// the paragraph that earns it; the iOS companion is a coda after the way out, in the label voice.
-const eaton = {
-  when: '2022.06 – 2022.08', org: 'Eaton Corporation', role: 'UX Design Intern', title: 'RapidLinkX',
-  sub: 'An IoT configuration tool for airport conveyor systems, with parameter editing and error monitoring.',
-  to: '/projects/eaton',
-};
+// One screenshot, taken apart three times. The shipped editor has the first screen to itself and
+// its caption names the three regions the decisions are about; each later figure is a region of
+// one of the Webflow case page's own images, cut so the deck's annotations stay out of the picture:
+// the image shows, the label names, the words argue. The page is short, then short, then long:
+// the layout decision is one paragraph and a row of four small frames, the timeline a stacked pair,
+// the play bar three full-width bands with the words continuing after them, and the close ends
+// the page. The way to the other case is one line in the footer.
 ---
 <Case
   title="Heygen — Kyle Xu"
-  description="Product Design Intern at Heygen, June–October 2023. The AI video editor re-architected around the script with an updated component library — engagement +32.1%, task completion +24.3% against the flow it replaced — then a first iOS companion MVP for avatar creation, delivered in a three-week sprint."
+  description="Product Design Intern at Heygen, June–October 2023. The AI video editor re-architected around the script, with an updated component library: engagement +32.1% and task completion +24.3% against the one-page flow it replaced. Three decisions, the last of them reversed after a usability test."
   ogImage="/og-heygen.jpg"
   eyebrow="Heygen · Product Design Intern · June – October 2023"
-  deck="Customers were making multi-scene videos in an editor built for one script on one page. I rebuilt it around the script: the text in the sidebar, a timeline that shows time, and a play bar I had to put back."
-  next={eaton}
+  deck="Customers were making videos of several scenes in an editor built for one script on one page. I rebuilt it around the script. Three decisions carried it, and the last was a play bar I had to put back."
+  next={{ title: 'RapidLinkX', to: '/projects/eaton' }}
 >
   <Fragment slot="claim">The video editor, <span class="nb">re-architected</span> around the script.</Fragment>
   <Figure slot="hero" src={editor} evidence="Shipped" loading="eager"
     alt="The Heygen video editor as shipped: two script cards in a dark panel on the left, an avatar on a white canvas, and below them a transport row and a timeline with a ruler and playhead"
-    caption="The script in the left sidebar, a transport row between canvas and timeline, the current time on the playhead." />
+    caption="Three decisions on this screen: 1, the script in the sidebar; 2, a timeline with a ruler and the current time on the playhead; 3, the transport row between canvas and timeline." />
 
   <section class="col sec" aria-label="In thirty seconds">
     <dl class="facts">
       <div>
         <dt class="meta">Scope</dt>
-        <dd>The desktop editor — script panel, timeline, component library — as its only designer; at the end, the first iOS companion for recording an avatar.</dd>
-      </div>
-      <div>
-        <dt class="meta">Shipped</dt>
-        <dd>The editor with its updated component library; the iOS MVP stayed a prototype.</dd>
+        <dd>The desktop editor, as its only designer: the script panel, the timeline and an updated component library. Then, in the last three weeks, an iOS MVP for recording an avatar. It stayed a prototype, indefinitely postponed once early validation showed less growth potential than the company's other initiatives.</dd>
       </div>
       <div>
         <dt class="meta">Outcome</dt>
-        <dd>
-          <ul class="nums">
-            <li><b>+32.1%</b><span>engagement</span></li>
-            <li><b>+24.3%</b><span>task completion</span></li>
-          </ul>
-          <span class="line">Heygen's numbers, taken on the new editor against the <span class="nb">one-page</span> flow it replaced.</span>
-        </dd>
+        <dd>Engagement +32.1% and task completion +24.3%: Heygen's numbers, taken on the new editor against the <span class="nb">one-page</span> flow it replaced.</dd>
       </div>
     </dl>
   </section>
@@ -68,13 +52,12 @@ const eaton = {
       <h2 id="c-hard">Why one page stopped working</h2>
     </div>
     <div class="body">
-      <p>Everything happened on one page: one box for the whole script, one voice for the whole video, and a timeline that was a card, a play button and a readout. That was the point — nothing to learn — and it held until customers were making videos of several scenes, each with its own lines, which one box and one voice can't carry. <span class="nb">Text-to-speech</span> was still the core of the product, so whatever replaced the page had to give the script more room, not less.</p>
-      <p>The teams read the scope differently — how much of the page was up for change — and I was the only designer on it, so I proposed a <span class="nb">one-week</span> design sprint to get everyone to one starting layout.</p>
+      <p>Everything happened on one page: one box for the whole script, one voice for the whole video, and a timeline that was a card, a play button and a readout. That was the point, nothing to learn. It held until customers were making videos of several scenes, each with its own lines, and one box with one voice couldn't hold them. <span class="nb">Text-to-speech</span> was still the core of the product, so whatever replaced the page had to give the script more room, not less.</p>
     </div>
     <div class="figs">
       <Figure src={onePage} evidence="Shipped"
         alt="The old editor's working panel: a script box with one sentence in it, a voice card with a speed slider and a Play Scripts button, and beneath them a timeline holding a play button, a single scene card and a plus"
-        caption="The page I started from: one script box, one voice, and a timeline of one card with a play button and a readout — no ruler." />
+        caption="The page I started from: one script box, one voice, and a timeline of one card with a play button and a readout." />
     </div>
   </section>
 
@@ -83,24 +66,15 @@ const eaton = {
       <h2 id="c-script"><span class="n">1</span>Where the script lives</h2>
     </div>
     <div class="body">
-      <p>The timeline needed the bottom of the page, which freed the script's old spot. Of the four layouts I drew, two survived the week. A <span class="nb">right-hand</span> panel could take new tools for years, but it put the script at the far edge, one panel among several, and hid it whenever another panel was open. The sidebar — a tab beside Template, Avatar, Text, Element and Asset — gave it the most room and moved nothing else.</p>
-      <p>I chose the sidebar. A tab has less room for whatever comes next, and I knew it, but an existing user could open the new editor and still know where they were.</p>
+      <p>The timeline needed the bottom of the page, which freed the script's old spot. Of the four layouts I drew, two put the script in a new panel on the right, where tools could keep arriving for years, and two kept it in the sidebar as a tab beside Avatar, Text and Element. I chose the sidebar and moved nothing else. A tab has less room for whatever comes next, and I knew it, but an existing user could open the new editor and still know where they were. The panel went to engineering drawn state by state, from the empty card to a script over the word limit, together with the updated component library.</p>
     </div>
     <div class="figs">
-      <Figure set="pair" evidence="Concept" caption="The two that survived, the script in orange."
+      <Figure set="four" caption="Four layouts: two move the script to the right edge, two keep it in the sidebar."
         items={[
-          { src: layoutRight, note: 'A right panel, turned down', alt: 'A block diagram: sidebar on the left, canvas in the middle, script and action panels stacked on the right, timeline along the bottom' },
-          { src: layoutSidebar, note: 'The sidebar, chosen', alt: 'A block diagram: sidebar and script together on the left, canvas in the middle, timeline along the bottom, nothing else' },
-        ]} />
-    </div>
-    <div class="body">
-      <p>The panel went to engineering with every edge case drawn as its own state — an empty card, a generation error, a voice that can't take a pitch setting, a script over the word limit — on a <span class="nb">Text-to-Script</span> flow map that doubled as the review list. The updated component library went with it.</p>
-    </div>
-    <div class="figs">
-      <Figure set="pair" evidence="Shipped" caption="Two of those states beside the happy path: the empty card and the generation error."
-        items={[
-          { src: panelError, alt: 'The script panel with a filled card, an empty card reading Please type your script text, a pause, a recording, and a red banner at the bottom reading Script generation error' },
-          { src: panelHappy, alt: 'The script panel on the happy path: two filled script cards with a character count, a five-second pause and a recording' },
+          { src: layout1, evidence: 'Concept', name: 'Right panel, script and actions', alt: 'A block diagram: sidebar on the left, canvas in the middle, script and action panels stacked on the right, timeline along the bottom' },
+          { src: layout2, evidence: 'Concept', name: 'Right panel, floating actions', alt: 'A block diagram: sidebar on the left, canvas in the middle with an action panel floating over its lower half, script on the right, timeline along the bottom' },
+          { src: layout3, evidence: 'Concept', name: 'Sidebar, actions below', alt: 'A block diagram: sidebar and script together on the left, canvas in the middle with an action panel beneath it, timeline along the bottom' },
+          { src: layout4, evidence: 'Concept', name: 'Sidebar alone', note: 'chosen', alt: 'A block diagram: sidebar and script together on the left, canvas in the middle, timeline along the bottom, nothing else' },
         ]} />
     </div>
   </section>
@@ -110,8 +84,8 @@ const eaton = {
       <h2 id="c-timeline"><span class="n">2</span>A timeline that shows time</h2>
     </div>
     <div class="body">
-      <p>The old timeline was a card, a play button and a readout. My first pass gave it three tracks — avatar, scenes, script — and a mark every fifteen seconds, and that is what we put in front of agencies and individual creators. People weren't sure what they had selected, and a scene's place in time was still a guess between the marks. A full <span class="nb">multi-track</span> suite was never on the table.</p>
-      <p>What shipped reads as time first: a ruler every ten seconds with finer ticks, the current time on the playhead, transport buttons and an expand toggle above the tracks, stronger state cues on the cards. Each panel got a visible boundary, and whatever appears in two panels stays in sync, so a scene selected in the timeline lights up on the canvas.</p>
+      <p>My first pass gave the timeline three tracks, for the avatar, the scenes and the script, with a mark every fifteen seconds, and that's what we put in front of agencies and individual creators. People couldn't tell what they had selected, and a scene's place in time was still a guess between the marks.</p>
+      <p>So the shipped timeline reads as time first, with a ruler and the current time on the playhead, and whatever appears in two panels stays in sync: select a scene in the timeline and it lights up on the canvas.</p>
     </div>
     <div class="figs">
       <Figure set="stack" caption="The timeline before and after the usability test, cut from the same editor."
@@ -127,35 +101,23 @@ const eaton = {
       <h2 id="c-playbar"><span class="n">3</span>The play bar, three times</h2>
     </div>
     <div class="body">
-      <p>In the first round I drew a play bar floating over the canvas. It didn't get through — too much on the canvas — so I went the other way and proposed dropping it: the timeline had a playhead and a play button of its own, and one control fewer would read as simpler.</p>
-      <p>That's the version we tested, and people kept reaching for the bar that wasn't there. Previewing is constant in this tool, fix a line and play it back, and a play button down in the timeline sat too far from where they were looking. I put the play bar back, as a slim row between canvas and timeline.</p>
+      <p>In the first round I drew a play bar floating just under the canvas, and the round turned it down as too complex. So I went the other way and proposed dropping it altogether. The timeline had a playhead and a play button of its own, and one control fewer would read as simpler. That's the version we tested.</p>
     </div>
     <div class="figs">
-      <Figure set="stack" narrow caption="The same band in each state, the canvas ending on the same line. The first two are cut from my comparison sheet, which blurred everything but the control in question."
+      <Figure set="stack" caption="The same band of the editor in each state, sidebar to right edge, the canvas ending on the same line, cut from my comparison sheet, which blurred everything but the control in question in the first two."
         items={[
-          { src: playbarFloating, name: 'Floating', note: 'round one, turned down', evidence: 'Concept', alt: 'The band between canvas and timeline, with a play bar floating over the lower edge of the canvas: play, a progress line, 00:00 of 00:30, zoom' },
-          { src: playbarNone, name: 'None', note: 'round two, my proposal', evidence: 'Concept', alt: 'The same band with no play bar: the canvas ends, and the timeline begins with a lone play button beside its tracks' },
-          { src: playbarRow, name: 'A row', note: 'after the test', evidence: 'Shipped', alt: 'The same band with a slim row between canvas and timeline: previous, play, next, and zoom controls' },
+          { src: playbarFloating, name: 'Floating', note: 'round one, turned down', evidence: 'Concept', alt: 'The editor from the script panel to the right edge, canvas bottom to the timeline tracks, with a play bar floating under the canvas: play, a progress line, 00:00 of 00:30, zoom' },
+          { src: playbarNone, name: 'None', note: 'round two, my proposal', evidence: 'Concept', alt: 'The same band with no play bar: the canvas ends, a strip of empty ground, and the timeline begins with a lone play button beside its tracks' },
+          { src: playbarRow, name: 'A row', note: 'after the test', evidence: 'Shipped', alt: 'The same band with a slim row between canvas and timeline: an expand toggle, previous, play and next buttons, and zoom controls' },
         ]} />
+    </div>
+    <div class="body">
+      <p>In the test, people went looking for a play control above the timeline and didn't find one. Previewing is constant in this editor: fix a line, play it back, fix the next. A play button down beside the tracks sat too far from where they were looking. I put the bar back as a slim row between canvas and timeline, the transport buttons in the middle of it and the zoom controls at its right.</p>
     </div>
   </section>
 
   <Fragment slot="close">
     <p class="stance">The best decision in this project is the one I reversed.</p>
-    <p>Dropping the bar was the tidier layout, and I'd argued for it. The test outranked the argument: the bar is the preview control, previewing is what people do most in this editor, and they reached for it whether it was there or not. What shipped has the bar back in, and that's the version Heygen measured — engagement up 32.1% and task completion up 24.3% against the <span class="nb">one-page</span> flow it replaced.</p>
+    <p>Dropping the bar was the tidier layout, and I'd argued for it. What shipped has it back in, and that's the version Heygen measured: engagement up 32.1% and task completion up 24.3% against the <span class="nb">one-page</span> flow it replaced. The test outranked the argument. The bar is the preview control, previewing is what people do most in this editor, and they reached for it whether it was there or not.</p>
   </Fragment>
-
-  <section class="col sec chap coda" slot="coda" aria-labelledby="c-ios">
-    <div class="head">
-      <h2 id="c-ios">The iOS companion</h2>
-    </div>
-    <div class="body">
-      <p>Avatar creation was <span class="nb">desktop-only</span> and its weakest link was the webcam, so in the last three weeks I led the first iOS MVP for recording one: scope set with the CPO and product team, 10+ user interviews, six internal evaluation rounds, a <span class="nb">mid-fidelity</span> prototype. Its one real decision is on this screen — consent is a sentence read to the camera in the same session, so the footage carries its own authorisation. Early validation was positive; against Heygen's other initiatives it showed less growth potential and was indefinitely postponed.</p>
-    </div>
-    <div class="figs">
-      <Figure src={iosConsent} crop evidence="Prototype"
-        alt="The lower half of a phone screen, under the camera: the heading Consent Script, the sentence I, Kuanghong Xu, hereby declare that I authorize HeyGen to use the footage of me to build a HeyGen avatar, and two buttons, Record Again and It Looks Good"
-        caption="The consent screen, cut to the sentence: read it to the camera, then Record Again or It Looks Good." />
-    </div>
-  </section>
 </Case>

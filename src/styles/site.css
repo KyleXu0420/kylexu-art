@@ -67,12 +67,16 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 
 /* ---- footer: the close — a stance line and its argument — then a hairline and one row of contact.
         The page opens and closes on an "I" sentence in ink; the pill is the last thing seen. A page
-        with nothing to say in the close (a case, the 404) goes straight from --s-4 to the hairline. ---- */
+        with nothing to say in the close (a case, the 404) goes straight from --s-4 to the hairline —
+        a case puts one line above it, the way to the other case, --s-2 from the hairline as the
+        contact row is beneath it. ---- */
 .foot { margin-top: var(--s-4); padding: 0 0 var(--s-2); }
 .close { display: grid; gap: var(--s-1); justify-items: start; }
 .close .stance { margin: 0; font-size: clamp(28px, 2.78vw, 40px); line-height: 1.1; letter-spacing: -.02em; font-weight: 500; max-width: 34ch; text-wrap: balance; color: var(--fg); }
 .close p { color: var(--fg-2); font-size: 17px; line-height: 1.55; max-width: 58ch; }
 .close + .reach { margin-top: 112px; }
+.foot .next { margin-bottom: var(--s-2); }
+.foot .next .link { margin-left: 8px; font-size: 15px; color: var(--fg); }
 .reach { padding-top: var(--s-2); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: var(--s-1) var(--s-2); flex-wrap: wrap; }
 .who { display: flex; align-items: baseline; gap: 12px; }
 .who b { font-weight: 600; letter-spacing: -.01em; }
