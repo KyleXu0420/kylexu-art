@@ -1,59 +1,67 @@
 ---
 // A case figure: one frame, or a set of frames under one caption. Every frame is the image in a
 // 24px frame at its own ratio (never cropped by the frame, never stretched), served as avif + webp
-// at the widths it is shown at. The caption is one sentence saying what to look at, and the
-// evidence label follows it on the same line after the eyebrow's middle dot. A set lays out as strips stacked on the full row
-// (`stack`; with `narrow`, on the words' column), three or four frames across the row (`three`,
-// `four`), or a before/after split on the row's own 5 / 7 division (`split`). An item may carry a
-// short label above its frame — a name and a note — set in the page's type, never in the bitmap.
-// `narrow` puts a single on the words' column.
+// at the widths it is shown at. The caption is one sentence saying what to look at; the evidence
+// label follows it on the same line after the eyebrow's middle dot — or, when the frames of a set
+// differ in status, each frame carries its own label on the line above it and the caption carries
+// none. A set lays out as strips stacked on the full row (`stack`; with `narrow`, on the words'
+// column) or as two frames side by side on the words' column at one height (`pair`). An item may
+// carry a short label above its frame — a name and a note — set in the page's type, never in the
+// bitmap. A single sits on the full row, on the words' column (`narrow`), or, for a phone screen,
+// on three columns of it (`phone`).
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
 export type Evidence = 'Shipped' | 'Prototype' | 'Concept' | 'Supporting state';
-export interface Item { src: ImageMetadata; alt: string; name?: string; note?: string }
+export interface Item { src: ImageMetadata; alt: string; name?: string; note?: string; evidence?: Evidence }
 interface Props {
   src?: ImageMetadata;
   alt?: string;
   items?: Item[];
-  set?: 'stack' | 'three' | 'four' | 'split';
+  set?: 'stack' | 'pair';
   caption: string;
-  evidence: Evidence;
+  evidence?: Evidence;
   narrow?: boolean;
+  phone?: boolean;
   loading?: 'eager' | 'lazy';
 }
-const { src, alt = '', items, set = 'stack', caption, evidence, narrow = false, loading = 'lazy' } = Astro.props;
+const { src, alt = '', items, set = 'stack', caption, evidence, narrow = false, phone = false, loading = 'lazy' } = Astro.props;
+// every frame carries a label: the figure's, or its own
+if (!evidence && !(items && items.every((it) => it.evidence))) throw new Error(`Figure "${caption.slice(0, 40)}…": no evidence label`);
+const perItem = !!items && !evidence;
+
 const full = { widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px' };
 const words = { widths: [720, 1100, 1440], sizes: '(max-width: 1023px) 100vw, (max-width: 1440px) 50vw, 718px' };
-const five = { widths: [480, 720, 1100], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 36vw, 506px' };
-const wideThird = { widths: [320, 480, 800], sizes: '(max-width: 767px) 31vw, (max-width: 1440px) 28vw, 400px' };
-const quarter = { widths: [320, 640, 960], sizes: '(max-width: 1023px) 46vw, (max-width: 1440px) 20vw, 294px' };
-const sizeFor = (i: number) => {
-  if (!items) return narrow ? words : full;
-  if (set === 'three') return wideThird;
-  if (set === 'four') return quarter;
-  if (set === 'split') return i === 0 ? five : words;
+const half = { widths: [320, 480, 800], sizes: '(max-width: 1023px) 48vw, (max-width: 1440px) 28vw, 400px' };
+const third = { widths: [320, 480, 640], sizes: '(max-width: 767px) 66vw, (max-width: 1023px) 40vw, 294px' };
+const sizeFor = () => {
+  if (!items) return phone ? third : narrow ? words : full;
+  if (set === 'pair') return half;
   return narrow ? words : full;
 };
 // never ask for a width the source does not have; the source's own width is always the last
 const widthsFor = (im: ImageMetadata, p: { widths: number[] }) => [...p.widths.filter((w) => w < im.width), im.width];
-const single = sizeFor(0);
+const p = sizeFor();
+// a pair shares one height: each column as wide as its frame's ratio
+const cols = items && set === 'pair' ? items.map((it) => `${(it.src.width / it.src.height).toFixed(3)}fr`).join(' ') : undefined;
 ---
-<figure class:list={['fig', { narrow, stack: items && set === 'stack', three: items && set === 'three', four: items && set === 'four', split: items && set === 'split' }]}>
+<figure class:list={['fig', { narrow, phone, stack: items && set === 'stack', pair: items && set === 'pair' }]}>
   {items ? (
-    <div class="frames">
-      {items.map((it, i) => {
-        const p = sizeFor(i);
-        return (
-          <div class="item">
-            {(it.name || it.note) && <span class="meta lab">{it.name && <b>{it.name}</b>}{it.name && it.note && ' — '}{it.note}</span>}
-            <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src, p)} sizes={p.sizes} alt={it.alt} loading={loading} decoding="async" /></div>
-          </div>
-        );
-      })}
+    <div class="frames" style={cols && `--cols: ${cols}`}>
+      {items.map((it) => (
+        <div class="item">
+          {(it.name || it.note || perItem) && (
+            <span class="meta lab">
+              {it.name && <b>{it.name}</b>}{it.name && it.note && ' — '}{it.note}
+              {perItem && <Fragment>{(it.name || it.note) && ' '}<b>· {it.evidence}</b></Fragment>}
+            </span>
+          )}
+          <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src, p)} sizes={p.sizes} alt={it.alt} loading={loading} decoding="async" /></div>
+        </div>
+      ))}
     </div>
   ) : (
-    <div class="frame"><Picture src={src as ImageMetadata} formats={['avif', 'webp']} widths={widthsFor(src as ImageMetadata, single)} sizes={single.sizes} alt={alt} loading={loading} decoding="async" /></div>
+    <div class="frame"><Picture src={src as ImageMetadata} formats={['avif', 'webp']} widths={widthsFor(src as ImageMetadata, p)} sizes={p.sizes} alt={alt} loading={loading} decoding="async" /></div>
   )}
-  <figcaption class="meta">{caption} <b>· {evidence}</b></figcaption>
+  <figcaption class="meta">{caption}{evidence && <Fragment> <b>· {evidence}</b></Fragment>}</figcaption>
 </figure>

@@ -1,7 +1,9 @@
 ---
 // A case page: Sheet, with the case's hero (eyebrow, claim, deck, the hero figure), the page's
-// chapters, then the index's row for the other case. The composition is case.css; the row is the
-// index's own (home.css). Pass a `signoff` slot only when the page has something to say there.
+// chapters, the page's close (`close` slot: the one line it ends on, at the site's stance size,
+// before the reader is shown the way out), then the index's row for the other case. The
+// composition is case.css; the row is the index's own (home.css). Pass a `signoff` slot only when
+// the page has something to say in the footer as well.
 import Sheet from './Sheet.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';
@@ -26,6 +28,8 @@ const { title, description, ogImage, eyebrow, deck, next } = Astro.props;
   </section>
 
   <slot />
+
+  {Astro.slots.has('close') && <section class="col sec close" aria-label="In one line"><slot name="close" /></section>}
 
   <section class="col sec next" aria-label="The other case">
     <p class="meta">The other case</p>
