@@ -3,39 +3,33 @@ import Case from '../../layouts/Case.astro';
 import Figure from '../../components/Figure.astro';
 import editor from '../../assets/img/eaton-editor.png';
 import compare from '../../assets/img/eaton-compare.png';
-import switchBand from '../../assets/img/eaton-switch.png';
 import confirm from '../../assets/img/eaton-confirm.png';
-import writing from '../../assets/img/eaton-writing.png';
 import monitor from '../../assets/img/eaton-monitor.png';
 import monitorLight from '../../assets/img/eaton-monitor-light.png';
 import monitorDark from '../../assets/img/eaton-monitor-dark.png';
-import monError from '../../assets/img/eaton-mon-error.png';
-import monEmpty from '../../assets/img/eaton-mon-empty.png';
-import monChannel from '../../assets/img/eaton-mon-channel.png';
-import monNormal from '../../assets/img/eaton-mon-normal.png';
-import monRecording from '../../assets/img/eaton-mon-recording.png';
-import monExport from '../../assets/img/eaton-mon-export.png';
 
-// The short case. The deck gives away the ending; the shipped editor has the first screen, shown
-// whole once, and every later frame is a region of one of the Webflow page's own images cut to
-// the thing its paragraph names: the comparison table under decision 1, the switch, the
-// confirmation and the running write as three bands under decision 2, the monitor on the row and
-// its light and dark drafts under decision 3. The canvas editor that lost the test isn't shown:
-// only what launched can be. The monitor's other states fold into one details row above the
-// close.
+// The short case. The deck is one sentence, the ending; the hero is the shipped editor cut to
+// its first four rows. Every later frame is a region of one of the Webflow page's own images cut
+// to the thing its paragraph names, and the weight follows the argument: the Compare view whole
+// under decision 1; the confirmation in situ under decision 2, with
+// the switch in the same toolbar; the two drafts and the shipped monitor cut to their charts and
+// set three across under decision 3, so the change from four axes to one and the colours read at
+// one glance. The canvas
+// editor that lost the test isn't shown: only what launched can be. The hand-off is a sentence
+// in decision 2, as Heygen's is in its decision 1.
 ---
 <Case
   title="Eaton — Kyle Xu"
   description="UX Design Intern at Eaton, June–August 2022. RapidLinkX, an IoT configuration tool for airport conveyor systems: a parameter editor and a fault monitor for airport engineers. In a comparative usability test the drag-and-drop editor was 35% faster and made 15% more errors, so the form shipped. 14 component variants added to Eaton's design system; in usability testing, operational efficiency +49.7% and error rates −36.8%."
   ogImage="/og-eaton.jpg"
   eyebrow="Eaton · UX Design Intern · June – August 2022"
-  deck="Airport engineers set a drive's parameters and read its faults from one laptop. The faster of the two editors we tested, 35% quicker, made 15% more errors, so the slower one shipped."
+  deck="The faster of the two editors we tested, 35% quicker, made 15% more errors, so the slower one shipped."
   next={{ title: 'Heygen', to: '/projects/heygen' }}
 >
   <Fragment slot="claim">A configuration tool for the drives that run an airport's conveyors.</Fragment>
   <Figure slot="hero" src={editor} name="The parameter editor" evidence="Shipped" loading="eager"
     alt="RapidLinkX's parameter editor: a blue header and toolbar with a Real-Time switch turned off, linked drives listed on the left with one selected, and a table of starred parameters with a value field, range, default and display checkbox on each row"
-    caption="Real-Time off in the toolbar, starred parameters filtering the table, Compare at the right." />
+    caption="Real-Time off in the toolbar, Starred filtering the table, Compare at the right." />
 
   <section class="col sec snap" aria-label="In thirty seconds">
     <dl class="facts">
@@ -49,7 +43,7 @@ import monExport from '../../assets/img/eaton-mon-export.png';
       </div>
       <div>
         <dt class="meta">Outcome</dt>
-        <dd>In usability testing of the shipped tool, operational efficiency up 49.7% and error rates down 36.8%. The 35% and 15% in the deck are a different test: the two editors against each other.</dd>
+        <dd>In usability testing of the shipped tool, operational efficiency up 49.7% and error rates down 36.8%.</dd>
       </div>
     </dl>
   </section>
@@ -59,12 +53,12 @@ import monExport from '../../assets/img/eaton-mon-export.png';
       <h2 id="c-editor"><span class="n">1</span>The slower editor</h2>
     </div>
     <div class="body">
-      <p>In a comparative usability test, participants split between a <span class="nb">drag-and-drop</span> canvas and this form. The canvas was 35% quicker. It also made 15% more errors, and a wrong value on a baggage line stops the line. The form shipped, and the speed came back in smaller ways: starred parameters filter the table, and Compare sets the live values beside a saved configuration or the defaults. Under Eaton's NDA I can show only what launched, so the canvas isn't here.</p>
+      <p>The comparative usability test split its participants between a <span class="nb">drag-and-drop</span> canvas and this form. The canvas was quicker. It also produced more wrong values, and a wrong value on a baggage line stops the line, so the form went forward and some of the speed came back in two smaller places. Starred parameters filter the table down to the ones that matter on a check. Compare sets the live values beside a saved configuration or the defaults, so a drift shows as a difference rather than a number to hold in your head. Eaton's NDA covers what didn't launch, so the canvas isn't here.</p>
     </div>
     <div class="figs">
-      <Figure narrow src={compare} name="Compare" evidence="Shipped"
-        alt="The parameter comparison view: a breadcrumb reading Parameter Configuration, Parameter Comparison, the title Compare with default values, and a table with a current value beside the default on each row"
-        caption="Live values in one column, the defaults in the next." />
+      <Figure src={compare} name="Compare" evidence="Shipped"
+        alt="The parameter comparison view: a breadcrumb reading Parameter Configuration, Parameter Comparison, the title Compare with default values, and a table with a current value beside the default and the range on each row"
+        caption="Live values beside the defaults; a saved configuration can take the defaults' place." />
     </div>
   </section>
 
@@ -73,16 +67,13 @@ import monExport from '../../assets/img/eaton-mon-export.png';
       <h2 id="c-write"><span class="n">2</span>Writing to a drive</h2>
     </div>
     <div class="body">
-      <p>An engineer on a routine round wants the tool linked and watching. One at a drive that has just failed wants nothing written until they say so.</p>
-      <p>So <span class="nb">real-time</span> writing is a switch, off when the tool opens, and both routes pass through one confirmation that backs up the drive's configuration before anything is written. A running write says so and asks not to be unplugged.</p>
+      <p>An engineer on a routine round wants the tool linked and watching. One at a drive that has just failed wants nothing written until they've decided what.</p>
+      <p>So <span class="nb">real-time</span> writing is a switch, off when the tool opens, and both routes, the switch and Write In, pass through one confirmation, with a backup of the drive's configuration ticked before anything goes. A running write says so in the header and asks not to be unplugged. These states went to the external developers in the last six weeks as annotated boards with one protocol for questions; they were new to Eaton's Brightlayer system, and what it didn't have became 14 component variants added to it.</p>
     </div>
     <div class="figs">
-      <Figure narrow set="stack" caption="The switch, the one confirmation on both routes, and the write in progress."
-        items={[
-          { src: switchBand, name: 'The switch', evidence: 'Shipped', alt: 'The editor\'s header and toolbar: new, open, save, export and reset icons, then a Real-Time label with its switch turned off' },
-          { src: confirm, name: 'The confirmation', evidence: 'Shipped', alt: 'A dialog, Confirm Write-in, over the parameter table: changes will be written in real time to the connected inverter, a ticked checkbox to back up the config of the connected device, a config name reading DC 01, and Cancel and Confirm buttons' },
-          { src: writing, name: 'A running write', evidence: 'Shipped', alt: 'The top right of the editor with a toast over the header: Writing to device, please do not disconnect, with a Cancel button' },
-        ]} />
+      <Figure src={confirm} name="Confirm Write-in" evidence="Shipped"
+        alt="The editor's toolbar with the Real-Time switch off and a Write In button at the right, and beneath it the parameter table with a dialog over its right half: Confirm Write-in, a note that changes will be written in real time to the connected inverter, a ticked checkbox to back up the config of the connected device, a config name reading DC 01, and Cancel and Confirm buttons"
+        caption="Real-Time off, the dialog up from Write In, the backup ticked." />
     </div>
   </section>
 
@@ -91,52 +82,20 @@ import monExport from '../../assets/img/eaton-mon-export.png';
       <h2 id="c-monitor"><span class="n">3</span>The monitor, in colour</h2>
     </div>
     <div class="body">
-      <p>The same test set a <span class="nb">text-heavy</span> monitor against a <span class="nb">colour-coded</span> chart, and the chart won outright: participants found errors 40% faster. I drew it twice. The dark version read better; the light one matched the design system and shipped, its four channel colours adjusted until they held apart at a glance.</p>
+      <p>The same test set a <span class="nb">text-heavy</span> monitor against a <span class="nb">colour-coded</span> chart, and with the chart participants found errors 40% faster. I drew it twice, light and dark, each with the four channels stacked on axes of their own. The dark one read better; the light one is what Brightlayer looks like, so it went forward. By the time it shipped the four traces shared one axis, where a channel can be read against the others, and their colours had been <span class="nb">re-tuned</span> to stay apart once the lines crossed.</p>
     </div>
     <div class="figs">
-      <Figure src={monitor} name="The monitor" evidence="Shipped"
-        alt="RapidLinkX's monitor: the linked drive and recording settings on the left, eight channel cards across the top with the first four coloured blue, green, purple and orange and showing live values, a chart of the four traces over a hundred seconds, and a sixty-second overview strip beneath"
-        caption="Four channels on one trace, a sixty-second overview beneath." />
-      <Figure set="pair" caption="The two drafts: the dark one read better, the light one is the system's."
+      <Figure set="three" caption="Four channels on white, on dark, and as shipped, on one axis. The drafts carry Chinese labels; the tool shipped in English."
         items={[
-          { src: monitorLight, name: 'Light', note: 'chosen', evidence: 'Prototype', alt: 'An earlier monitor in light colours: four stacked traces in blue, green, purple and orange over a white grid, the channel cards above' },
-          { src: monitorDark, name: 'Dark', evidence: 'Concept', alt: 'The same monitor in dark colours: the four traces over a dark grid, a legend of the four channels floating at the right' },
+          { src: monitorLight, name: 'Light', evidence: 'Prototype', alt: 'The light draft of the monitor, cut to its channel cards and chart: four cards in blue, green, purple and orange with live values, four more unset, and beneath them four traces stacked on separate axes over a white grid' },
+          { src: monitorDark, name: 'Dark', evidence: 'Concept', alt: 'The dark draft of the monitor, the same region: the four coloured channel cards, the four traces stacked over a dark grid, and a legend of the four channels floating over the chart' },
+          { src: monitor, name: 'The monitor', evidence: 'Shipped', alt: 'The shipped monitor, cut to its channel cards and chart: channels 1 to 4 in blue, green, purple and orange with live values and min and max, channels 5 to 8 reading Please Select, and beneath them the four traces on one axis over a hundred seconds' },
         ]} />
     </div>
   </section>
 
-  <section class="col sec chap" aria-labelledby="c-ship">
-    <div class="head">
-      <h2 id="c-ship">How it shipped</h2>
-    </div>
-    <div class="body">
-      <p>The last six weeks were the <span class="nb">hand-off</span> to contractors new to Eaton's Brightlayer system: the flows went to them as annotated boards with a set protocol for questions, and what the system didn't have became 14 component variants added to it. In my final days I started a Bluetooth mobile version for work at height, where USB won't reach, and left prototypes and notes for whoever came next.</p>
-    </div>
-  </section>
-
-  <section class="col sec" aria-label="More states">
-    <details class="more">
-      <summary>
-        <h2>More states</h2>
-        <span class="meta">The monitor state by state: its error report, empty, setting a channel, live, recording, exporting.</span>
-        <span class="link toggle"><span class="show">Show →</span><span class="hide">Hide ↑</span></span>
-      </summary>
-      <div class="figs">
-        <Figure set="pair" caption="Six states of the same screen."
-          items={[
-            { src: monError, name: 'Error report', evidence: 'Shipped', alt: 'The monitor on its Error tab: the most recent entry, a fault with its error code, diagnostics and a suggestion, then two earlier alarm entries' },
-            { src: monEmpty, name: 'Empty', evidence: 'Supporting state', alt: 'The monitor before any channel is set: eight empty channel cards, an empty grid and a cursor on the first card' },
-            { src: monChannel, name: 'Setting a channel', evidence: 'Supporting state', alt: 'The monitor with a channel popover open: analog input 1 chosen, hide scope trace, auto-scaling, scale and offset steppers' },
-            { src: monNormal, name: 'Normal view', evidence: 'Shipped', alt: 'The monitor with four channels live and their traces on the chart' },
-            { src: monRecording, name: 'Recording', evidence: 'Shipped', alt: 'The monitor while recording: a blue band sweeps the chart, the button reads Stop Recording and a counter shows the samples' },
-            { src: monExport, name: 'Export', evidence: 'Shipped', alt: 'The monitor with the Export Waveform dialog open: a name, an address, and PDF or CSV' },
-          ]} />
-      </div>
-    </details>
-  </section>
-
   <Fragment slot="close">
     <p class="stance">The slower editor was the right one to ship.</p>
-    <p>35% faster is the number that sells a <span class="nb">drag-and-drop</span> editor. Its 15% more errors show up later, on a baggage line, not in a demo. The test put both numbers on one page, which is what it was for.</p>
+    <p>A demo shows the canvas's speed. It doesn't show the wrong value that sits on a drive until a line stops, or the round it takes to find it and put it right, and that round costs more than the canvas saved.</p>
   </Fragment>
 </Case>

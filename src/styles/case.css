@@ -46,29 +46,14 @@
 .fig figcaption { margin-top: 4px; max-width: 72ch; }
 .fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the name and the evidence label; the label wraps as one word */
 
-/* a set of frames: strips stacked, pairs across the row (the About page's halves), or four
+/* a set of frames: strips stacked, three across (the states of one screen side by side), or four
    across at one height. A dimmed item is an option that lost, beside the one that shipped at full
    colour */
 .fig .frames { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
-.fig.pair .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.fig.three .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }   /* frames share a bottom edge even when a label wraps */
 .fig .item { display: grid; gap: 8px; align-content: start; }
 .fig .item.dim .frame { opacity: .55; }
-
-/* the rest of the frames, folded: one details row ruled as the index's rows are — its name at
-   column 1 at the title size, what it holds on the reading column, the toggle at the link's
-   column — and, open, the figures beneath on the chapters' grid. Closed, the page reads through
-   without them */
-.more { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.more summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: baseline; padding: var(--s-1) 0; }
-.more summary::-webkit-details-marker { display: none; }
-.more summary h2 { grid-column: 1 / span 5; font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; }
-.more summary .meta { grid-column: 6 / span 5; }
-.more summary .toggle { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
-.more summary:hover .toggle { text-decoration-color: currentColor; }
-.more .hide, .more[open] .show { display: none; }
-.more[open] .hide { display: inline; }
-.more .figs { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); padding: var(--s-1) 0 var(--s-2); }
 
 /* the close: the decisions' row — the stance at 1–5 at the site's stance size, the paragraph at
    6–10 — so the page's last row keeps the grid every row above it used */
@@ -84,14 +69,10 @@
   .chap .figs { margin-top: calc(var(--s-2) - 12px); }
   .snap .facts dd { grid-column: 2; }
   .fig.narrow { grid-column: 1 / -1; }
-  .more summary { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
-  .more summary h2 { grid-column: 1; }
-  .more summary .meta { grid-column: 1; }
-  .more summary .toggle { grid-column: 2; grid-row: 1 / span 2; align-self: baseline; }
   .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* two by two once the row is one column */
 }
 @media (max-width: 767px) {
   .snap .facts dd { grid-column: 1; }
   .fig.four .frames { column-gap: 12px; }
-  .fig.pair .frames { grid-template-columns: minmax(0, 1fr); }   /* halves stack on a phone */
+  .fig.three .frames { grid-template-columns: minmax(0, 1fr); }   /* thirds stack on a phone */
 }
