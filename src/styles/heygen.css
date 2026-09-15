@@ -4,16 +4,18 @@
    quotation. The record is long enough to need parts, so the opener is used eight times: once to
    turn the page from the decisions to the record, then once at the head of each of its seven
    parts. It is a ruled row, as the snapshot's rows are ruled: a hairline across the row, then at
-   column 1 the label in the label grey (the record's own opener) or the part's number in the
-   label grey over its name at the title size (a part), and the signpost at 6–10 in the reading
-   voice. The record's opener and the first part stack as the snapshot's rows do, --s-1 apart. */
+   column 1 the label in the label grey (the record's own opener) or the part's number over its
+   name — the decisions' own anatomy, the number in the label grey on its own line above the name
+   at the title size — and the signpost at 6–10 in the reading voice. The record's opener and the
+   first part stack as the snapshot's rows do, --s-1 apart. */
 
 /* the part opener: a ruled row, the label or the number-and-name at 1–5, the signpost at 6–10 */
-.part { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; padding-top: var(--s-1); border-top: 1px solid var(--line); }
+.part { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+.part::before { content: ''; grid-column: 1 / -1; border-top: 1px solid var(--line); margin-bottom: var(--s-1); }   /* the hairline stays inside the column, as the snapshot's rules do */
 .part + .part { margin-top: var(--s-1); }
 .part .meta { grid-column: 1 / span 5; padding-top: 3px; }
 .part h2 { grid-column: 1 / span 5; font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; color: var(--fg); }
-.part h2 .n { display: block; margin-bottom: 4px; font-size: 14px; line-height: 1.5; letter-spacing: 0; font-weight: 400; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.part h2 .n { display: block; color: var(--fg-3); font-variant-numeric: tabular-nums; }   /* as .chap .head h2 .n, case.css */
 .part .sign { grid-column: 6 / span 5; font-size: 17px; line-height: 1.55; color: var(--fg-2); }
 
 /* the words a chapter needs here: a list set as its paragraphs are (the three rules the design
@@ -29,6 +31,7 @@
 
 @media (max-width: 1023px) {
   .part { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .part::before { margin-bottom: calc(var(--s-1) - 12px); }
   .part .meta, .part h2, .part .sign { grid-column: 1; }
   .part .sign { max-width: 612px; }   /* the words keep their measure once the row is one column */
 }

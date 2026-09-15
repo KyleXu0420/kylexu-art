@@ -1,0 +1,22 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Astro v7.3.2"><title>Not found — Kyle Xu</title><meta name="description" content="This page doesn't exist."><link rel="canonical" href="https://www.kylexu.art/404.html"><meta property="og:title" content="Not found — Kyle Xu"><meta property="og:description" content="This page doesn't exist."><meta property="og:type" content="website"><meta property="og:url" content="https://www.kylexu.art/404.html"><meta name="twitter:card" content="summary"><meta name="robots" content="noindex"><meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F5F5"><meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131417"><link rel="icon" href="/favicon.png" type="image/png"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><script>
+    // Apply a remembered theme before first paint so there is no flash.
+    (function () {
+      try {
+        var t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('kx-theme');
+        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script><link rel="stylesheet" href="/_astro/Sheet.DqBOz1fk.css"></head><body><a class="skip" href="#main">Skip to content</a><header class="nav"><div class="col"><a class="brand" href="/">Kyle Xu</a><nav class="pill" aria-label="Primary"><a href="/">Work</a><a href="/about">About</a><button class="theme" id="theme" type="button" aria-label="Toggle dark theme" title="Theme"><svg viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M7 1a6 6 0 0 1 0 12z" fill="currentColor"></path></svg></button></nav></div></header><main id="main"><section class="col hero"><h1 class="display">This page doesn't exist.</h1><p class="lead">The address may have changed, or there was a typo in it. Everything that is here is reachable from the work page.</p><p class="lead"><a class="link" href="/">Back to the work →</a></p></section></main><footer class="foot" id="contact"><div class="col"><div class="reach"><div class="who"><b>Kyle Xu<span class="cjk">徐匡泓</span></b><span class="meta">they / them</span></div><ul><li><a class="btn" href="mailto:kylexu@umich.edu">kylexu@umich.edu</a></li><li><a class="link" href="https://www.linkedin.com/in/kyle-xu-a111161a4/" rel="noopener">LinkedIn ↗</a></li><li><a class="link" href="https://github.com/KyleXu0420" rel="noopener">GitHub ↗</a></li><li><a class="link" href="https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing" rel="noopener">Resume ↗</a></li></ul></div></div></footer><script>
+    (function () {
+      var r = document.documentElement, k = 'kx-theme', b = document.getElementById('theme');
+      if (!b) return;
+      b.addEventListener('click', function () {
+        var dark = r.getAttribute('data-theme') === 'dark' ||
+          (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+        var n = dark ? 'light' : 'dark';
+        r.classList.add('theming'); setTimeout(function () { r.classList.remove('theming'); }, 260);
+        r.setAttribute('data-theme', n);
+        try { localStorage.setItem(k, n); } catch (e) {}
+      });
+    })();
+  </script></body></html>

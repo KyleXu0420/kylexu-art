@@ -28,6 +28,7 @@
   --code-muted: var(--grey-40); /* the rest of the window */
   --focus: var(--ink);
   --selection: var(--grey-15);
+  --sheet: var(--white);        /* the ground under a transparent sheet or screenshot: light in both themes */
 
   --sans: "Manrope", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
@@ -59,7 +60,7 @@
     --code-fg: var(--grey-15);    /* a token's name */
     --code-muted: var(--grey-60); /* the rest of the window */
     --focus: var(--grey-5);
-    --selection: var(--ink-700);
+    --selection: var(--ink-700); --sheet: var(--grey-5);
     color-scheme: dark;
   }
 }
@@ -75,7 +76,7 @@
   --code-fg: var(--grey-15);
   --code-muted: var(--grey-60);
   --focus: var(--grey-5);
-  --selection: var(--ink-700);
+  --selection: var(--ink-700); --sheet: var(--grey-5);
   color-scheme: dark;
 }
 

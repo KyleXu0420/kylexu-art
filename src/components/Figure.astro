@@ -1,11 +1,9 @@
 ---
 // A case figure: one frame, or a set of frames under one caption. Every frame is the image in a
 // 24px frame at its own ratio (never cropped by the frame, never stretched), served as avif + webp
-// at the widths it is shown at. One system for the words around a frame: a label line above it
-// carries what it is and its evidence — the frame's name, a note, then the evidence label after
-// the eyebrow's middle dot, set in the page's type, never in the bitmap; a frame the page has
-// already named (a hero under its deck) carries the evidence label alone — and the caption
-// beneath, when there is one, carries the one thing to look at. A set lays out as strips stacked
+// at the widths it is shown at. One system for the words around a frame: a single caption line
+// beneath it — the evidence label first, then what the frame is and the one thing to look at —
+// set in the page's type, never in the bitmap. Nothing above the frame. A set lays out as strips stacked
 // (`stack`), four across at one height (`four`), or two across on the page's own two edges
 // (`lead`: the smaller frame on the label column beside the larger on the words' column to the
 // row's edge — the option that lost beside the one that shipped, or a detail beside the view it
@@ -16,7 +14,7 @@
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
-export type Evidence = 'Shipped' | 'Prototype' | 'Concept' | 'Supporting state';
+export type Evidence = 'Shipped' | 'Prototype' | 'Concept' | 'Research' | 'Supporting state';
 export interface Item { src: ImageMetadata; alt: string; evidence: Evidence; name?: string; note?: string; dim?: boolean; caption?: string }
 interface Props {
   src?: ImageMetadata;
@@ -48,11 +46,8 @@ const single = items ? [] : [{ src: src as ImageMetadata, alt, evidence: evidenc
   <div class="frames">
     {(items ?? single).map((it, i) => (
       <div class:list={['item', { dim: it.dim }]}>
-        <span class="meta lab">
-          {it.name && <b>{it.name}</b>}{it.name && it.note && ' — '}{it.note}{(it.name || it.note) && ' '}<b>{(it.name || it.note) && '· '}{it.evidence}</b>
-        </span>
         <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src, i)} sizes={specFor(i).sizes} alt={it.alt} loading={loading} decoding="async" /></div>
-        {it.caption && <span class="meta under">{it.caption}</span>}
+        <span class="meta under"><b>{it.evidence}</b>{(it.name || it.note || it.caption) && ' · '}{it.name}{it.name && it.note && ' — '}{it.note}{(it.name || it.note) && it.caption && '. '}{it.caption}</span>
       </div>
     ))}
   </div>
