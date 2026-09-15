@@ -12,19 +12,22 @@ import home1 from '../assets/img/about-home-1.png';
 import home2 from '../assets/img/about-home-2.png';
 import michigan from '../assets/img/about-michigan.jpg';
 
-// The same eight pictures the Webflow About page used, in the same places, framed like the
-// project cards on the index: 24px radius, no hairline, the image covering the frame.
-// Hairlines are held to two — above the intro row and above the chapters; the facts sit as one
-// block under the intro, and the chapters are parted by air and their photographs.
+// The same eight pictures the Webflow About page used, framed like the project cards on the
+// index: 24px radius, no hairline, the image covering the frame. They sit on the row's own
+// twelve columns — the portrait full width; in a chapter, the author in columns 1–5 under the
+// date and the place in 6–12 under the words, so the pair splits on the text's left edge; the
+// group photo alone at 6–12, at its own 3:2, nobody cropped. One hairline, above the chapters.
+// The last chapter is the page's close, in the footer's sign-off slot like the index.
 const wide = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600, 2036], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 92vw, 1248px', loading: 'lazy' as const, decoding: 'async' as const };
-const half = { formats: ['avif', 'webp'] as const, widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 45vw, 612px', loading: 'lazy' as const, decoding: 'async' as const };
+const left = { formats: ['avif', 'webp'] as const, widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 40vw, (max-width: 1440px) 36vw, 506px', loading: 'lazy' as const, decoding: 'async' as const };
+const right = { formats: ['avif', 'webp'] as const, widths: [480, 720, 1100, 1440, 2048], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 40vw, (max-width: 1440px) 50vw, 718px', loading: 'lazy' as const, decoding: 'async' as const };
 
 const facts = [
-  { label: 'Product work with', value: 'Temper · Dify (LangGenius) · Curio Digital Therapeutics · Infloww · Heygen · Eaton Corporation' },
-  { label: 'Earlier', value: "Xi'an University of Architecture and Technology · HIL Architects · ColdMe · COIL Connect for Virtual Exchange · Capital Area District Libraries · Erb Family Foundation" },
-  { label: 'Skills', value: 'AI UX · Agent workflows · Design systems · Design-to-code · Frontend prototyping · Design ops · Information architecture · Product strategy · UX research · Usability testing' },
-  { label: 'Tools', value: 'Figma · Claude Code · Cursor · Codex · React · TypeScript · Tailwind · HTML / CSS · JavaScript · Vitest · Python' },
-  { label: 'Languages', value: 'English · Mandarin (native)' },
+  { label: 'Product work with', items: ['Temper', 'Dify (LangGenius)', 'Curio Digital Therapeutics', 'Infloww', 'Heygen', 'Eaton Corporation'] },
+  { label: 'Earlier', items: ["Xi'an University of Architecture and Technology", 'HIL Architects', 'ColdMe', 'COIL Connect for Virtual Exchange', 'Capital Area District Libraries', 'Erb Family Foundation'] },
+  { label: 'Skills', items: ['AI UX', 'Agent workflows', 'Design systems', 'Design-to-code', 'Frontend prototyping', 'Design ops', 'Information architecture', 'Product strategy', 'UX research', 'Usability testing'] },
+  { label: 'Tools', items: ['Figma', 'Claude Code', 'Cursor', 'Codex', 'React', 'TypeScript', 'Tailwind', 'HTML / CSS', 'JavaScript', 'Vitest', 'Python'] },
+  { label: 'Languages', items: ['English', 'Mandarin (native)'] },
 ];
 ---
 <Sheet
@@ -33,8 +36,7 @@ const facts = [
   ogImage="/og-about.jpg"
 >
   <section class="col hero" aria-labelledby="h1">
-    <p class="eyebrow">About</p>
-    <h1 class="display" id="h1">Hi, I'm Kyle — an AI product designer turning complex workflows into clear product experiences.</h1>
+    <h1 class="display" id="h1">At fifteen I was sketching buildings while my classmates prepared for the gaokao.</h1>
   </section>
 
   <section class="col sec" aria-label="Portrait">
@@ -47,7 +49,7 @@ const facts = [
         <span class="meta when">Now</span>
         <div class="what">
           <h2>Product designer for AI systems, trained as an architect</h2>
-          <p>Trained as an architect, then in HCI at the University of Michigan. Since 2022 I have designed for enterprise IoT at Eaton, AI video creation at Heygen, a B2B CRM and its AI assistant at Infloww, two FDA-cleared digital therapeutics at Curio, and an AI application platform at Dify — most recently on contract at Temper, working inside the production codebase. I design 0→1 features, rebuild existing systems, and help teams make technical products easier to understand and scale.</p>
+          <p>Architecture in Xi'an, then HCI at the University of Michigan. Since 2022 I have designed enterprise tools and AI products, most recently on contract at Temper, inside the production codebase.</p>
         </div>
       </li>
     </ul>
@@ -55,7 +57,7 @@ const facts = [
       {facts.map((f) => (
         <div>
           <dt class="meta">{f.label}</dt>
-          <dd>{f.value}</dd>
+          <dd>{f.items.map((it, i) => <>{i > 0 && ' · '}<span class="nb">{it}</span></>)}</dd>
         </div>
       ))}
     </dl>
@@ -67,52 +69,50 @@ const facts = [
         <span class="meta when">2013 – 2018</span>
         <div class="what">
           <h2>How I became a designer</h2>
-          <p>It started in 2013. At fifteen I was spending most of my free time sketching buildings, and while my classmates prepared for the gaokao I was in volunteer building workshops in Hangzhou, making small physical improvements for people the city had overlooked. That was the first time I felt what it is to bring an idea into the world. By 2017 the hobby was paying for itself — I was designing spaces and art pieces for my father's business associates — and at eighteen a local design studio took me on for my first professional project.</p>
+          <p>It started in 2013, with volunteer building workshops in Hangzhou — small physical improvements for people the city had overlooked. By 2017 the hobby was paying for itself: I was designing spaces and art pieces for my father's business associates, and at eighteen a local design studio took me on for my first professional project.</p>
         </div>
         <div class="photos">
-          <div class="photo"><Picture src={sketch1} {...half} alt="Kyle as a student, sitting on the steps of a rooftop garden" /></div>
-          <div class="photo"><Picture src={sketch2} {...half} alt="Kyle's reflection in the window of a brick building, camera raised" /></div>
+          <div class="photo"><Picture src={sketch1} {...left} alt="Kyle as a student, sitting on the steps of a rooftop garden" /></div>
+          <div class="photo"><Picture src={studio1} {...right} alt="A small studio interior: a long wooden table and a glass partition" /></div>
         </div>
       </li>
       <li>
         <span class="meta when">2019</span>
         <div class="what">
-          <h2>Starting out as a problem-solving designer</h2>
-          <p>In 2019 I was working part-time as a junior architect at an urban-design practice. It was a good place to learn how a physical intervention changes the way people work, live and feel — and how little of that an architect actually controls once cost and construction take over. Leaving was not an easy decision, and the title did not travel well into other fields. So, still a student, I started freelancing and finding clients on my own. It is still one of the best decisions I have made: I learned the job by making mistakes and fixing them.</p>
+          <h2>Junior architect, then freelance</h2>
+          <p>In 2019 I was working part-time as a junior architect at an <span class="nb">urban-design</span> practice — a good place to learn how a physical intervention changes the way people live, and how little of that an architect controls once cost and construction take over. Leaving was not easy, and the title did not travel well into other fields. So, still a student, I started freelancing and finding clients on my own.</p>
         </div>
         <div class="photos">
-          <div class="photo"><Picture src={studio1} {...half} alt="A small studio interior: a long wooden table and a glass partition" /></div>
-          <div class="photo"><Picture src={studio2} {...half} alt="A narrow city street lined with shop signs" /></div>
+          <div class="photo"><Picture src={sketch2} {...left} alt="Kyle's reflection in the window of a brick building, camera raised" /></div>
+          <div class="photo"><Picture src={studio2} {...right} alt="A narrow city street lined with shop signs" /></div>
         </div>
       </li>
       <li>
         <span class="meta when">2020 – 2022</span>
         <div class="what">
           <h2>Three years at home</h2>
-          <p>2020 changed most people's plans, and it changed mine for the better. Working remotely, I took on UI and UX projects with partners in several Chinese cities, and built a digital platform for a community in Xi'an's Muslim Quarter, a joint project between my university and the city. The one I remember most is the app a few of us from a film community researched, built and launched in a stretch of long days. The product was modest, but the way we worked stayed with me: commit fully, and most of the limits turn out to be ones you set yourself.</p>
+          <p>From 2020 I worked remotely: UI and UX projects with partners in several Chinese cities, and a digital platform for a community in Xi'an's Muslim Quarter, a joint project between my university and the city. The one I remember most is an app that a few of us from a film community built and launched in a stretch of long days.</p>
         </div>
         <div class="photos">
-          <div class="photo"><Picture src={home1} {...half} alt="Kyle at a workbench in a workshop" /></div>
-          <div class="photo"><Picture src={home2} {...half} alt="A night-market kitchen in Xi'an's Muslim Quarter, cooks at the grills" /></div>
+          <div class="photo"><Picture src={home1} {...left} alt="Kyle at a workbench in a workshop" /></div>
+          <div class="photo"><Picture src={home2} {...right} alt="A night-market kitchen in Xi'an's Muslim Quarter, cooks at the grills" /></div>
         </div>
       </li>
       <li>
         <span class="meta when">2022 – 2026</span>
         <div class="what">
-          <h2>From enterprise tools to AI-native products</h2>
-          <p>2022 was the turn: a first internship at Eaton, on an IoT configuration tool for airport clients, and then a master's in HCI at the University of Michigan. Heygen came next — the AI video editor, re-architected around the script. At Infloww I designed an AI chat assistant and the payment and messaging tools around it, working with prompt engineers on the cases where the model is wrong. At Curio Digital Therapeutics I was the founding product designer on two FDA-cleared products, MamaLift and MenoLift: the design system, the information architecture and the Achievement Garden, all under clinical review. At Dify I designed three AI products — Droploft, a team knowledge base; Syncless, a multi-agent workplace concept; and Skills Agent for Dify Enterprise. Most recently, on contract at Temper, I worked inside the production codebase on a token architecture and the checks that keep it honest.</p>
+          <h2>From enterprise tools to <span class="nb">AI-native</span> products</h2>
+          <p>2022 was the turn: an internship at Eaton, on an IoT configuration tool for airport clients, then a master's in HCI at the University of Michigan. Heygen came next — the AI video editor, <span class="nb">re-architected</span> around the script. At Infloww I designed an AI chat assistant for a B2B CRM, and the payment and messaging tools around it, with prompt engineers, for the cases where the model is wrong. At Curio Digital Therapeutics I was the founding product designer on two <span class="nb">FDA-cleared</span> products, MamaLift and MenoLift: the design system, the information architecture and the Achievement Garden, all under clinical review. At Dify, an AI application platform, three products — Droploft, a team knowledge base; Syncless, a <span class="nb">multi-agent</span> workplace concept; Skills Agent for Dify Enterprise. Most recently, on contract at Temper, I worked inside the production codebase on a token architecture and its checks.</p>
         </div>
         <div class="photos">
-          <div class="photo tall"><Picture src={michigan} {...wide} alt="Kyle with classmates at the University of Michigan" /></div>
-        </div>
-      </li>
-      <li>
-        <span class="meta when">What carried over</span>
-        <div class="what">
-          <h2>Structure first, then room to move</h2>
-          <p>Architecture left me with the habit of thinking in systems: the parts, the limits, and what each part is allowed to do. That is how I approach AI products today — agents people can configure, interrupt and inspect, and the interfaces that make that feel ordinary. I am most useful to teams whose product is technically complex and whose interaction model is still being worked out.</p>
+          <div class="photo single"><Picture src={michigan} {...right} alt="Kyle with classmates at the University of Michigan" /></div>
         </div>
       </li>
     </ul>
   </section>
+
+  <Fragment slot="signoff">
+    <p class="stance">I am most useful to teams whose product is technically complex and whose interaction model is still being worked out.</p>
+    <p>Architecture left me the habit of thinking in systems: what the parts are, and what each is allowed to do. I approach AI products the same way — an agent a person can configure, interrupt and inspect, and an interface that makes that feel ordinary.</p>
+  </Fragment>
 </Sheet>
