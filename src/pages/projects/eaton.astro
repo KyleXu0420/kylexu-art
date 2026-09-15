@@ -1,0 +1,335 @@
+---
+import Case from '../../layouts/Case.astro';
+import Figure from '../../components/Figure.astro';
+import '../../styles/eaton.css';
+import editor from '../../assets/img/eaton-editor.png';
+import monitor from '../../assets/img/eaton-monitor.png';
+import workflows from '../../assets/img/eaton-workflows.png';
+import write from '../../assets/img/eaton-write.png';
+import drafts from '../../assets/img/eaton-drafts.png';
+import stakeholders from '../../assets/img/eaton-stakeholders.png';
+import workMap from '../../assets/img/eaton-work-map.png';
+import personas from '../../assets/img/eaton-personas.png';
+import system from '../../assets/img/eaton-system.png';
+import board from '../../assets/img/eaton-board.png';
+import components from '../../assets/img/eaton-components.png';
+import monitorStates from '../../assets/img/eaton-monitor-states.png';
+import handOff from '../../assets/img/eaton-hand-off.png';
+import storyboard from '../../assets/img/eaton-storyboard.png';
+import mobile1 from '../../assets/img/eaton-mobile-1.png';
+import mobile2 from '../../assets/img/eaton-mobile-2.png';
+import mobile3 from '../../assets/img/eaton-mobile-3.png';
+
+// The case in two registers on one numbered run of chapters. First the decisions, 1 to 3: the
+// hero is the editor that shipped, the deck is the ending, the snapshot four rows, then each
+// decision told as tension, decision, evidence, with the Webflow page's own composite whole under
+// it and the caption saying where in it to look. Then, past a ruled opener, the record, 4 to 15:
+// everything the Webflow page kept, in its order, each image that page's own file byte for byte —
+// the stakeholders, the work map, the personas, the system and the board, the components, the
+// monitor state by state, the test, the hand-off, the storyboard, the phones, the lessons. Every
+// image on the page is one of the owner's originals, whole: no crop, no re-composition, no
+// resampling, no flattening; each appears once. The reader who stops after the decisions has the
+// judgement; the one who keeps scrolling gets the whole summer.
+---
+<Case
+  caseId="eaton"
+  title="Eaton — Kyle Xu"
+  description="UX Design Intern at Eaton, June–August 2022. RapidLinkX, an IoT configuration tool for airport conveyor systems: a parameter editor and a fault monitor for airport engineers. In a comparative usability test the drag-and-drop editor was 35% faster and made 15% more errors, so the form shipped. 14 component variants added to Eaton's design system; in usability testing, operational efficiency +49.7% and error rates −36.8%. The decisions first, then the whole process: stakeholders, workshops, personas, 60 hi-fi pages over 10 workflows, the test, the hand-off, a mobile exploration."
+  ogImage="/og-eaton.jpg"
+  eyebrow="Eaton · RapidLinkX · UX Design Intern · June – August 2022"
+  deck="The faster of the two editors we tested, 35% quicker, made 15% more errors, so the slower one shipped."
+  next={{ title: 'Heygen', to: '/projects/heygen', line: 'The video editor, re-architected around the script.' }}
+>
+  <Fragment slot="claim">A configuration tool for the drives that run an airport's conveyors.</Fragment>
+  <Figure slot="hero" loading="eager"
+    items={[
+      { src: editor, evidence: 'Shipped', caption: 'The editor that shipped, linked drives on the left and a row per starred parameter on the right: value, range, default, displayed.', alt: 'The parameter editor: a blue header reading Rapid LinkX, a toolbar with new, open, save, share and revert icons, a Real-Time switch turned off and a Write In button, a sidebar listing a linked VFD 3001 in real time and the local configurations DC 02 to DC 09 under Airport A, a Starred and All toggle over a search field and a Compare button, and a table of twelve starred parameters, each P-01 Motor Num Frequency with a value of 50.0 or 0, a range of 10 to 500 Hz, a default of 50.0 Hz and a ticked display box' },
+    ]} />
+
+  <section class="col sec snap" aria-label="In thirty seconds">
+    <dl class="facts">
+      <div>
+        <dt class="meta">Scope</dt>
+        <dd>RapidLinkX, an IoT configuration tool for the drives in airport conveyor systems, used by airport engineers: a parameter editor and a fault monitor, over USB. <a class="link" href="https://www.eaton.com/gb/en-gb/catalog/industrial-control--drives--automation---sensors/rapid-link-5.html" rel="noopener">The drives at Eaton ↗</a></dd>
+      </div>
+      <div>
+        <dt class="meta">Role</dt>
+        <dd>Primary designer on the <span class="nb">day-to-day</span> product design; my mentor on planning and <span class="nb">cross-team</span> communication.</dd>
+      </div>
+      <div>
+        <dt class="meta">Process</dt>
+        <dd>Stakeholder workshops, secondary research and personas; more than 60 <span class="nb">hi-fi</span> pages over 10 workflows, in parallel with the hardware; a comparative usability test; six weeks of <span class="nb">hand-off</span>.</dd>
+      </div>
+      <div>
+        <dt class="meta">Outcome</dt>
+        <dd>Both shipped, with 14 component variants added to Eaton's Brightlayer design system. In usability testing of the shipped tool, operational efficiency was up 49.7% and error rates down 36.8%.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-editor">
+    <div class="head">
+      <h2 id="c-editor"><span class="n">1</span>The slower editor</h2>
+    </div>
+    <div class="body">
+      <p>A wrong value on a baggage line stops the line. The comparative usability test split its participants between a <span class="nb">drag-and-drop</span> canvas and this form: the canvas was quicker, and it made more errors, so it lost (it's under NDA, so it isn't shown).</p>
+      <p>Two things gave the form part of its speed back. Starred, the toggle above the table, keeps a check to the parameters that matter on a round. Compare puts the live value in one column and a saved configuration or the defaults in the next, so checking a drive is a read across each row.</p>
+      <p>Both sit among the workflows we refined to shorten the path through a parameter setting and take steps out of it:</p>
+      <ul class="terms">
+        <li><b>Empty state.</b> With nothing connected, a prompt to connect an inverter over USB, and the most recent files beneath, so an engineer is back in the last configuration straight away.</li>
+        <li><b>Routine options.</b> Presets of parameters can be created and saved, a new project and then a configuration inside it, and imported into a drive in one step.</li>
+        <li><b>Comparison mode.</b> A <span class="nb">side-by-side</span> of a past dataset and the current one, against the defaults, an open configuration or a local file, for analysis and for working out a fix.</li>
+        <li><b>Favourites.</b> The parameters that matter most on a configuration check are starred; All lists every parameter, 3,456 in this drive, in nine categories.</li>
+      </ul>
+    </div>
+    <div class="figs">
+      <div class="sheet">
+        <Figure
+          items={[
+            { src: workflows, evidence: 'Shipped', caption: 'The four workflows, in the order listed; bottom left, Compare with default values with its target dialog open.', alt: 'Four editor windows, two by two, each titled. Empty State: a file icon, the text Connect the inverter to your local configuration via USB, a note that parameters can be edited offline, an Open Local Configs button, and four recently opened DX-COM-STICK default settings files. Routine options: three Create dialogs in a row over a dimmed editor, the first with a type of New project and a project name, the second with a config name and a ticked box to save the configuration to a project, the third with a type of New Config and a project chosen from a list. Comparison Mode: the page Compare with default values, a table of parameters P-01 to P-14 with current value, default and range, and a dialog, Select comparison target, listing Open a local file and Configuration 001, 002 and 003. Favorites (Star): the editor on its All view with a cursor on the All toggle, a row of chips Param Cat 1 to Param Cat 9 above the table, and a footer reading 1 to 10 of 3,456' },
+          ]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-write">
+    <div class="head">
+      <h2 id="c-write"><span class="n">2</span>Writing to a drive</h2>
+    </div>
+    <div class="body">
+      <p>An engineer on a routine round wants the tool linked and watching. One at a drive that has just failed wants nothing written until they've decided what.</p>
+      <p>So <span class="nb">real-time</span> writing is a switch, and it's off when the tool opens. Turning it on, or pressing Write In, brings up the same confirmation, with a backup of the drive's current configuration already ticked. Once linked, the drive's card turns green and reads REALTIME; while a write runs, a notice at the top right asks not to disconnect, with Cancel beside it.</p>
+      <p>The two modes answer the situations our expert research described. Manual <span class="nb">write-in</span> gives the engineer control for routine maintenance and troubleshooting: when a drive on the baggage handling system fails without warning, the engineer connects by hand, goes straight to the diagnostics and the troubleshooting features, and resolves it there. Auto connect is for continuous monitoring and automated processes: on routine work such as watching the whole conveyor system, the tool keeps checking and raises an alert on any irregularity or likely failure without the engineer having to step in.</p>
+    </div>
+    <div class="figs">
+      <div class="sheet">
+        <Figure
+          items={[
+            { src: write, evidence: 'Shipped', caption: 'The four states of a write, auto connect above and manual write-in below; bottom left, Write In pressed with Real-Time off and the backup ticked.', alt: 'Four editor windows, two by two, each titled. Auto Connect (selection): a cursor on the Real-Time switch, now green, and a dialog, Enabling Real-time Writing Mode, any changes you make will be written in real time to the connected inverter, a ticked box to back up the config of the connected device, a config name reading DC 01, Cancel and Confirm. Auto Connect (linking): the VFD 3001 card at the top of the sidebar green and labelled REALTIME, a green progress bar under the toolbar, and the starred parameters filling the table. Manual Write-in (selection): a green cursor mark on the Write In button and the Confirm Write-in dialog open over the table, the backup box ticked and a config name reading DC 01. Manual Write-in (action): a notice at the top right reading Writing to device, please do not disconnect, with a Cancel button' },
+          ]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-monitor">
+    <div class="head">
+      <h2 id="c-monitor"><span class="n">3</span>The monitor, in colour</h2>
+    </div>
+    <div class="body">
+      <p>The same test set a <span class="nb">text-heavy</span> monitor against a <span class="nb">colour-coded</span> chart, and with the chart participants found errors 40% faster. The chart I drew first gave each of the four channels an axis of its own, which is fine until a spike on one needs reading against the other three. The shipped chart puts the four on one axis.</p>
+      <p>Besides setting parameters, engineers need to watch the data to find errors quickly and accurately, for a fix later on, so the monitor was drawn twice, light and dark, with the labels still in Chinese at that stage. Dark reads better; light was chosen as the final design because it fits the overall design system, the Brightlayer theme the external developers were building from, and the system's colour scheme was adjusted slightly for readability.</p>
+    </div>
+    <div class="figs">
+      <div class="sheet">
+        <Figure
+          items={[
+            { src: drafts, evidence: 'Concept', dim: true, caption: 'The two drafts, light and dark; in each plot four stacked bands, one per channel, and a spike to read across them.', alt: 'Two monitor windows side by side, titled White mode version (selected for iteration) and Dark Mode Version: in each, four channel cards across the top reading 12.4%, 20.3%, 39.2% and 2.3%, four traces in blue, green, purple and orange each on its own band with its own 0 to 80% scale, a time axis from 0 to 100, an overview strip beneath, and the buttons labelled in Chinese; the dark one with a legend of the four channels floating over the top two bands' },
+          ]} />
+      </div>
+      <Figure
+        items={[
+          { src: monitor, evidence: 'Shipped', caption: 'The monitor, the drive and its recording settings at the left, eight channel slots across the top, the four live ones on one axis.', alt: 'The whole monitor: the linked drive VFD 3001 and its recording settings on the left, capture mode, time scaling, save files, log file name, logging interval and sample limit, a Start Recording button at the bottom; on the right the Waveform Recording and Error tabs, eight channel cards with the first four coloured blue, green, purple and orange and reading 12.4%, 20.3%, 39.2% and 2.3%, a plot of the four traces on one grid from 0 to 100 seconds, and a strip of the same traces over sixty seconds' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap part" aria-labelledby="c-record">
+    <div class="head">
+      <h2 id="c-record"><span class="n">The record</span>The rest of the summer</h2>
+    </div>
+    <div class="body">
+      <p>The three decisions above are the case. What follows is what I recorded at the time: how the studio worked, what research we could do, the tool state by state, the test, the <span class="nb">hand-off</span>, and what I took from it.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-whole">
+    <div class="head">
+      <h2 id="c-whole"><span class="n">4</span>The two halves</h2>
+    </div>
+    <div class="body">
+      <p>Over the three months I designed RapidLinkX in two parts: a parameter editor for configuring a drive, and a monitor for finding and correcting faults. The work was stakeholder meetings, user research and prototyping, and it ran in parallel with the hardware.</p>
+      <p>The editor sets a drive's motor speed, torque and <span class="nb">start/stop</span> settings, and its automatic operation modes and schedules. An engineer can save a set of parameters as a profile and switch between profiles, so one tool serves the different <span class="nb">material-handling</span> lines a drive ends up on. The monitor detects and diagnoses faults in real time, alerts the engineer, keeps error logs with corrective actions, and lets the configuration be adjusted so the fault doesn't come back.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-studio">
+    <div class="head">
+      <h2 id="c-studio"><span class="n">5</span>The studio, and everyone the tool answered to</h2>
+    </div>
+    <div class="body">
+      <p>In 2022 I joined Eaton APAC's newly established <span class="nb">Human-Centered</span> Design department as one of its first UX interns, and was given a <span class="nb">high-priority</span> project: a <span class="nb">ground-up</span> design for a <span class="nb">parameter-editing</span> IoT product aimed at airport markets worldwide. Eaton, a global <span class="nb">power-management</span> company, was modernising its product experiences by pairing its business departments with the new design studio, Studio Blue, which worked like an internal design consultancy. The product team made the request, but the people with a say in it were an external development team, the <span class="nb">in-house</span> engineering and market teams, our direct clients and their secondary dealers, spread across the business, product development, sales and marketing teams of the APAC region. Before any design started, we had to find a way of working that would move the project through all of them.</p>
+      <p>I was the primary designer on the <span class="nb">day-to-day</span> product design; my mentor's role was task planning and <span class="nb">cross-team</span> communication. Wanting more of that experience, I planned my own schedule and met her regularly to go over the collaboration, the research and the design. We set the strategy together, and I took the lead in carrying it out.</p>
+    </div>
+    <div class="figs">
+      <Figure
+        items={[
+          { src: stakeholders, evidence: 'Research', caption: 'The stakeholder map, Eaton’s teams on the left and the customer’s on the right; between them the dealer and the system integrator.', alt: 'A map of two dashed circles: Eaton Corporation on the left holding the PM, the R&D team (Studio Blue), the presale support team, sales, the quality management team and the customer support team; Customer on the right holding the installer and the field engineer; between them a dealer, who is provided customers and sells the VFD, and a system integrator, who is provided VFD hardware and integrates solutions for customers; a line from presale support to the customer for training, deployment and commissioning, and one from customer support for commissioning and troubleshooting' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-workshops">
+    <div class="head">
+      <h2 id="c-workshops"><span class="n">6</span>Workshops and the work map</h2>
+    </div>
+    <div class="body">
+      <p>To move the project we held several <span class="nb">design-thinking</span> workshops, so that partners and clients took part in the design decisions and understood every phase from R&amp;D to launch; it improved communication across all the teams. To make the plan clearer and easier to remember, my mentor and I took the conventional UX journey map and redrew it around our collaborative context and each stakeholder's role, which made it an organisational chart as much as a journey. The work map that came out of it outlines the whole process and tracks every stakeholder's interaction with the product and with sales across the product's lifecycle.</p>
+    </div>
+    <div class="figs">
+      <Figure
+        items={[
+          { src: workMap, evidence: 'Research', caption: 'The work map, four stages from presentation to maintenance; in the issues row, dozens of configurations a project and faults reported as error codes alone.', alt: 'A customer journey map in four stages, product presentation, training, parameter configuration and post-maintenance, with rows for who is involved (marketing, PMs, clients, pre-sales and after-sales engineers, client engineers), what is happening, the tools in use (slides, the product manual, Drive Connector, Excel, email and WeChat) and, in orange under the last two stages, the issues: customers ask about parameters that are in the manual, a project may involve dozens of configurations, users struggle to capture precise fault information, only error codes are available' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-research">
+    <div class="head">
+      <h2 id="c-research"><span class="n">7</span>Research with limited resources</h2>
+    </div>
+    <div class="body">
+      <p>Pandemic restrictions limited our access to experts, so we turned to online secondary research and to what the stakeholders told us in the workshop to understand the target audience. From that came detailed personas, which guided the design and, as much, improved communication inside the company: with the personas every team had the same picture of who the tool was for.</p>
+    </div>
+    <div class="figs">
+      <Figure
+        items={[
+          { src: personas, evidence: 'Research', caption: 'The two personas: Alan, the client field engineer, wants his workflow automated and support at height; Kevin, Eaton’s application engineer, wants remote-friendly tools.', alt: 'Two persona cards. Alan Smith, client field engineer, who executes, monitors, adjusts and reports: he specialises in parameter editing for airport machinery, often works at height and late, and wants replicable processes automated, timely remote support, supported error detection and analysis, and support for aerial work; his quote, I’m seeking a tool to automate parts of my workflow. Kevin Wang, Eaton application engineer, who deploys, coaches and supports: he gives remote technical support and software coaching to client engineers, and wants efficient information acquisition, remote-friendly experiences, automated guides built into the software, and cloud-based data; his quote, Clients and I found learning our apps challenging' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-brief">
+    <div class="head">
+      <h2 id="c-brief"><span class="n">8</span>The brief, and the scale of the work</h2>
+    </div>
+    <div class="body">
+      <p>The question we set ourselves: how might we create an intuitive tool that lets airport engineers detect hardware issues quickly and resolve them efficiently, minimising downtime and improving operational efficiency? The design goal under it: an IoT dashboard on which an airport engineer completes the parameter settings and performs the error checks for a conveyor system. The drive sits between the conveyor and the engineer's laptop, connected over USB.</p>
+      <p>The UX design ran in parallel with the hardware's design and production. Our scrum workflow had a weekly or biweekly review with the hardware product team, so the design tracked the hardware as it changed, and we ordered the work by the importance of each workflow. More than 60 <span class="nb">hi-fi</span> pages were designed during the internship, of which 35 selected pages cover over 10 distinct workflows. Under Eaton's NDA, only the parts that have launched are shown here.</p>
+    </div>
+    <div class="figs">
+      <Figure set="stack"
+        items={[
+          { src: system, evidence: 'Research', caption: 'The system, left to right: the conveyor, the two drives, and the laptop the tool runs on.', alt: 'Three pictures joined by a blue line: a photograph of an airport baggage conveyor system, two Eaton variable frequency drives, and a laptop, labelled conveyor system, hardware and laptop' },
+          { src: board, evidence: 'Prototype', caption: 'The Figma board at the end of the summer, every flow laid out under a coloured title bar.', alt: 'A zoomed-out Figma board: rows of small editor and monitor screens linked by arrows, each group under a coloured title bar in grey, blue, orange, green, purple, teal and yellow, with notes in Chinese' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-components">
+    <div class="head">
+      <h2 id="c-components"><span class="n">9</span>The core panel and the components</h2>
+    </div>
+    <div class="body">
+      <p>The design starts from the fundamentals of how a page operates, how it's organised and how it's managed. On that base we customised specific components from Eaton's existing Brightlayer design system to present the data the tool needed, and what the system didn't have became 14 component variants added to it.</p>
+    </div>
+    <div class="figs">
+      <div class="sheet">
+        <Figure
+          items={[
+            { src: components, evidence: 'Shipped', caption: 'The components sheet; in the dashed box the drive card local, linked and in real time, its menu beneath, the three dialogs at the right.', alt: 'A sheet titled Customized Components: in a dashed box the drive card as a local configuration, plain and selected, as a linked VFD, plain and selected, and in real time, plain and with a tooltip reading Click The Menu Icon Or Right-Click; beneath it the card’s menu, edit configuration name, copy configuration, restore to factory settings, delete; the editor in the middle; and on the right a notice, VFD detected, do you want to backup the configuration of the currently connected device, with an Export button, a Create dialog with a type and a project name, and a dialog reading Configuration already exists with Open and Overwrite' },
+          ]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-states">
+    <div class="head">
+      <h2 id="c-states"><span class="n">10</span>The monitor, state by state</h2>
+    </div>
+    <div class="body">
+      <p>With the version chosen, we turned to the functions that matter for operational efficiency: a close reading of the workflow for bottlenecks, and priority to whatever took manual steps out and made the state of the system easier to see.</p>
+      <ul class="terms">
+        <li><b>Error reports.</b> Alert the engineer to a malfunction or a discrepancy, with a detailed breakdown and possible solutions: the most recent entry, a fault with its code, diagnostics and a suggested fix, then the entries before it.</li>
+        <li><b>Empty state.</b> When no file is open or a session starts, eight empty channel slots over an empty grid lead straight to setting the monitored channel.</li>
+        <li><b>Setting a channel.</b> A popover on the slot: the input, hide scope trace, <span class="nb">auto-scaling</span>, scale and offset.</li>
+        <li><b>Normal view.</b> A <span class="nb">real-time</span> overview of the system, so the engineer keeps a constant read on current states and parameters without opening deeper views.</li>
+        <li><b>Recording.</b> Records the live data stream for detailed review and historical analysis, a band sweeping the plot and a counter running; what lets an engineer trace the events before an error.</li>
+        <li><b>Exports.</b> Data and reports in several formats, PDF or CSV over a selected span, to share across departments or with external stakeholders.</li>
+      </ul>
+    </div>
+    <div class="figs">
+      <div class="sheet">
+        <Figure
+          items={[
+            { src: monitorStates, evidence: 'Shipped', caption: 'The six states, two across and top to bottom in the order listed; top left, the Error tab with the most recent fault open.', alt: 'Six monitor windows, two by two by two. The Error tab: a most recent entry, Voltage Anomaly, type Fault, error code 79018, diagnostics reading Internal Drive Output Board Anomaly, a suggestion to check the parameters and test the output voltages, and readings for frequency, voltage, current, bus voltage and temperature, then a last entry and a second-to-last entry, both alarms with the same code. The empty state: eight channel cards reading Please select, an empty grid from 0 to 100, and a cursor on the first card. A channel popover open over the grid: Analog Input 1 chosen, a Hide Scope Trace box unticked, an Enable Auto-scaling box ticked, and steppers for scale, 1, and offset, 3 div. The normal view: the first four channel cards coloured and showing 12.4%, 20.3%, 39.2% and 2.3%, the four traces on the grid over a hundred seconds, and the sixty-second overview strip beneath. Recording: a blue band across the right of the plot, a red Stop Recording button at the bottom left, a counter reading 42S and a green progress bar. Export: an Export Waveform dialog with a name reading DC01, an address, a format of PDF or CSV, Cancel and Confirm, and a span selected on the overview strip beneath' },
+          ]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-test">
+    <div class="head">
+      <h2 id="c-test"><span class="n">11</span>The comparative usability test</h2>
+    </div>
+    <div class="body">
+      <p>We ran a comparative usability test on the two halves of the tool. For parameter editing, the conventional form layout against an interactive <span class="nb">drag-and-drop</span> interface; for monitoring, a detailed, <span class="nb">text-heavy</span> format against our graphical, <span class="nb">colour-coded</span> design. Participants were divided into two groups, each working with one version, and we collected task completion times, error rates and satisfaction through surveys and direct observation.</p>
+      <p>Two things came out of it. Safety before efficiency: the <span class="nb">drag-and-drop</span> interface cut the time to complete parameter settings by 35%, and raised the error rate by 15%. Where a small mistake can carry a large financial cost, that <span class="nb">trade-off</span> decided it, and the slower, conventional layout was adopted for its lower error rate. And the <span class="nb">colour-coded</span> monitor: with the graphical dashboard, engineers identified errors 40% faster than with the <span class="nb">text-heavy</span> format. The visual cues and the simpler presentation made <span class="nb">real-time</span> monitoring more intuitive and decisions quicker; the engineers reported less cognitive load and anomalies easier to spot, which is what keeps an airport system running.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-handoff">
+    <div class="head">
+      <h2 id="c-handoff"><span class="n">12</span>The <span class="nb">hand-off</span></h2>
+    </div>
+    <div class="body">
+      <p>In the last six weeks of the internship we worked closely with the development team to deliver the designed features and workflows. The developers were contractors unfamiliar with Eaton's design system, which raised the amount of communication the work needed, so we established a structured communication protocol, and introduced an annotation process for each phase to keep the delivery clear.</p>
+    </div>
+    <div class="figs">
+      <div class="sheet">
+        <Figure
+          items={[
+            { src: handOff, evidence: 'Research', caption: 'An annotation round, 10 August 2022, version 0.9.17.7Z; the problems ranked on the blue sheet, the three flows annotated at the right.', alt: 'An annotation board dated 10 August 2022, version 0.9.17.7Z: on the left a blue sheet headed Problems, with primary problems of screen interaction, the window’s initial state and text folding on resize, each with a screenshot and a proposed fix, and a second column of secondary problems, discussion points and notes on colour, components, page background and header navigation; on the right the parameter, monitoring and log flows as small screens with green, teal and pink annotation tags and connecting lines' },
+          ]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-storyboard">
+    <div class="head">
+      <h2 id="c-storyboard"><span class="n">13</span>A storyboard for the department</h2>
+    </div>
+    <div class="body">
+      <p>As the project neared its end and we prepared a <span class="nb">department-wide</span> presentation, our product manager raised a concern about how the design would transfer across different sections. Diagrams wouldn't fully answer that, so we presented with storyboards: a format every stakeholder could read, which put the UX workflow in front of them as a sequence rather than a chart.</p>
+    </div>
+    <div class="figs">
+      <Figure
+        items={[
+          { src: storyboard, evidence: 'Concept', caption: 'The storyboard, four frames from the engineer at the line to customer support; the red mark in the second is the error caught.', alt: 'Four drawn frames, numbered: a client engineer in a hard hat at a laptop on a table beside the conveyor’s drives, labelled Client Engineer Adjustments; a laptop showing a waveform with a red exclamation mark and a red dot on one drive, labelled Error Detection; the drives on their rack, labelled Hardware Check; and a support engineer with a headset at a monitor, labelled Customer Support' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mobile">
+    <div class="head">
+      <h2 id="c-mobile"><span class="n">14</span>A mobile version, for work at height</h2>
+    </div>
+    <div class="body">
+      <p>This was our APAC team's first physical product, and since the studio was founded to digitise Eaton's product ecosystem, we tried to make the most of it. The scope was desktop only at first, because the tool depends on USB and a hardware connection. During the design we found scenarios that involve work at height, where a <span class="nb">USB-only</span> connection doesn't serve. After long discussion with my mentor and our design manager, I was entrusted with starting a mobile, <span class="nb">Bluetooth-based</span> solution, with future cloud data integration in mind. In my final days I started it and iterated on it, and left prototypes and detailed documentation for my mentor and the interns who'd follow.</p>
+    </div>
+    <div class="figs">
+      <div class="phones">
+        <Figure set="four"
+          items={[
+            { src: mobile1, evidence: 'Prototype', caption: 'An alarm’s details, the voltage in red.', alt: 'A phone screen, Alarm, on its Details tab: frequency 10 Hz, current 5 A, voltage 220 V in red, temperature 45 °C; then the fault name, Abnormal voltage, the error code 09972, the time of occurrence, diagnostics reading Internal drive error, and suggestions' },
+            { src: mobile2, evidence: 'Prototype', caption: 'The alarm’s waveform, a range slider on the strip beneath.', alt: 'A phone screen, Alarm, on its Waveform tab: three traces on a grid from 0 to 60 seconds, a range slider on an overview strip from 15 to 40 seconds, and channel cards beneath reading 58%' },
+            { src: mobile3, evidence: 'Prototype', caption: 'A drive’s parameters, Write-in at the bottom.', alt: 'A phone screen, Drive 01 in Auto mode: the latest update at 9:41, four parameter rows, PNU01, each with a value of 100 Hz, a Write-in button, and a tab bar of Status, Setting and Error' },
+          ]} />
+      </div>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-lessons">
+    <div class="head">
+      <h2 id="c-lessons"><span class="n">15</span>What I took from it</h2>
+    </div>
+    <div class="body">
+      <p>At Eaton the role went beyond UI and UX craft into driving the team's performance: reading a domain quickly, structuring its information, taking its workflows apart. Those are what deliver specialised, stable, predictable results, and recognising that was the main thing I learned in the three months; it's what let me meet complex requirements consistently.</p>
+      <p>Working remotely added a second lesson. Keeping onsite levels of efficiency takes planning, communication and coordination, and effective design in that setting is closer to careful management than to sheer effort. I made a habit of meeting my manager's expectations efficiently, keeping the team informed, and going to get the resources a design problem needed. Those habits are what made me reliable on the team.</p>
+    </div>
+  </section>
+
+  <Fragment slot="close">
+    <p class="stance">A wrong value was the expensive thing.</p>
+    <p>The slower form keeps most of them out, and the chart is there for the ones that get past it.</p>
+  </Fragment>
+</Case>

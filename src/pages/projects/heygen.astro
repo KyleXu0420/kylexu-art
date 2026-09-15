@@ -1,0 +1,572 @@
+---
+import Case from '../../layouts/Case.astro';
+import Figure from '../../components/Figure.astro';
+import '../../styles/heygen.css';
+// every figure is one of the Webflow case page's own images, whole and untouched: a byte-for-byte
+// copy of the file in legacy/images under a clean name. Where a paragraph needs one region of a
+// composite, the caption says where to look.
+import mockup from '../../assets/img/heygen-mockup.png';
+import oneInAll from '../../assets/img/heygen-one-in-all.png';
+import layouts from '../../assets/img/heygen-layouts.png';
+import testTimeline from '../../assets/img/heygen-test-timeline.png';
+import playbar from '../../assets/img/heygen-playbar.png';
+import onboarding from '../../assets/img/heygen-onboarding.png';
+import mobileMvp from '../../assets/img/heygen-mobile-mvp.png';
+import projects from '../../assets/img/heygen-projects.png';
+import persona from '../../assets/img/heygen-persona.png';
+import personaInsight from '../../assets/img/heygen-persona-insight.png';
+import process from '../../assets/img/heygen-process.png';
+import competitors from '../../assets/img/heygen-competitors.png';
+import researchPlan from '../../assets/img/heygen-research-plan.png';
+import findings from '../../assets/img/heygen-findings.png';
+import sprint from '../../assets/img/heygen-sprint.png';
+import ia from '../../assets/img/heygen-ia.png';
+import crawlWalkRun from '../../assets/img/heygen-crawl-walk-run.png';
+import designSystem from '../../assets/img/heygen-design-system.png';
+import testMenus from '../../assets/img/heygen-test-menus.png';
+import testCards from '../../assets/img/heygen-test-cards.png';
+import finalDesign from '../../assets/img/heygen-final.png';
+import handoff from '../../assets/img/heygen-handoff.png';
+import reflection from '../../assets/img/heygen-reflection.png';
+import mobileBrief from '../../assets/img/heygen-mobile-brief.png';
+import mobileCompetitors from '../../assets/img/heygen-mobile-competitors.png';
+import jtbd from '../../assets/img/heygen-jtbd.png';
+import scope from '../../assets/img/heygen-scope.png';
+import mobilePrototype from '../../assets/img/heygen-mobile-prototype.png';
+import metrics from '../../assets/img/heygen-metrics.png';
+
+// Two pages in one. The first is the judgement: the shipped editor on the first screen, the
+// thirty-second snapshot, then the three decisions told as tension, decision, evidence and
+// consequence. The second, from the ruled row that opens the record to the close, is the whole of
+// the work as the Webflow page recorded it — the four months, the research, the sprint and the
+// iterations, the test, the hand-off, the iOS MVP and the lessons — in seven parts of chapters.
+// Every image appears once: where the judgement and the record want the same image, the judgement
+// carries it and the record's chapter goes without, as a chapter whose evidence is the hero does.
+// Each opener has one anatomy: a number in the label grey at column 1 (a decision's 1, 2, 3; a
+// part's Part 1 to Part 7), the name beneath it, the words at column 6. The counts in the record
+// are the owner's, from the page they wrote at the time; where the resume and the page differed
+// on a date or a metric, the resume won. The close is the decisions' own row, and the way to the
+// other case is in the footer.
+---
+<Case
+  caseId="heygen"
+  title="Heygen — Kyle Xu"
+  description="Product Design Intern at Heygen, June–October 2023. The AI video editor re-architected around the script, with an updated component library: engagement +32.1% and task completion +24.3% against the one-page flow it replaced. Three decisions, the last of them settled by a usability test; then the whole record — 24 client interviews, a 328-response survey, seven competitors, a design sprint, the iterations, the hand-off, and an iOS MVP prototyped in three weeks."
+  ogImage="/og-heygen.jpg"
+  eyebrow="Heygen · Product Design Intern · June – October 2023"
+  deck="Customers were making videos of several scenes in an editor built for one script on one page. I rebuilt it around the script. Three decisions carried it, and a usability test settled the third."
+  next={{ title: 'RapidLinkX', to: '/projects/eaton', line: "A configuration tool for the drives that run an airport's conveyors." }}
+>
+  <Fragment slot="claim">The video editor, <span class="nb">re-architected</span> around the script.</Fragment>
+  <Figure slot="hero" src={mockup} evidence="Shipped" loading="eager"
+    name="The new editor, the script cards in the sidebar, a voice setting open and the ruler on the timeline"
+    alt="The shipped editor: the script panel on the left with two script cards, one empty with a script generation error, a voice setting panel open over the canvas with speed, pitch and volume sliders and a menu of GPT script writer, translate, duplicate and delete, the avatar on the canvas, and the full timeline beneath with ruler, playhead and four scene cards" />
+
+  <section class="col sec snap" aria-label="In thirty seconds">
+    <dl class="facts">
+      <div>
+        <dt class="meta">Scope</dt>
+        <dd>The desktop editor, as its only designer: the script panel, the timeline and an updated component library; then an iOS MVP in the last three weeks, which stayed a prototype.</dd>
+      </div>
+      <div>
+        <dt class="meta">Research</dt>
+        <dd>Three rounds of interviews with 24 clients, a survey of 328 people and seven competing editors before the design; six rounds of internal evaluation and a usability test with six agencies and four creators during it.</dd>
+      </div>
+      <div>
+        <dt class="meta">Outcome</dt>
+        <dd>Engagement +32.1% and task completion +24.3%, Heygen's numbers for the new editor against the <span class="nb">one-page</span> flow it replaced.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-hard">
+    <div class="head">
+      <h2 id="c-hard">Why one page stopped working</h2>
+    </div>
+    <div class="body">
+      <p>Everything happened on one page: one box for the whole script, one voice for the whole video, and a timeline that was a card, a play button and a readout. That was the point, nothing to learn. It held until customers were making videos of several scenes, each with its own lines, and one box with one voice couldn't hold them. <span class="nb">Text-to-speech</span> was still the core of the product, so whatever replaced the page had to give the script more room, not less.</p>
+    </div>
+    <div class="figs">
+      <Figure narrow src={oneInAll} evidence="Shipped"
+        name="The editor in June 2023, the working panel over the blurred page; beneath, the timeline enlarged to show the one card"
+        alt="The old editor, blurred behind its working panel: a script box with one sentence, a voice picker with Aria and a speed slider, and a timeline of one scene card with a play button; beneath, the same timeline enlarged with the single scene outlined; and a line reading The previous One in All approach, which encapsulated all elements within a single Scene, has become a One Fail All as our market scope has evolved" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-script">
+    <div class="head">
+      <h2 id="c-script"><span class="n">1</span>Where the script lives</h2>
+    </div>
+    <div class="body">
+      <p>The timeline needed the bottom of the page, which freed the script's old spot. Of the four layouts I drew, two put the script in a new panel on the right, with room for tools to keep arriving, and two kept it in the sidebar as a tab beside Avatar, Text and Element. I chose the sidebar and moved nothing else: less room for whatever comes next, but an existing user could open the new editor and still know where they were. It went to engineering drawn state by state, from the empty card to a script over the word limit, with the updated component library.</p>
+    </div>
+    <div class="figs">
+      <Figure src={layouts} evidence="Concept"
+        name="The four plans, the top row: the script on the right in 1 and 1.1, in the sidebar in 2 and 2.1, which shipped"
+        alt="Four block diagrams over four editor mock-ups, each with its pros and cons listed beneath: Plan 1, an action panel as a new separate module; Plan 1.1, the TTS panel as a permanent module; Plan 2, the sidebar carrying TTS with an action panel replacing the old TTS panel; Plan 2.1, selected, the sidebar carrying TTS" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-timeline">
+    <div class="head">
+      <h2 id="c-timeline"><span class="n">2</span>A timeline that shows time</h2>
+    </div>
+    <div class="body">
+      <p>My first pass gave the timeline three tracks, for the avatar, the scenes and the script, with a mark every fifteen seconds, and that's what we put in front of agencies and individual creators. People couldn't tell what they had selected, and a scene's place in time was still a guess between the marks. So the shipped timeline reads as time first, with a ruler and the current time on the playhead, and whatever appears in two panels stays in sync: select a scene in the timeline and it lights up on the canvas.</p>
+    </div>
+    <div class="figs">
+      <Figure src={testTimeline} evidence="Shipped"
+        name="The timeline before and after the test, the marks at :15 above against the ruler and the playhead's readout beneath"
+        alt="Before: the timeline with marks at 0, 15, 30 and 45, avatar, script and scene tracks, and a play button at the left; a note that it was confusing, its transitions unclear. After: the timeline with an expand toggle, transport buttons, a ruler marked every ten seconds, a playhead reading 00:38:88, and the tracks with clearer cues; a note that a playback bar and more time markers were added" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-playbar">
+    <div class="head">
+      <h2 id="c-playbar"><span class="n">3</span>The play bar, three times</h2>
+    </div>
+    <div class="body">
+      <p>In the first round I drew a play bar floating just under the canvas, and the round turned it down as too complex. So I went the other way and proposed dropping it altogether. The timeline had a playhead and a play button of its own, and one control fewer would read as simpler. That's the version we tested, and people went looking for a play control above the timeline and didn't find one.</p>
+      <p>Previewing is constant in this editor, fix a line, play it back, fix the next, and a play button down beside the tracks sat too far from where they were looking. I put the bar back as a slim row between canvas and timeline, the transport buttons in the middle of it and the zoom controls at its right. That's the version Heygen measured against the <span class="nb">one-page</span> flow it replaced: engagement up 32.1%, task completion up 24.3%.</p>
+    </div>
+    <div class="figs">
+      <Figure src={playbar} evidence="Concept"
+        name="Three editors, left to right: the bar floating under the canvas, no bar and a lone play button by the tracks, the row that shipped"
+        alt="Three editors side by side. Left: a play bar floating under the canvas with play, a progress line, 00:00 of 00:30 and zoom. Middle: no play bar, the canvas ending on empty ground and the timeline beginning with a lone play button beside its tracks. Right: a slim row between canvas and timeline with a collapse toggle, previous, play and next, the elapsed time, the playhead reading 00:38:88 and zoom controls" />
+    </div>
+  </section>
+
+  <section class="col sec part" aria-label="The record">
+    <p class="meta">The record</p>
+    <p class="sign">The three decisions above are the judgement. What follows is the work they came out of, in the order it happened: the four months, the research, the sprint and the iterations, the test, the <span class="nb">hand-off</span>, and the iOS MVP that came last. The numbers in it are from the notes I kept at the time.</p>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-1">
+    <h2 id="p-1"><span class="n">Part 1</span>June to October, in four pieces</h2>
+    <p class="sign">In 2023 Heygen was a video generation company of about 25 people whose annual recurring revenue had gone from zero to $18 million. Like most companies growing that fast, it needed its product rebuilt for the customers it now had. From June to October I worked on the desktop product, on mobile, on PRDs, and on the design system that held them together, with the product and development teams, mostly on existing workflows that had to change.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-editor">
+    <div class="head">
+      <h2 id="c-editor">The editor revamp</h2>
+    </div>
+    <div class="body">
+      <p>Our customers were becoming more numerous and more professional, and the old editor workflow was retired. I led the revamp of the video editor around the new <span class="nb">AI-powered</span> <span class="nb">text-to-speech</span> workflow, with the design system upgraded for the states the editor now had to cover. The editor itself is the first screen of this page; the three decisions above are the heart of it, and the research and the iterations that produced them follow.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-onboarding">
+    <div class="head">
+      <h2 id="c-onboarding">The onboarding redesign</h2>
+    </div>
+    <div class="body">
+      <p>In the survey, 91% of respondents said they had found it difficult to onboard to Heygen's creation system, which is complex. New users needed a guide with some motivation in it. I designed a <span class="nb">step-by-step</span> guide with a gamified reward at the end: three steps, a progress bar, and credits for finishing, which the guide carries with it as a small card in the sidebar. It went out with an 18.1% boost in new user retention.</p>
+    </div>
+    <div class="figs">
+      <Figure src={onboarding} evidence="Shipped"
+        name="The guide over the home page, the Claim on its third step; at the left, the same guide folded into the sidebar"
+        alt="Heygen's home page in a browser with a welcome card over it: Welcome to HeyGen, a progress bar at 0 of 3, and three steps, create your avatar, create your first video, and claim your reward for completing onboarding, with a Start button on the first two and Claim on the third; the same guide folded into a small card in the sidebar reading Get started with Heygen, 0 of 3" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-ios">
+    <div class="head">
+      <h2 id="c-ios">The iOS MVP</h2>
+    </div>
+    <div class="body">
+      <p>Heygen's service is built on AI avatars, and every avatar starts as a recording. I was responsible for the mobile MVP, which was to use the high-quality cameras on smartphones to improve that recording. It is told in full in Part 6.</p>
+    </div>
+    <div class="figs">
+      <Figure src={mobileMvp} evidence="Prototype"
+        name="Three screens of the recording flow, the teleprompter over the camera, the topic sheet, and the footage review at step 3 of 5"
+        alt="Three iPhone screens: a camera view with a teleprompter over it, a prompt language selector and Upload Footage and Start Recording buttons; a sheet of topics to talk about for thirty seconds, freestyle, tell us about yourself, your hometown, a product update, your business, a training lesson; and step 3 of 5, a footage review with a checklist, visible face, acting natural, eyes on the camera, and Record Again and It Looks Good buttons" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-projects">
+    <div class="head">
+      <h2 id="c-projects">Ten smaller projects</h2>
+    </div>
+    <div class="body">
+      <p>Alongside these I worked with the other designers on more than ten projects, building on their earlier work rather than starting over: an AI credit monitor for enterprise teams, as a chart and as a table; a dropout survey shown at cancellation, which reduced service cancellation by 6.7% and collected more feedback; social sharing, which brought a 5.3% increase in viewers through shared links; the design system for the Canva <span class="nb">plug-in</span>, for exposure and conversion from Canva; and the layout of video translation, a workflow template for one of the product's viral features. Working from each other's strengths and insights made the designs more refined.</p>
+    </div>
+    <div class="figs">
+      <Figure src={projects} evidence="Shipped"
+        name="Six of them, top row: the credit monitor, the dropout survey, social sharing; beneath, the monitor's table, the Canva plug-in, video translation"
+        alt="Six screenshots with their captions: the AI credit team monitor as a usage chart and as a table of individual usage, a dropout survey dialog reading We're sorry to see you go, a video page with social sharing options, the Canva plug-in's dark panels of avatars and voices, and the video translate layout with English and Chinese transcripts side by side" />
+    </div>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-2">
+    <h2 id="p-2"><span class="n">Part 2</span>Why the product had to change</h2>
+    <p class="sign">The customer base had grown and matured past the scope the product was made for, so the product had to be modified to meet what those customers now needed and expected.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-market">
+    <div class="head">
+      <h2 id="c-market">A customer base the product wasn't built for</h2>
+    </div>
+    <div class="body">
+      <p>In 2022 Heygen served one kind of customer: people who needed an <span class="nb">avatar-based</span> video. By 2024 that had diversified into individuals, influencers, content creators, small studios and enterprises of every size, each pulling the product's focus a different way.</p>
+    </div>
+    <div class="figs">
+      <Figure narrow src={persona} evidence="Research"
+        name="The customers in 2022 and in 2024, one icon against a radar of five"
+        alt="Left, one grey person icon labelled People who need AI videos, dated 2022. Right, a radar chart dated 2024 around Heygen's customer focus, with influencers, small enterprise, content creators, large enterprise and individuals on its five points" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-needs">
+    <div class="head">
+      <h2 id="c-needs">What each kind of customer needed</h2>
+    </div>
+    <div class="body">
+      <p>Three things followed from the growth. Small and large enterprises wanted to make complex videos without mastering intricate software, and the editor's capabilities were limited. Creators, influencers and enterprises alike began nearly every task with an avatar recording, and recording was <span class="nb">desktop-only</span>, which capped its quality. And to keep growing, Heygen had to keep upgrading each customer touchpoint, because retention was dropping. Understanding the customer journey and where it touched the product was how we tailored the work to the new context.</p>
+    </div>
+    <div class="figs">
+      <Figure src={personaInsight} evidence="Research"
+        name="The three insights, each headed by the icons of the customers it concerns"
+        alt="Three headed paragraphs, each with the persona icons it applies to: Expanding towards more professional enterprise users, for small and large enterprise; Improving access to avatar recordings, for content creators, influencers and enterprises; Keeping growth, dropping retention, for content creators and enterprises" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-pace">
+    <div class="head">
+      <h2 id="c-pace">How a designer worked at Heygen</h2>
+    </div>
+    <div class="body">
+      <p>Heygen's growth pushed the work past the usual boundaries of the role. Designers made interfaces and also took on product research and product management, which let us respond quickly to what users needed. A project ran through problem analysis (half a week to two weeks), a product document (one to two), a design sprint (two), development (two to four) and feedback (two to six), with interviews and metric analysis at the start, the PRD as the record, and client meetings at the end.</p>
+    </div>
+    <div class="figs">
+      <Figure src={process} evidence="Concept"
+        name="The five stages with their weeks, and beneath each a picture of what it looked like"
+        alt="Five stages in a row with their durations: problem analysis, half a week to two weeks; product document, one to two; design sprint, two; development, two to four; feedback, two to six. Beneath each, a photograph or screenshot: an interview call over a metrics chart, a PRD for the mobile MVP, designers in a meeting, a video call over the editor, a client meeting" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-hmw">
+    <div class="head">
+      <h2 id="c-hmw">The question</h2>
+    </div>
+    <div class="body">
+      <p class="ask">How might we help people create and manage videos on Heygen's platform with ease, so that the experience is enjoyable and efficient for everyone, from beginners to experts?</p>
+    </div>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-3">
+    <h2 id="p-3"><span class="n">Part 3</span>The editor: research</h2>
+    <p class="sign">The design goal was to redefine the video editor's structure to support the diversity of video creation. Before any drawing: the editor as it was, seven competitors, three rounds of interviews and a survey.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-context">
+    <div class="head">
+      <h2 id="c-context">One page for everything</h2>
+    </div>
+    <div class="body">
+      <p>Heygen's two main services are creating AI avatars and turning audio into video. In the past the editor put every interaction on one page, to keep the learning burden low. As the market moved, that became the problem for professional users who wanted to make more complex and more creative videos: the <span class="nb">one-in-all</span> approach, which put every element inside a single scene, had become <span class="nb">one-fail-all</span>. The page as it was is under the first chapter above.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-competitors">
+    <div class="head">
+      <h2 id="c-competitors">Seven competitors</h2>
+    </div>
+    <div class="body">
+      <p>For a baseline of the market for video editing tools I analysed seven of them: their features, structure, interface, and fit for different kinds of editing. They sorted into three kinds. Traditional timelines (Adobe, CapCut, Veed) put a main track with separate tracks for visuals and audio that can be edited independently: flexible, and intimidating in their complexity. A <span class="nb">script-based</span> timeline (Descript) organises the edit by the script and shows only the selected element's track: right for <span class="nb">dialogue-heavy</span> videos, with a steeper learning curve and little use without dialogue. <span class="nb">Scene-based</span> tools (Canva, Synthesia, and Heygen itself) divide the video into scenes: easy to learn, and less suited to complex edits; Synthesia doesn't show a timeline at all.</p>
+    </div>
+    <div class="figs">
+      <Figure src={competitors} evidence="Research"
+        name="The three findings and the table, a column per tool and a row each for editor layout, timeline and script"
+        alt="Left, three findings: traditional timeline editors offer flexible editing but can be intimidating; script-based timelines suit dialogue-heavy videos but have a steeper learning curve; scene-based timelines simplify editing but are less ideal for complex edits. Right, a table of Synthesia, Descript, Canva, CapCut and Veed by editor layout, timeline and script, with screenshots and notes in each cell" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-interviews">
+    <div class="head">
+      <h2 id="c-interviews">Twenty-four clients, 328 surveys</h2>
+    </div>
+    <div class="body">
+      <p>To get closer to what customers experienced and needed, we ran three rounds of <span class="nb">semi-structured</span> interviews with 24 clients, gathering the perspectives of both users and businesses, and 328 people completed a survey. The plan set the problems against the research goals and questions: on the users' side, what customers needed from the next editor and where the interface fell short; on the business's, day-one retention, a low conversion rate, and too few professional users.</p>
+      <p>In the findings, 85% of users found videos more engaging when they used diverse styles like A/B roll; 90% of creators said customization options helped the final quality; 75% liked a revamped layout with new features, because it simplified navigation; and 60% were concerned that too many new features would complicate the interface. The last two set the terms for the design: new features, in a layout that stayed simple.</p>
+    </div>
+    <div class="figs">
+      <Figure set="stack"
+        items={[
+          { src: researchPlan, evidence: 'Research', name: 'The research plan, the users’ problems, goals and questions on the left and the business’s on the right', alt: 'A grid: user problems (customers’ needs for future editor improvements, UI improvements) and business problems (improve day-one retention, conversion rate is low, low professional user attraction); research goals (understand first user experience, co-design future video editor experiences, identify how to increase key business metrics); and research questions beneath each' },
+          { src: findings, evidence: 'Research', name: 'The four findings, a quotation from a participant under each figure', alt: 'Four statistics with a sentence and a quotation each: 85% of users reported finding videos more engaging with diverse styles like A/B roll; 90% of creators mentioned that customization options benefit the final quality; 75% of users liked a revamped editor layout with new features; 60% of users expressed concern that adding too many new features could complicate the interface' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-conclusion">
+    <div class="head">
+      <h2 id="c-conclusion">Conclusion</h2>
+    </div>
+    <div class="body">
+      <p>The <span class="nb">one-page</span> editor had been the right answer before ChatGPT's release. After it the market accelerated: AI offered more, and more professionals chose AI video software. The solution was outdated and needed a systematic revamp to match the experience of the professional video editing apps.</p>
+    </div>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-4">
+    <h2 id="p-4"><span class="n">Part 4</span>The editor: design</h2>
+    <p class="sign">From the sprint to the final design, in the order it happened: the layout, the components, the rules they were drawn to, the test, and what the test changed.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-sprint">
+    <div class="head">
+      <h2 id="c-sprint">A design sprint, to agree on the problem</h2>
+    </div>
+    <div class="body">
+      <p>The project's details and scope were uncertain at the start, and the departments involved read them differently, so no consensus formed. As the only designer on it I was caught in a continual <span class="nb">tug-of-war</span> between those readings. I proposed a design sprint to align the objectives of everyone on the product and design teams and to establish a common foundation: Monday for the business perspective and the stakeholders, Tuesday for ideation and product mapping, Wednesday for rapid prototyping and design discussion, Thursday for iteration and test preparation, Friday for usability testing and the final meeting.</p>
+    </div>
+    <div class="figs">
+      <Figure src={sprint} evidence="Concept"
+        name="The sprint week, Monday to Friday, with a picture from each day beneath its sessions"
+        alt="Five columns, Monday to Friday, each with its sessions: business perspective and stakeholders; ideation and product mapping; rapid prototyping and design discussion; iterations and usability testing prep; usability testing and the final meeting. Beneath, a photograph or screenshot from each day" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-ia">
+    <div class="head">
+      <h2 id="c-ia">Information architecture</h2>
+    </div>
+    <div class="body">
+      <p>Before, during and after the sprint I led the iteration on two features, the script panel and the timeline editor. The objective was to redesign the page's information architecture so that the workflow of making a video improved. The old page had four regions: the sidebar, the canvas with its action bar above it, the script beneath the canvas, and a timeline along the bottom.</p>
+    </div>
+    <div class="figs">
+      <Figure narrow src={ia} evidence="Shipped"
+        name="The June 2023 editor, the regions labelled over the page"
+        alt="The old editor with four labels over it: Sidebar over the template list on the left, Action over the toolbar, Canvas over the video, Script over the text and audio script panel beneath it, and Timeline over the strip at the bottom" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-layouts">
+    <div class="head">
+      <h2 id="c-layouts">Layout: four plans</h2>
+    </div>
+    <div class="body">
+      <p>To revamp the layout I moved the <span class="nb">text-to-speech</span> functions, the script, into the sidebar, where they would be more visible and have more room, and weighed four plans, the ones drawn under the first decision above. Plan 1 added an action panel as a separate module on the right: expandable, and a standard pattern, but the panel needed learning and hid the script during transitions. Plan 1.1 made the script panel permanent on the right: the script stayed at the highest level of attention, and the layout got crowded. Plan 2 put the script in the sidebar and an action panel under the canvas: it didn't solve <span class="nb">wide-screen</span> adaptation, and it made the script look like an external element. Plan 2.1, the sidebar alone, kept the script's priority and display space and changed little else, so existing users would find their way; its one cost was less room for future features. The changes were meant to be minimal and effective, for a smooth transition and continuity for existing users.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-components">
+    <div class="head">
+      <h2 id="c-components">Components: crawl, walk, run</h2>
+    </div>
+    <div class="body">
+      <p>With Plan 2.1 chosen, we kept experimenting with the visual components and the functions attached to them, to make sure the redesign met its goals: better visibility and usability of the core features, the <span class="nb">text-to-speech</span> functions above all, and an interface that followed standard software layout patterns so there was less to learn. I drew the panels at three levels. Crawl, with the fewest interactions and the plainest interface on each panel. Walk, a balance of panel interactions with a minimal interface. Run, with the most complex interactions and heavy visuals. Walk was selected.</p>
+    </div>
+    <div class="figs">
+      <Figure src={crawlWalkRun} evidence="Concept"
+        name="The editor at three levels of interaction, walk in the middle marked selected"
+        alt="Three editor mock-ups side by side: Crawl, minimized interactions and UIs on each panel; Walk, selected, a balance of panel interactions while keeping minimalistic UIs; Run, adding the most complex interactions with heavy visuals" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-system">
+    <div class="head">
+      <h2 id="c-system">The design system</h2>
+    </div>
+    <div class="body">
+      <p>The initial design showed promise, but the new timeline panel had a learning curve, and essential functions such as the script needed to be easier to reach. I wrote a concise style guide for component interactions to make the vision clear to the development team. Three conclusions guided it.</p>
+      <ul>
+        <li>Define the boundaries between the operation panels clearly, using the contrast of white and dark modes to separate the sections of the page.</li>
+        <li>Make every element <span class="nb">single-attribute</span>, operable and indivisible, with no automatic dependencies or bindings between elements.</li>
+        <li>Synchronise the elements repeated across the timeline, script and canvas panels, so that when a user interacts with a photo in the timeline, the same element shows the interaction on the canvas.</li>
+      </ul>
+    </div>
+    <div class="figs">
+      <Figure src={designSystem} evidence="Supporting state"
+        name="The sheet, the text-to-script flow's initial and final state at the left, its steps down the middle, the components at the right"
+        alt="Left, the editor's text-to-script flow in its initial and final states, with the timeline beneath each. Centre, the script flow step by step: start new script, new script box, text inputting, inputs finished, add new avatar, select avatar, add studio avatar. Right, the component sheets: recording rows, script cards in each state, context menus, voice model and voice setting panels, and the icon set" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-testing">
+    <div class="head">
+      <h2 id="c-testing">Usability testing</h2>
+    </div>
+    <div class="body">
+      <p>We ran client interviews with six agencies and four individual creators to test the features I had designed, for clarity, usability, completion and, above all, comprehension. Between the sprint and the <span class="nb">hand-off</span> the design also went through six rounds of internal evaluation. Three things changed. The timeline had been confusing: the transitions between states were unclear and unprompted, it wasn't built for interacting with elements, and it used the page's space badly; the update added a playback bar and more time markers and gave <span class="nb">drag-and-drop</span> clearer visual cues, the before and after under the second decision above. The script's elements didn't show their state changes clearly, and a simple action took two or three steps; I adjusted the text display for clarity, strengthened the cues for each state, and made the interactions one step, with hotkeys in place of the old tips. And the script cards' normal, hover and error states were redrawn so that they could be told apart.</p>
+    </div>
+    <div class="figs">
+      <Figure set="stack"
+        items={[
+          { src: testMenus, evidence: 'Shipped', name: 'Guides and menus before and after, the hotkeys in place of the pronunciation tip', alt: 'Before: a guide reading Tips to improve pronunciations, a script menu of switch avatar, duplicate script and delete script, and a timeline element menu of switch avatar, download and delete. After: hotkey guides, Enter to add a new script and Shift+Enter for a new line; a script menu of GPT script writer, translate, duplicate and delete; a timeline element menu of apply to all avatars, animation and delete' },
+          { src: testCards, evidence: 'Shipped', name: 'Script cards before and after, the error card tinted in the lower row', alt: 'Before: three script cards, normal, hover and error, nearly identical, the error marked only by a small icon. After: the normal card, the hover card with a bar at its edge and its text field outlined, and the error card tinted with a message reading Please type your script text' },
+        ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-final">
+    <div class="head">
+      <h2 id="c-final">Final design</h2>
+    </div>
+    <div class="body">
+      <p>After the test the design was refined for clarity, with stronger visual cues for the different states and the text set for readability. The final editor has hotkeys for the script (16.3% more efficient in testing), an error state with more notification, timeline components that drag, drop and stay synchronised across panels, voice settings with a <span class="nb">script-by-script</span> AI writing <span class="nb">plug-in</span> connected to the earlier designs, and three modes: normal, extended for a lengthy script, and expanded, where every element is viewable, selectable and editable from the timeline.</p>
+      <blockquote>
+        <p>"… It's getting so much more professional… This is gonna be a total <span class="nb">game-changer</span> for us! Now we can create <span class="nb">high-quality</span> videos way more efficiently without spending a fortune on hiring professional video makers."</p>
+        <span class="meta">One of our users, who runs a small business in the housing market</span>
+      </blockquote>
+    </div>
+    <div class="figs">
+      <Figure src={finalDesign} evidence="Shipped"
+        name="The editor in normal mode and in extended mode, a long script's card grown down the sidebar in the second; the improvements beneath"
+        alt="Two views of the shipped editor, normal mode with the voice setting open and extended mode with a long script; beneath, the improvements named: hotkeys, improved 16.3% efficiency in testing; error state, improved with more notifications; timeline component improvements, drag-and-drop with synchronised actions; voice settings with a script-by-script AI writing plug-in; and the three modes, normal, extended for a lengthy script, and expanded, every element viewable, selectable and editable from the timeline" />
+    </div>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-5">
+    <h2 id="p-5"><span class="n">Part 5</span>The editor: hand-off</h2>
+    <p class="sign">What went to engineering, and what I took from the project.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-dev">
+    <div class="head">
+      <h2 id="c-dev">Design for development</h2>
+    </div>
+    <div class="body">
+      <p>During development we worked on the interaction details of edge cases and workflows in detailed discussions with the product managers and engineers. Resources were limited, so each update to the design had to be incremental, manageable and verifiable, which kept the iterations moving and the cost of development down. The two flows, text to script and the timeline editor, went over drawn state by state, each task with its screens and the note that explains them.</p>
+    </div>
+    <div class="figs">
+      <Figure src={handoff} evidence="Supporting state"
+        name="Text to script and the timeline editor, every task's screens down a dark spine with the state each ends in"
+        alt="Two columns of small screens: Text to Script on the left, its tasks down a dark spine, write with pause, pause behaviour, voice setting, upload and record audio, play, and delete, each with its screens and green state tags; Timeline Editor on the right, its tasks likewise, with the screens for selecting, dragging and editing elements" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-reflection">
+    <div class="head">
+      <h2 id="c-reflection">Reflection</h2>
+    </div>
+    <div class="body">
+      <p>The project was intense. Besides the interface work there were research, evaluation and testing sessions with colleagues and with external clients, and with that many moving parts I learned how to balance efficiency against process in a <span class="nb">fast-paced</span> environment. The play bar's reversal, told above as the third decision, was the case in point: an idea set aside for simplicity proved essential once people used the editor, and staying flexible mattered more than holding to my earlier call.</p>
+      <p>Two lessons stayed. Move fast when the perfect answer isn't known: in that environment, striving for flawless design causes delays and misses opportunities, so we iterated quickly, learned from each version, and kept improving. And take in as much feedback as possible: as the only designer, regular feedback and evaluation from the team were how the design kept improving, and the outcomes I'm proudest of came through collaboration.</p>
+    </div>
+    <div class="figs">
+      <Figure src={reflection} evidence="Research"
+        name="The two lessons as I wrote them at the time"
+        alt="Two numbered paragraphs: 01, Move super fast when not sure about the perfect answer, on rapid iteration in a fast-paced environment; 02, Maximize feedback reception, on open communication, regular feedback and evaluation as a solo designer, and collaboration" />
+    </div>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-6">
+    <h2 id="p-6"><span class="n">Part 6</span>The iOS MVP</h2>
+    <p class="sign">The design goal was to translate the desktop avatar recording feature into an MVP for an iOS app. Three weeks, from the first concept to a <span class="nb">mid-fidelity</span> prototype, and then a decision not to build it.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mcontext">
+    <div class="head">
+      <h2 id="c-mcontext">Context</h2>
+    </div>
+    <div class="body">
+      <p>Heygen's growth relied on its avatar service being easy to use and high in quality. Avatar generation was <span class="nb">desktop-only</span>, and many users had poor desktop cameras. To improve avatar quality and attract more customers, we proposed a mobile version that would use the cameras on smartphones; it could speed up customer growth and open new business. The desktop workflow was already a structured one, five steps from intro to submit, and the aim was to keep that structure on the phone and use what a phone can do.</p>
+      <p>It was the last project of my internship. I took it as designer, researcher and product manager, working closely with the product team from the initial concept to <span class="nb">mid-fidelity</span> prototypes in three weeks.</p>
+    </div>
+    <div class="figs">
+      <Figure src={mobileBrief} evidence="Shipped"
+        name="The desktop flow at step 3, upload, and the phone still a question; the five desktop steps beneath"
+        alt="A laptop showing the desktop Create Instant Avatar flow at step 3, upload, with a footage preview and a checklist; a line to a phone outline holding a question mark; beneath, the five desktop steps as screenshots: intro, instruction, upload, consent, submit" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mresearch">
+    <div class="head">
+      <h2 id="c-mresearch">Research</h2>
+    </div>
+    <div class="body">
+      <p>Customers might expect more from a phone than from the desktop, so I ran a series of competitive analyses to understand their needs and preferences for a mobile version, and the market of <span class="nb">AI-powered</span> video apps. <span class="nb">D-ID</span> and VEED Captions were the direct comparisons, each strong in information architecture and UX: <span class="nb">D-ID</span> <span class="nb">desktop-only</span> but simple enough to adapt to mobile, VEED Captions an iOS app with a layout of its own. Lensa.ai, Spirit.me and Loom.ai were indirect: Lensa's flexible uploading, Spirit.me's workflow structure, Loom.ai's straightforward 3D avatar creation. CapCut, under ByteDance, was the potential competitor, with robust editing on mobile and AI features worth studying.</p>
+      <p>The background for the MVP was written down at the same time. It didn't need to resolve the uncertainties around new video features; the aim was <span class="nb">low-cost</span>, preliminary validation of the hypothesis, because running every new feature through the full cycle of PRD, design, development and testing was too costly and too risky at that stage, as onboarding and captioning had shown. Its advantage: as the pace of product iteration slowed, there was room to bring a systematic user research process into the R&amp;D workflow.</p>
+    </div>
+    <div class="figs">
+      <Figure src={mobileCompetitors} evidence="Research"
+        name="The six apps, a column per app in the table at the top right; beneath it, the background note that kept the MVP small"
+        alt="Left, three findings: D-ID and VEED Caption as direct competitors, Lensa.ai, Spirit.me and Loom.ai as indirect, CapCut as potential. Top right, a table of six apps with a screenshot and notes each. Bottom right, a background note: the issue, why it matters, and the advantage of a low-cost MVP" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mgoal">
+    <div class="head">
+      <h2 id="c-mgoal">Goal</h2>
+    </div>
+    <div class="body">
+      <p>I began with an analysis of the customer base, which grounded the scope discussions with the CPO and the design and product teams. In those meetings we brainstormed solutions and named specific user needs, then organised and prioritised them with the Jobs to Be Done framework, so that the work lined up with what users were trying to accomplish. The main job: help users use Heygen's unique features on a phone, in their own scenarios, while driving Heygen's expansion and revenue. Under it, three jobs, demand for the unique features, usage shifting to mobile, and the expansion of business and services, each split into <span class="nb">user-centric</span> and <span class="nb">business-centric</span> <span class="nb">sub-jobs</span>.</p>
+    </div>
+    <div class="figs">
+      <Figure src={jtbd} evidence="Research"
+        name="The jobs to be done, read top to bottom: the main job, the three jobs, the sub-jobs"
+        alt="A main job to be done at the top, three jobs beneath it, demand for unique features, shifting usage scenarios with mobile, expansion of business and services, each with a task and a purpose, and beneath those the user-centric sub-jobs, instant avatar, convenient use on mobile, lab usage, adaptation to mobile usage, and the business-centric sub-jobs, market positioning and user retention, revenue streams and a broadened user base" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mscope">
+    <div class="head">
+      <h2 id="c-mscope">Scope</h2>
+    </div>
+    <div class="body">
+      <p>To handle what was coming, we organised the goals into two horizons, which clarified the priorities. The <span class="nb">two-month</span> scope: <span class="nb">sign-up</span> and <span class="nb">log-in</span>; asset creation, an instant avatar recorded with the phone's front or rear camera or made from <span class="nb">pre-selected</span> videos, a photo avatar from existing photos or from the camera, and consent for all future recordings; asset management on the phone; monetisation checkpoints; and desktop and mobile in sync, with notifications and promotion on the desktop. The <span class="nb">one-year</span> scope: migrate the Lab feature to avatars, an avatar creator community, download and export, sharing to social platforms, short videos from avatars, teleprompter-style uses, video translation, and short AI videos made on the phone. So the MVP had to be simple and intuitive, lean, and flexible in its information architecture and its interactions.</p>
+    </div>
+    <div class="figs">
+      <Figure src={scope} evidence="Concept"
+        name="The two-month scope as a tree at the left, the one-year scope as a column at the right"
+        alt="Left, the two-month scope as a tree: sign up and log in, asset creation with its five branches, asset management, monetization, and desktop plus mobile with their branches. Right, the one-year scope as a column of eight items, from migrating the Lab feature to avatars to creating AI short videos on the phone" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mprototype">
+    <div class="head">
+      <h2 id="c-mprototype">Prototyping</h2>
+    </div>
+    <div class="body">
+      <p>The MVP built on existing workflows, and moving them from the desktop to a phone was detailed work; every function had to be adapted to how people use a phone. Focusing on the three crucial functions, management, recording and consent, I made an <span class="nb">84-page</span> <span class="nb">mid-fidelity</span> prototype in seven days: <span class="nb">sign-in</span>, the avatar list, the five recording steps with good and bad footage examples, a teleprompter with a choice of topics for a <span class="nb">thirty-second</span> freestyle, the footage review checklist, the consent script, and the processing screen.</p>
+    </div>
+    <div class="figs">
+      <Figure src={mobilePrototype} evidence="Prototype"
+        name="Fifteen of the eighty-four pages in three rows: sign-in and the list, the steps and the teleprompter, consent and the processing screen"
+        alt="Three rows of five iPhone screens: loading and welcome, sign-in, the instant avatars list empty and with its add menu; step 1, how it works, step 2, good and bad footage examples, the topic sheet, the teleprompter camera view, and a preview of the script; the recording with a Fantastic start message, step 3, consent with previous cases, the footage review checklist, the consent script, and step 5, your avatar is being processed" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mmetrics">
+    <div class="head">
+      <h2 id="c-mmetrics">Metrics</h2>
+    </div>
+    <div class="body">
+      <p>After the prototype I drew up an initial set of metrics for the PMs, on the funnel, to track engagement across the whole journey through the app: awareness (downloads, visits to <span class="nb">sign-up</span> and <span class="nb">log-in</span>), interest (attempts to create an instant avatar, use of <span class="nb">pre-selected</span> videos and existing photos), decision (conversion at each step, and the share who give consent through DocuSign), action (avatars renamed or refined, time spent in asset management, premium checkpoints reached and purchases made), retention (notifications sent and clicked through, users guided to the related object, sync updates received), and feedback (<span class="nb">drop-off</span> at <span class="nb">sign-up</span>, <span class="nb">log-in</span> and avatar creation, and satisfaction after refining an avatar and after a sync). They were meant to build a progressive picture to drive the iterations that followed.</p>
+    </div>
+    <div class="figs">
+      <Figure src={metrics} evidence="Research"
+        name="The six stages of the funnel, each branching to its metrics"
+        alt="Six stages, awareness, interest, retention, decision, action and feedback, each branching to its metrics: download number, visits to the sign-up and login pages; attempts to create an instant avatar; notifications sent and their click-through rate; conversion rates from visit to sign-up, login and avatar creation, and consent via DocuSign; avatars renamed, engagement time, premium checkpoints; drop-off rates and satisfaction rates" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-afterstory">
+    <div class="head">
+      <h2 id="c-afterstory">Afterstory</h2>
+    </div>
+    <div class="body">
+      <p>The prototype was shared with a number of users for preliminary validation, and the feedback was positive. Set against Heygen's other, faster-growing services, though, the project showed less <span class="nb">product-market</span> fit and less potential growth impact, and it was postponed indefinitely. The decision taught me to separate a workable experience from a product worth scaling.</p>
+    </div>
+  </section>
+
+  <section class="col sec part" aria-labelledby="p-7">
+    <h2 id="p-7"><span class="n">Part 7</span>What the internship was</h2>
+    <p class="sign">It was meant to be an internship. I worked as a junior designer with a mentor.</p>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-lessons">
+    <div class="head">
+      <h2 id="c-lessons">Lessons</h2>
+    </div>
+    <div class="body">
+      <p>Because the pace of my work was fast, the role became a hybrid of UX design and product management, and among the moving parts I learned to adapt to the many sides of the work. In a startup moving that quickly I worked in an agile way, with rapid prototyping and clear communication with the team, so that we could gather user feedback quickly and make the iterations it called for.</p>
+      <p>Through it I kept a <span class="nb">user-centred</span> approach, with the product's usability and relevance first. In a setting like that a designer has to deliver quickly while continuously adapting and learning, and the regular feedback and revision improved the product and, through it, my own work.</p>
+    </div>
+  </section>
+
+  <Fragment slot="close">
+    <p class="stance">The best decision in this project is the one I reversed.</p>
+    <p>I'd argued from the layout, where one control fewer looked like a gain. Watching people use the editor was the better argument, and I should have started there.</p>
+  </Fragment>
+</Case>

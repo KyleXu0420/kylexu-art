@@ -1,0 +1,33 @@
+/* eaton.css — the Eaton case's own rules, over case.css. The page is one run of numbered chapters
+   in two registers: the decisions, then the record. Four things case.css doesn't have: the rule
+   that turns the page from the decisions to the record, a list of named states inside a chapter's
+   words, the inset for a titled sheet, and three phones across the words' column. */
+
+/* the turn to the record: the same chapter row (label in the grey at column 1, name beneath, words
+   at 6), with a hairline across the row above it, as the snapshot's rows are ruled */
+.part { padding-top: var(--s-1); border-top: 1px solid var(--line); }
+
+/* a chapter's list of named states, in the words' column: the name in the reading ink at the
+   title weight, its line after it, each entry 8px from the last */
+.chap .body .terms { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.chap .body .terms li { font-size: 17px; line-height: 1.55; color: var(--fg); }
+.chap .body .terms b { font-weight: 500; }
+
+/* a titled sheet: a composite that carries its own labels on a transparent ground sits inset on
+   the frame by the row's inner unit, so the frame's corners never cut into its labels or its
+   windows' edges; a screenshot fills the frame as everywhere else */
+.sheet { grid-column: 1 / -1; }
+.sheet .frame { padding: var(--s-1); }
+
+/* three phones across the words' column, at the four-across set's sizes; the three are one ratio,
+   so they align at the top and their captions may run to different lengths beneath */
+.phones { grid-column: 6 / -1; }
+.phones .fig.four .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+
+@media (max-width: 1023px) {
+  .phones { grid-column: 1 / -1; }
+}
+@media (max-width: 767px) {
+  .sheet .frame { padding: 12px; }   /* still past the corner's reach, at a phone's width */
+  .phones .fig.four .frames { column-gap: 12px; }
+}

@@ -1,0 +1,36 @@
+---
+// A case page: Sheet, with the case's hero (eyebrow, claim, deck, the hero figure), the page's
+// chapters, then the page's close (`close` slot: the line it ends on at the site's stance size
+// and the paragraph that earns it). The page ends there. The way to the other case is a row in
+// the footer, above the contact rule: its title at the title size and its one-line claim (Sheet
+// passes `next` down to it). The composition is case.css.
+// Pass a `signoff` slot only when the page has something to say in the footer as well.
+import Sheet from './Sheet.astro';
+import '../styles/home.css';
+import '../styles/case.css';
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage?: string;
+  eyebrow: string;
+  deck?: string;
+  next: { title: string; to: string; line?: string };
+  caseId: string;          // heygen | eaton | … — the hue the page carries
+}
+const { title, description, ogImage, eyebrow, deck, next, caseId } = Astro.props;
+---
+<Sheet {title} {description} {ogImage} {next} {caseId}>
+  <section class="col hero" aria-labelledby="h1">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="display" id="h1"><slot name="claim" /></h1>
+    {deck && <p class="lead deck">{deck}</p>}
+    <slot name="hero" />
+  </section>
+
+  <slot />
+
+  {Astro.slots.has('close') && <section class="col sec close" aria-label="In one line"><slot name="close" /></section>}
+
+  <slot name="signoff" slot="signoff" />
+</Sheet>

@@ -1,0 +1,55 @@
+---
+// A case figure: one frame, or a set of frames under one caption. Every frame is the image in a
+// 24px frame at its own ratio (never cropped by the frame, never stretched), served as avif + webp
+// at the widths it is shown at. One system for the words around a frame: a single caption line
+// beneath it — the evidence label first, then what the frame is and the one thing to look at —
+// set in the page's type, never in the bitmap. Nothing above the frame. A set lays out as strips stacked
+// (`stack`), four across at one height (`four`), or two across on the page's own two edges
+// (`lead`: the smaller frame on the label column beside the larger on the words' column to the
+// row's edge — the option that lost beside the one that shipped, or a detail beside the view it
+// belongs to); an item may be `dim` (the options that lost beside the one that shipped), and an
+// item in a set may carry its own caption, under its own frame, when the two frames each have a
+// different thing to look at. A figure sits on the full row, or, `narrow`, on the words' column
+// from 6 to the row's edge, so a page has two right edges: the words' measure and the row's.
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+export type Evidence = 'Shipped' | 'Prototype' | 'Concept' | 'Research' | 'Supporting state';
+export interface Item { src: ImageMetadata; alt: string; evidence: Evidence; name?: string; note?: string; dim?: boolean; caption?: string }
+interface Props {
+  src?: ImageMetadata;
+  alt?: string;
+  evidence?: Evidence;
+  name?: string;
+  note?: string;
+  items?: Item[];
+  set?: 'stack' | 'four' | 'lead';
+  narrow?: boolean;
+  caption?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { src, alt = '', evidence, name, note, items, set = 'stack', narrow = false, caption, loading = 'lazy' } = Astro.props;
+if (!items && !evidence) throw new Error(`Figure "${name ?? caption ?? alt}": no evidence label`);
+
+const full = { widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px' };
+const half = { widths: [480, 720, 1100, 1440], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 87vw, (max-width: 1440px) 50.5vw, 718px' };
+const fifth = { widths: [480, 720, 1100], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 87vw, (max-width: 1440px) 35.5vw, 506px' };
+const quarter = { widths: [300, 480, 640], sizes: '(max-width: 767px) 48vw, (max-width: 1440px) 21vw, 294px' };
+// the widths a frame is shown at: a `lead` set's first frame sits on the label column (1–5), its
+// second on the words' column to the row's edge (6–12), the same width as a `narrow` figure
+const specFor = (i: number) => items && set === 'four' ? quarter : items && set === 'lead' ? (i === 0 ? fifth : half) : narrow ? half : full;
+// never ask for a width the source does not have; the source's own width is always the last
+const widthsFor = (im: ImageMetadata, i: number) => [...specFor(i).widths.filter((w) => w < im.width), im.width];
+const single = items ? [] : [{ src: src as ImageMetadata, alt, evidence: evidence as Evidence, name, note }];
+---
+<figure class:list={['fig', { lead: items && set === 'lead', four: items && set === 'four', narrow }]}>
+  <div class="frames">
+    {(items ?? single).map((it, i) => (
+      <div class:list={['item', { dim: it.dim }]}>
+        <div class="frame"><Picture src={it.src} formats={['avif', 'webp']} widths={widthsFor(it.src, i)} sizes={specFor(i).sizes} alt={it.alt} loading={loading} decoding="async" /></div>
+        <span class="meta under"><b>{it.evidence}</b>{(it.name || it.note || it.caption) && ' · '}{it.name}{it.name && it.note && ' — '}{it.note}{(it.name || it.note) && it.caption && '. '}{it.caption}</span>
+      </div>
+    ))}
+  </div>
+  {caption && <figcaption class="meta">{caption}</figcaption>}
+</figure>

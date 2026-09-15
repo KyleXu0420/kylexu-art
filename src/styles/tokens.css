@@ -1,33 +1,44 @@
 /* tokens.css — two layers. Components read roles, never primitives.
    Layer 1 (@primitives) is the only place a colour literal may appear; tools/check-site.py
    enforces that, and that every colour role authored in light is authored again in dark.
-   The light palette is the site's own (the Webflow build: whitesmoke ground, the grey ramp,
-   --black); the dark palette is its counterpart on the same ink. The index page shows the
-   first lines of the two role blocks below, read from this file at build time. */
+
+   The colour logic (2026-09-15): the chrome is neutral — a warm white ground, one ink — and the
+   colour comes from the work. Each case carries one hue taken from its own card, and that hue is
+   the page's accent only where the case is on the page: its row on the index, its case page
+   (eyebrow, links, the decision numbers). The index's skeleton never carries a hue. */
 
 /* @primitives */
 :root {
   --white: #FFFFFF;
-  --grey-5: #F5F5F5;   --grey-15: #ECEDF1;  --grey-20: #CFD1D7;  --grey-40: #9FA0A3;
-  --grey-60: #828283;  --grey-70: #66676B;  --grey-80: #4D4E50;
-  --ink: #131417;      --ink-950: #0E0F12;  --ink-700: #2C2D33;  --ink-600: #3B3C43;
+  --warm-50: #F8F6F2;   --warm-100: #F1EEE8;  --warm-200: #E7E3DC;
+  --ink-900: #1B1917;   --ink-700: #3A3733;   --ink-500: #5C5955;   --ink-400: #8B8781;
+  --graphite-950: #141311; --graphite-900: #1D1B19; --graphite-800: #2C2A26;
+  --bone-100: #EDEAE4;  --bone-300: #A8A49C;  --bone-500: #7F7B74;
+  /* the cases' own hues, from their cards; a 600 for the light ground, a 300/400 for the dark */
+  --heygen-600: #994B4B;  --heygen-400: #D08585;
+  --curio-600: #2C2245;   --curio-300: #B9A9E6;
+  --eaton-600: #052941;   --eaton-300: #7FB0D9;
+  --echo-600: #6E5A0F;    --echo-300: #C9B04D;
+  --dify-600: #1F55F5;    --dify-300: #7C9CFF;
 }
 /* @end-primitives */
 
 /* @roles — light */
 :root {
-  --bg: var(--grey-5);          /* the page */
-  --fg: var(--ink);             /* reading text */
-  --fg-2: var(--grey-80);       /* secondary text */
-  --fg-3: var(--grey-70);       /* meta, captions */
-  --line: var(--grey-20);       /* hairlines */
-  --fill: var(--ink);           /* the filled pill */
+  --bg: var(--warm-50);         /* the page */
+  --fg: var(--ink-900);         /* reading text */
+  --fg-2: var(--ink-500);       /* secondary text */
+  --fg-3: var(--ink-400);       /* meta, captions */
+  --line: var(--warm-200);      /* hairlines */
+  --fill: var(--ink-900);       /* the filled pill */
   --fill-fg: var(--white);      /* text on the fill */
-  --code-bg: var(--ink);        /* the code window */
-  --code-fg: var(--grey-5);     /* a token's name */
-  --code-muted: var(--grey-40); /* the rest of the window */
-  --focus: var(--ink);
-  --selection: var(--grey-15);
+  --code-bg: var(--ink-900);    /* the code window */
+  --code-fg: var(--warm-50);    /* a token's name */
+  --code-muted: var(--bone-300);/* the rest of the window */
+  --focus: var(--ink-900);
+  --selection: var(--warm-100);
+  --sheet: var(--white);        /* the ground under a transparent sheet or screenshot: light in both themes */
+  --accent: var(--ink-700);     /* the case hue; ink where nothing on the page is a case */
 
   --sans: "Manrope", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
@@ -44,39 +55,57 @@
   --t: 320ms var(--ease);
   color-scheme: light;
 }
+/* each case's hue, where the case is on the page */
+[data-case="heygen"] { --accent: var(--heygen-600); }
+[data-case="curio"]  { --accent: var(--curio-600); }
+[data-case="eaton"]  { --accent: var(--eaton-600); }
+[data-case="echo"]   { --accent: var(--echo-600); }
+[data-case="dify"]   { --accent: var(--dify-600); }
 
 /* @roles — dark */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: var(--ink);             /* the page */
-    --fg: var(--grey-5);          /* reading text */
-    --fg-2: var(--grey-20);       /* secondary text */
-    --fg-3: var(--grey-40);       /* meta, captions */
-    --line: var(--ink-600);       /* hairlines */
-    --fill: var(--grey-5);        /* the filled pill */
-    --fill-fg: var(--ink);        /* text on the fill */
-    --code-bg: var(--ink-950);    /* the code window */
-    --code-fg: var(--grey-15);    /* a token's name */
-    --code-muted: var(--grey-60); /* the rest of the window */
-    --focus: var(--grey-5);
-    --selection: var(--ink-700);
+    --bg: var(--graphite-950);
+    --fg: var(--bone-100);
+    --fg-2: var(--bone-300);
+    --fg-3: var(--bone-500);
+    --line: var(--graphite-800);
+    --fill: var(--bone-100);
+    --fill-fg: var(--graphite-950);
+    --code-bg: var(--graphite-900);
+    --code-fg: var(--bone-100);
+    --code-muted: var(--bone-500);
+    --focus: var(--bone-100);
+    --selection: var(--graphite-900); --sheet: var(--warm-50);
+    --accent: var(--bone-300);
     color-scheme: dark;
   }
+  :root:not([data-theme="light"]) [data-case="heygen"] { --accent: var(--heygen-400); }
+  :root:not([data-theme="light"]) [data-case="curio"]  { --accent: var(--curio-300); }
+  :root:not([data-theme="light"]) [data-case="eaton"]  { --accent: var(--eaton-300); }
+  :root:not([data-theme="light"]) [data-case="echo"]   { --accent: var(--echo-300); }
+  :root:not([data-theme="light"]) [data-case="dify"]   { --accent: var(--dify-300); }
 }
 :root[data-theme="dark"] {
-  --bg: var(--ink);
-  --fg: var(--grey-5);
-  --fg-2: var(--grey-20);
-  --fg-3: var(--grey-40);
-  --line: var(--ink-600);
-  --fill: var(--grey-5);
-  --fill-fg: var(--ink);
-  --code-bg: var(--ink-950);
-  --code-fg: var(--grey-15);
-  --code-muted: var(--grey-60);
-  --focus: var(--grey-5);
-  --selection: var(--ink-700);
+  --bg: var(--graphite-950);
+  --fg: var(--bone-100);
+  --fg-2: var(--bone-300);
+  --fg-3: var(--bone-500);
+  --line: var(--graphite-800);
+  --fill: var(--bone-100);
+  --fill-fg: var(--graphite-950);
+  --code-bg: var(--graphite-900);
+  --code-fg: var(--bone-100);
+  --code-muted: var(--bone-500);
+  --focus: var(--bone-100);
+  --selection: var(--graphite-900); --sheet: var(--warm-50);
+  --accent: var(--bone-300);
   color-scheme: dark;
 }
+:root[data-theme="dark"] [data-case="heygen"] { --accent: var(--heygen-400); }
+:root[data-theme="dark"] [data-case="curio"]  { --accent: var(--curio-300); }
+:root[data-theme="dark"] [data-case="eaton"]  { --accent: var(--eaton-300); }
+:root[data-theme="dark"] [data-case="echo"]   { --accent: var(--echo-300); }
+:root[data-theme="dark"] [data-case="dify"]   { --accent: var(--dify-300); }
 
 @media (prefers-reduced-motion: reduce) { :root { --t: 0ms; } }
