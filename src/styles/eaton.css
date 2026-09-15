@@ -1,0 +1,38 @@
+/* eaton.css — the Eaton case's own rules, over case.css. The page has two registers: the
+   decisions first (case.css alone), then the record — the same chapters, the same row — with
+   three things case.css doesn't have: a part opener that turns the page from the decisions to
+   the record, a list of named states inside a chapter's words, and two more frame layouts
+   (two across at the row's half for the composites' own pairs, three phones across the words'
+   column). */
+
+/* the part opener: a hairline across the row, as the snapshot's rows are ruled, then the label at
+   column 1 in the label grey and the signpost at 6–10 — the decisions' own row */
+.part { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; padding-top: var(--s-1); border-top: 1px solid var(--line); }
+.part .meta { grid-column: 1 / span 5; padding-top: 3px; }
+.part .sign { grid-column: 6 / span 5; font-size: 17px; line-height: 1.55; color: var(--fg-2); }
+
+/* a chapter's list of named states, in the words' column: the name in the reading ink at the
+   title weight, its line after it, each entry 8px from the last */
+.chap .body .terms { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.chap .body .terms li { font-size: 17px; line-height: 1.55; color: var(--fg); }
+.chap .body .terms b { font-weight: 500; }
+
+/* two frames across the row at the row's half: the composites' own pairs (the four states of a
+   write, the editor's four workflows, the monitor's six), a caption under each */
+.two { grid-column: 1 / -1; }
+.two .fig .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+/* three phones across the words' column, at the four-across set's sizes */
+.phones { grid-column: 6 / -1; }
+.phones .fig.four .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+@media (max-width: 1023px) {
+  .part { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .part .meta, .part .sign { grid-column: 1; }
+  .part .sign { max-width: 612px; }   /* the words keep their measure once the row is one column */
+  .phones { grid-column: 1 / -1; }
+}
+@media (max-width: 767px) {
+  .two .fig .frames { grid-template-columns: minmax(0, 1fr); }   /* one frame per row on a phone */
+  .phones .fig.four .frames { column-gap: 12px; }
+}
