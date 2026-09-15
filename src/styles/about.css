@@ -1,48 +1,74 @@
 /* about.css — the About page reuses the index's rows (.tl) and its card treatment. Its own
-   rules: the photo frames (the cards' 24px radius and cover crop), the photographs set on the
-   row's twelve columns so a pair splits on the text's left edge (identity in 1–5, the reading
-   voice in 6–12, as everywhere on the site), and the hairlines held to one — above the chapters.
-   The facts sit under the intro as one block on the same columns; the chapters are parted by
-   air and their photographs; the page closes in the footer's sign-off, as the index does. */
+   rules: the photo frames (the cards' 24px radius and cover crop) at one ratio, 3:2, in the cards'
+   two widths; the portrait as the hero's figure, cropped half-length; the deck under the claim at
+   the title size; the facts on the row's columns, parted by --s-1; the chapters, unruled, each the
+   index's row — the years at column 1 at the title size in the label grey, the words on the index's
+   reading column from 6, the chapter's pictures beneath the words as the index's rows carry their
+   figures; and the links the story makes to the work. No hairline in the body. */
 
-.photo { border-radius: 24px; overflow: hidden; background: var(--selection); }
-.photo picture, .photo img { display: block; width: 100%; height: clamp(220px, 25vw, 360px); object-fit: cover; }
-.photo.tall picture, .photo.tall img { height: clamp(280px, 34vw, 490px); }
-.photo.single picture, .photo.single img { height: auto; aspect-ratio: 3 / 2; }
+/* the hero: the claim, its deck (the site's lede: --s-2 below, two thirds of the measure) at the
+   title size, then the portrait as the hero's figure */
+.hero .deck { font-size: 20px; line-height: 1.4; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
+.hero .portrait { margin-top: var(--s-2); }
 
-/* a chapter's photographs: the author under the date (columns 1–5), the place under the words (6–12);
-   a single photograph sits under the words alone, at its own proportion */
-.photos { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--gutter); margin-top: var(--s-2); }
-.photos .photo:first-child:not(:last-child) { grid-column: 1 / span 5; }
-.photos .photo + .photo, .photos .single { grid-column: 6 / -1; }
+/* the frames: one ratio. The portrait is drawn larger than its frame and offset so the frame holds
+   the figure half-length on its left third — the helmet in, the hand out, the shelf grid and the
+   "HANGZHOU 徐" tag behind. The square workshop snapshot keeps its head, the square night market
+   its cooks; the street is cropped from the right so its soft left edge goes */
+.photo { border-radius: 24px; overflow: hidden; background: var(--selection); aspect-ratio: 3 / 2; }
+.photo picture { display: block; height: 100%; }
+.photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.photo.portrait img { width: 163.5%; max-width: none; height: auto; margin: -12.45% 0 0 -21.69%; }
+.photo.up img { object-position: 50% 8%; }
+.photo.mid img { object-position: 50% 35%; }
+.photo.right img { object-position: 80% 50%; }
 
-/* the intro: one row, unruled — the portrait above it does the dividing; the facts follow as a
-   block, label at column 1, value at column 6, each entry unbreakable so a list wraps between
+/* the facts: label at column 1, value from column 6 to the edge where the portrait ends, rows
+   parted by --s-1 measured from the value; each entry unbreakable so a list wraps between
    entries and never inside one */
-.tl.intro li, .tl.intro li:last-child { border: 0; padding: 0; }
-.facts { margin: var(--s-2) 0 0; display: grid; gap: 12px; }
+.facts { margin: 0; display: grid; gap: var(--s-1); }
 .facts > div { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
 .facts dt { grid-column: 1 / span 2; padding-top: 1px; }
-.facts dd { grid-column: 6 / span 5; margin: 0; color: var(--fg-2); }
+.facts dd { grid-column: 6 / -1; margin: 0; color: var(--fg-2); }
 
-/* the chapters: ruled once at the top, then parted by air and their photographs */
-.tl.story { border-top: 1px solid var(--line); padding-top: var(--s-1); }
-.tl.story li, .tl.story li:last-child { border: 0; padding: 0; }
+/* the chapters: unruled, parted by air. Each is the index's row — the years at column 1 at the
+   title size in the label grey, on the paragraph's first baseline; the words in the reading voice
+   on the index's own column (6 / span 5, about 65 characters a line); the pictures beneath on the
+   cards' grid, a pair of halves or one single from the words' edge to the row's. A chapter with
+   two paragraphs carries a pair after each, every step --s-2 */
+.tl.story li, .tl.story li:last-child { border: 0; padding: 0; align-items: baseline; }
 .tl.story li + li { margin-top: var(--s-3); }
-.story .what p { max-width: 64ch; }
+.story .when { grid-column: 1 / span 5; padding-top: 0; font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--fg-3); }
+.story .what { gap: 0; }
+.story .what p { font-size: 17px; line-height: 1.55; color: var(--fg); }
+.story .what p + p { margin-top: 12px; }
+.story .pics { grid-column: 1 / -1; align-self: start; margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--gutter); }
+.story .pics > :first-child { grid-column: 1 / span 6; }
+.story .pics > :last-child { grid-column: 7 / span 6; }
+.story .pics > :only-child { grid-column: 6 / -1; }
+.story .pics + .what { margin-top: var(--s-2); }
+
+/* a link inside the prose: the site's link anatomy with the underline showing, in the hairline
+   grey until hovered */
+.ref { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--line); transition: text-decoration-color var(--t); }
+.ref:hover { text-decoration-color: currentColor; }
 
 @media (max-width: 1023px) {
-  .photos { grid-column: 2; grid-template-columns: 1fr 1fr; }
-  .photos .photo:first-child:not(:last-child), .photos .photo + .photo { grid-column: auto; }
-  .photos .single { grid-column: 1 / -1; }
+  .tl.story li { grid-template-columns: minmax(0, 1fr); }
+  .story .when, .story .what, .story .pics { grid-column: 1; }
+  .story .what { max-width: 612px; }   /* the words keep their measure once the row is one column */
+  .story .pics { margin-top: calc(var(--s-2) - 8px); }   /* the row's 8px gap makes it --s-2 */
+  .story .pics + .what { margin-top: calc(var(--s-2) - 8px); }
+  .story .pics > :only-child { grid-column: 1 / -1; }
   .facts > div { grid-template-columns: 136px minmax(0, 1fr); }
   .facts dt { grid-column: 1; }
   .facts dd { grid-column: 2; }
 }
 @media (max-width: 767px) {
-  .photos { grid-column: 1; grid-template-columns: 1fr; }
-  .photo picture, .photo img, .photo.tall picture, .photo.tall img { height: 62vw; }
-  .photo.single picture, .photo.single img { height: auto; }
+  .claim .nb { white-space: normal; }   /* on a phone the claim balances on its own */
+  .story .pics { margin-top: calc(var(--s-2) - 6px); }   /* the row's 6px gap */
+  .story .pics + .what { margin-top: calc(var(--s-2) - 6px); }
+  .story .pics > :first-child, .story .pics > :last-child, .story .pics > :only-child { grid-column: 1 / -1; }
   .facts { gap: 16px; }
   .facts > div { grid-template-columns: 1fr; row-gap: 4px; }
   .facts dt, .facts dd { grid-column: 1; }
