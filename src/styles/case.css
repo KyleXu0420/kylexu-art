@@ -7,7 +7,8 @@
    the row's edge, as the About page's singles. The page has two right edges: the words' measure
    and the row's. The figures change register from chapter to chapter — a strip under the words,
    four small frames across the row, two strips stacked on the row, three bands under the words,
-   two frames across the row —
+   one window on the row, the option that lost small on the label column beside the one that
+   shipped on the words' column to the edge —
    so the weight of a chapter is its figure's size and the words around it, never a label; a
    chapter whose evidence is the hero above it carries no figure at all.
    Every frame is a 24px frame at its own ratio (a screenshot is never stretched) with a label line
@@ -45,14 +46,18 @@
 .fig.narrow { grid-column: 6 / -1; }
 .frame { border-radius: 24px; overflow: hidden; background: var(--selection); }
 .frame picture, .frame img { display: block; width: 100%; height: auto; }
-.fig figcaption, .fig .item .under { margin-top: 4px; max-width: 72ch; }   /* one caption under the figure, or one under each frame of a pair */
+.fig figcaption, .fig .item .under { margin-top: 4px; max-width: 72ch; }   /* one caption under the figure, or one under each frame of a set */
 .fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the name and the evidence label; the label wraps as one word */
 
-/* a set of frames: strips stacked, two across at one width (the same region of two screens side
-   by side), or four across at one height. A dimmed item is an option that lost, beside the one
-   that shipped at full colour */
+/* a set of frames: strips stacked, four across at one height, or two across on the page's own two
+   edges (`lead`: the first frame on the label column, 1–5, the second on the words' column to the
+   row's edge, so the one that shipped is the larger and the one that lost sits beside it at the
+   size of a note). A dimmed item is an option that lost, beside the one that shipped at full
+   colour */
 .fig .frames { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
-.fig.pair .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.fig.lead .frames { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.fig.lead .item:first-child { grid-column: 1 / span 5; }
+.fig.lead .item:last-child { grid-column: 6 / -1; }
 .fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }   /* frames share a bottom edge even when a label wraps */
 .fig .item { display: grid; gap: 8px; align-content: start; }
 .fig .item.dim .frame { opacity: .55; }
@@ -72,7 +77,8 @@
   .snap .facts dd { grid-column: 2; }
   .fig.narrow { grid-column: 1 / -1; }
   .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* two by two once the row is one column */
-  .fig.pair .frames { grid-template-columns: minmax(0, 1fr); }   /* a pair stacks once the row is one column, each frame at the row's width */
+  .fig.lead .frames { grid-template-columns: minmax(0, 1fr); }   /* the two frames stack once the row is one column, each at the row's width */
+  .fig.lead .item:first-child, .fig.lead .item:last-child { grid-column: 1; }
 }
 @media (max-width: 767px) {
   .snap .facts dd { grid-column: 1; }
