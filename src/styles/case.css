@@ -6,8 +6,8 @@
    reading column from 6, the figures beneath: on the full row, or on the words' column from 6 to
    the row's edge, as the About page's singles. The page has two right edges: the words' measure
    and the row's. The figures change register from chapter to chapter — a strip under the words,
-   four small frames across the row, two strips stacked on the row, three thin bands under the
-   words — so the weight of a chapter is its figure's size and the words around it, never a label.
+   four small frames across the row, two strips stacked on the row, three bands under the words —
+   so the weight of a chapter is its figure's size and the words around it, never a label.
    Every frame is a 24px frame at its own ratio (a screenshot is never stretched) with a label line
    above it (what it is, then the evidence label) and, when there is one thing to look at, a
    caption beneath. The page ends on its close — the stance line at column 1 and the paragraph
@@ -18,17 +18,20 @@
 .hero .fig { margin-top: var(--s-2); }
 
 /* the snapshot: the facts list, each row ruled above as the index's rows are and the last ruled
-   beneath, so a label at column 1 and its value at 6 read as one row */
+   beneath, so a label at column 1 and its value at 6 read as one row; the value keeps the
+   chapters' reading measure, 6 to 10, not the About list's run to the edge */
 .snap .facts { gap: 0; }
+.snap .facts dd { grid-column: 6 / span 5; }
 .snap .facts > div { padding: var(--s-1) 0; border-top: 1px solid var(--line); }
 .snap .facts > div:last-child { border-bottom: 1px solid var(--line); }
 
 /* a chapter: the index's row, unruled. The name at 1–5, the words at 6–10, the figures beneath,
-   every step --s-2 */
+   every step --s-2. A decision's number sits on its own line above the name, in the label grey as
+   the About page's years, so every chapter's name starts at the same edge */
 .chap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
 .chap .head { grid-column: 1 / span 5; }
 .chap .head h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; }
-.chap .head h2 .n { color: var(--fg-3); font-variant-numeric: tabular-nums; margin-right: .6em; }   /* a decision's number, in the label grey */
+.chap .head h2 .n { display: block; color: var(--fg-3); font-variant-numeric: tabular-nums; }
 .chap .body { grid-column: 6 / span 5; }
 .chap .body p { font-size: 17px; line-height: 1.55; color: var(--fg); }
 .chap .body p + p { margin-top: 12px; }
@@ -43,12 +46,11 @@
 .fig figcaption { margin-top: 4px; max-width: 72ch; }
 .fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the name and the evidence label; the label wraps as one word */
 
-/* a set of frames: strips stacked, pairs across the row (the About page's halves), three across,
-   or four across at one height. A dimmed item is an option that lost, beside the one that shipped
-   at full colour */
+/* a set of frames: strips stacked, pairs across the row (the About page's halves), or four
+   across at one height. A dimmed item is an option that lost, beside the one that shipped at full
+   colour */
 .fig .frames { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
 .fig.pair .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.fig.three .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }   /* frames share a bottom edge even when a label wraps */
 .fig .item { display: grid; gap: 8px; align-content: start; }
 .fig .item.dim .frame { opacity: .55; }
@@ -80,6 +82,7 @@
   .chap .body, .sec.close p:not(.stance) { max-width: 612px; }   /* the words keep their measure once the row is one column */
   .sec.close { row-gap: var(--s-1); }
   .chap .figs { margin-top: calc(var(--s-2) - 12px); }
+  .snap .facts dd { grid-column: 2; }
   .fig.narrow { grid-column: 1 / -1; }
   .more summary { grid-template-columns: minmax(0, 1fr) auto; row-gap: 4px; }
   .more summary h2 { grid-column: 1; }
@@ -88,6 +91,7 @@
   .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* two by two once the row is one column */
 }
 @media (max-width: 767px) {
+  .snap .facts dd { grid-column: 1; }
   .fig.four .frames { column-gap: 12px; }
-  .fig.pair .frames, .fig.three .frames { grid-template-columns: minmax(0, 1fr); }   /* halves and thirds stack on a phone */
+  .fig.pair .frames { grid-template-columns: minmax(0, 1fr); }   /* halves stack on a phone */
 }

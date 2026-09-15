@@ -2,13 +2,11 @@
 import Case from '../../layouts/Case.astro';
 import Figure from '../../components/Figure.astro';
 import editor from '../../assets/img/eaton-editor.png';
-import monitor from '../../assets/img/eaton-monitor.png';
-import stakeholders from '../../assets/img/eaton-stakeholders.png';
 import compare from '../../assets/img/eaton-compare.png';
-import starred from '../../assets/img/eaton-starred.png';
-import writeAuto from '../../assets/img/eaton-write-auto.png';
-import writeManual from '../../assets/img/eaton-write-manual.png';
-import components from '../../assets/img/eaton-components.png';
+import switchBand from '../../assets/img/eaton-switch.png';
+import confirm from '../../assets/img/eaton-confirm.png';
+import writing from '../../assets/img/eaton-writing.png';
+import monitor from '../../assets/img/eaton-monitor.png';
 import monitorLight from '../../assets/img/eaton-monitor-light.png';
 import monitorDark from '../../assets/img/eaton-monitor-dark.png';
 import monError from '../../assets/img/eaton-mon-error.png';
@@ -17,30 +15,27 @@ import monChannel from '../../assets/img/eaton-mon-channel.png';
 import monNormal from '../../assets/img/eaton-mon-normal.png';
 import monRecording from '../../assets/img/eaton-mon-recording.png';
 import monExport from '../../assets/img/eaton-mon-export.png';
-import journey from '../../assets/img/eaton-journey.png';
-import mobile1 from '../../assets/img/eaton-mobile-1.png';
-import mobile2 from '../../assets/img/eaton-mobile-2.png';
-import mobile3 from '../../assets/img/eaton-mobile-3.png';
 
-// The short case. The shipped editor has the first screen; the monitor, the other half of the
-// tool, closes the decisions. Every frame that came as a quadrant of one of the Webflow page's
-// composites is cut out at its own edges so the deck's headings stay out of the picture and the
-// page's label line names it. The frames the reading path doesn't need — the monitor state by
-// state, the dark version, the journey map, the phone concept — fold into one details row above
-// the close.
+// The short case. The deck gives away the ending; the shipped editor has the first screen, shown
+// whole once, and every later frame is a region of one of the Webflow page's own images cut to
+// the thing its paragraph names: the comparison table under decision 1, the switch, the
+// confirmation and the running write as three bands under decision 2, the monitor on the row and
+// its light and dark drafts under decision 3. The canvas editor that lost the test isn't shown:
+// only what launched can be. The monitor's other states fold into one details row above the
+// close.
 ---
 <Case
   title="Eaton — Kyle Xu"
-  description="UX Design Intern at Eaton, June–August 2022. RapidLinkX, an IoT configuration tool for airport conveyor systems: a parameter editor and a fault monitor for airport engineers, with 14 component variants added to Eaton's design system. In usability testing, operational efficiency +49.7% and error rates −36.8%."
+  description="UX Design Intern at Eaton, June–August 2022. RapidLinkX, an IoT configuration tool for airport conveyor systems: a parameter editor and a fault monitor for airport engineers. In a comparative usability test the drag-and-drop editor was 35% faster and made 15% more errors, so the form shipped. 14 component variants added to Eaton's design system; in usability testing, operational efficiency +49.7% and error rates −36.8%."
   ogImage="/og-eaton.jpg"
   eyebrow="Eaton · UX Design Intern · June – August 2022"
-  deck="Airport engineers set a drive's parameters and read its faults from one laptop. One comparative usability test settled both halves of the tool."
+  deck="Airport engineers set a drive's parameters and read its faults from one laptop. The faster of the two editors we tested, 35% quicker, made 15% more errors, so the slower one shipped."
   next={{ title: 'Heygen', to: '/projects/heygen' }}
 >
   <Fragment slot="claim">A configuration tool for the drives that run an airport's conveyors.</Fragment>
   <Figure slot="hero" src={editor} name="The parameter editor" evidence="Shipped" loading="eager"
-    alt="RapidLinkX's parameter editor: a blue header, linked drives listed on the left with one selected, and a table of starred parameters with a value field, range, default and display checkbox on each row"
-    caption="Linked drives on the left, every parameter beside its range and default." />
+    alt="RapidLinkX's parameter editor: a blue header and toolbar with a Real-Time switch turned off, linked drives listed on the left with one selected, and a table of starred parameters with a value field, range, default and display checkbox on each row"
+    caption="Real-Time off in the toolbar, starred parameters filtering the table, Compare at the right." />
 
   <section class="col sec snap" aria-label="In thirty seconds">
     <dl class="facts">
@@ -49,68 +44,64 @@ import mobile3 from '../../assets/img/eaton-mobile-3.png';
         <dd>RapidLinkX, an IoT configuration tool for the drives in airport conveyor systems, used by airport engineers: a parameter editor and a fault monitor over USB. I was the primary designer on the <span class="nb">day-to-day</span> product design; my mentor planned the work and carried communication across teams.</dd>
       </div>
       <div>
+        <dt class="meta">Constraints</dt>
+        <dd>The hardware was designed in parallel, so we reviewed with its team every week or two and redrew what had moved. Regional sales, dealers, <span class="nb">in-house</span> engineering and an external development team all had a say. Pandemic restrictions kept us from the engineers themselves; secondary research and stakeholder workshops stood in.</dd>
+      </div>
+      <div>
         <dt class="meta">Outcome</dt>
-        <dd>In usability testing, operational efficiency up 49.7% and error rates down 36.8%.</dd>
+        <dd>In usability testing of the shipped tool, operational efficiency up 49.7% and error rates down 36.8%. The 35% and 15% in the deck are a different test: the two editors against each other.</dd>
       </div>
     </dl>
   </section>
 
-  <section class="col sec chap" aria-labelledby="c-hard">
-    <div class="head">
-      <h2 id="c-hard">Everyone the tool answered to</h2>
-    </div>
-    <div class="body">
-      <p>Eaton's APAC design studio was new and worked as an internal consultancy, so <span class="nb">in-house</span> engineering, regional sales and marketing, dealers and integrators, the airports' engineers and an external development team all had a say in the product team's request. The hardware was being designed in parallel; we reviewed with its team every week or two and redrew what had moved. Pandemic restrictions kept us from the engineers themselves; secondary research and stakeholder workshops stood in.</p>
-    </div>
-    <div class="figs">
-      <Figure narrow src={stakeholders} name="Who the tool answers to" evidence="Supporting state"
-        alt="A map of two dashed circles: Eaton Corporation on the left holding the PM, R&D (Studio Blue), presale support, sales, quality management and customer support; Customer on the right holding the installer and the field engineer; a dealer and a system integrator between them, with lines for training, purchase, hardware and support" />
-    </div>
-  </section>
-
   <section class="col sec chap" aria-labelledby="c-editor">
     <div class="head">
-      <h2 id="c-editor"><span class="n">1</span>The editor that lost the speed test</h2>
+      <h2 id="c-editor"><span class="n">1</span>The slower editor</h2>
     </div>
     <div class="body">
-      <p>The editor could have been a <span class="nb">drag-and-drop</span> canvas. In the comparative usability test, with participants split between the two, the canvas was quicker: parameter settings took 35% less time, and the error rate rose 15%. A wrong value on a baggage line stops the line, so the form stayed, and the speed came back elsewhere: starred parameters filter the table, and a comparison view sets a saved configuration beside the live values.</p>
+      <p>In a comparative usability test, participants split between a <span class="nb">drag-and-drop</span> canvas and this form. The canvas was 35% quicker. It also made 15% more errors, and a wrong value on a baggage line stops the line. The form shipped, and the speed came back in smaller ways: starred parameters filter the table, and Compare sets the live values beside a saved configuration or the defaults. Under Eaton's NDA I can show only what launched, so the canvas isn't here.</p>
     </div>
     <div class="figs">
-      <Figure set="pair"
-        items={[
-          { src: compare, name: 'Comparison', evidence: 'Shipped', alt: 'The parameter comparison view: a table of parameters with current value, default and range, and a dialog for choosing the comparison target from open configurations or a local file' },
-          { src: starred, name: 'Starred', evidence: 'Shipped', alt: 'The editor filtered to starred parameters, with a row of parameter category chips above the table and a cursor on the star filter' },
-        ]} />
+      <Figure narrow src={compare} name="Compare" evidence="Shipped"
+        alt="The parameter comparison view: a breadcrumb reading Parameter Configuration, Parameter Comparison, the title Compare with default values, and a table with a current value beside the default on each row"
+        caption="Live values in one column, the defaults in the next." />
     </div>
   </section>
 
   <section class="col sec chap" aria-labelledby="c-write">
     <div class="head">
-      <h2 id="c-write"><span class="n">2</span>Two ways to write to a drive</h2>
+      <h2 id="c-write"><span class="n">2</span>Writing to a drive</h2>
     </div>
     <div class="body">
-      <p>An engineer at a drive is in one of two moods. On a routine check they want the tool linked and watching. At a drive that has just failed they want nothing written until they say so. So <span class="nb">real-time</span> writing is a switch, off when the tool opens, and both routes go through one confirmation that backs up the drive's configuration first. A running write says so, and asks not to be unplugged.</p>
+      <p>An engineer on a routine round wants the tool linked and watching. One at a drive that has just failed wants nothing written until they say so.</p>
+      <p>So <span class="nb">real-time</span> writing is a switch, off when the tool opens, and both routes pass through one confirmation that backs up the drive's configuration before anything is written. A running write says so and asks not to be unplugged.</p>
     </div>
     <div class="figs">
-      <Figure set="pair"
+      <Figure narrow set="stack" caption="The switch, the one confirmation on both routes, and the write in progress."
         items={[
-          { src: writeAuto, name: 'Real-time on', evidence: 'Shipped', alt: 'The editor with a cursor on the Real-Time switch and a popover, Enabling real-time writing mode, that recommends exporting the current configuration, offers to back up the connected device, and asks for a config name before Confirm' },
-          { src: writeManual, name: 'Manual write-in', evidence: 'Shipped', alt: 'The editor while a manual write runs: a toast at the top right reads Writing to device, please do not disconnect, with a Cancel button' },
+          { src: switchBand, name: 'The switch', evidence: 'Shipped', alt: 'The editor\'s header and toolbar: new, open, save, export and reset icons, then a Real-Time label with its switch turned off' },
+          { src: confirm, name: 'The confirmation', evidence: 'Shipped', alt: 'A dialog, Confirm Write-in, over the parameter table: changes will be written in real time to the connected inverter, a ticked checkbox to back up the config of the connected device, a config name reading DC 01, and Cancel and Confirm buttons' },
+          { src: writing, name: 'A running write', evidence: 'Shipped', alt: 'The top right of the editor with a toast over the header: Writing to device, please do not disconnect, with a Cancel button' },
         ]} />
     </div>
   </section>
 
   <section class="col sec chap" aria-labelledby="c-monitor">
     <div class="head">
-      <h2 id="c-monitor"><span class="n">3</span>A monitor read by colour</h2>
+      <h2 id="c-monitor"><span class="n">3</span>The monitor, in colour</h2>
     </div>
     <div class="body">
-      <p>For the monitor the same test set a <span class="nb">text-heavy</span> format against a <span class="nb">colour-coded</span> chart, and the chart won outright: engineers found errors 40% faster. Of the two versions I drew, the dark one read better and the light one matched the design system. The light one shipped, its colours adjusted until the four channels held apart at a glance.</p>
+      <p>The same test set a <span class="nb">text-heavy</span> monitor against a <span class="nb">colour-coded</span> chart, and the chart won outright: participants found errors 40% faster. I drew it twice. The dark version read better; the light one matched the design system and shipped, its four channel colours adjusted until they held apart at a glance.</p>
     </div>
     <div class="figs">
       <Figure src={monitor} name="The monitor" evidence="Shipped"
         alt="RapidLinkX's monitor: the linked drive and recording settings on the left, eight channel cards across the top with the first four coloured blue, green, purple and orange and showing live values, a chart of the four traces over a hundred seconds, and a sixty-second overview strip beneath"
         caption="Four channels on one trace, a sixty-second overview beneath." />
+      <Figure set="pair" caption="The two drafts: the dark one read better, the light one is the system's."
+        items={[
+          { src: monitorLight, name: 'Light', note: 'chosen', evidence: 'Prototype', alt: 'An earlier monitor in light colours: four stacked traces in blue, green, purple and orange over a white grid, the channel cards above' },
+          { src: monitorDark, name: 'Dark', evidence: 'Concept', alt: 'The same monitor in dark colours: the four traces over a dark grid, a legend of the four channels floating at the right' },
+        ]} />
     </div>
   </section>
 
@@ -119,11 +110,7 @@ import mobile3 from '../../assets/img/eaton-mobile-3.png';
       <h2 id="c-ship">How it shipped</h2>
     </div>
     <div class="body">
-      <p>The last six weeks were the <span class="nb">hand-off</span>. The developers were contractors new to Eaton's Brightlayer system, so the flows went to them as annotated boards with a set protocol for questions, and what the system didn't have became 14 component variants added to it. At the end I started a Bluetooth mobile version for work done at height, where USB won't reach, and left prototypes and notes for whoever came next.</p>
-    </div>
-    <div class="figs">
-      <Figure src={components} name="The components" evidence="Shipped"
-        alt="A sheet of RapidLinkX components around the editor: the drive card in its local, linked, real-time and selected states inside a dashed box, its right-click menu, and three dialogs — a device-detected backup prompt, Create with a file type and name, and Configuration already exists with Open and Overwrite" />
+      <p>The last six weeks were the <span class="nb">hand-off</span> to contractors new to Eaton's Brightlayer system: the flows went to them as annotated boards with a set protocol for questions, and what the system didn't have became 14 component variants added to it. In my final days I started a Bluetooth mobile version for work at height, where USB won't reach, and left prototypes and notes for whoever came next.</p>
     </div>
   </section>
 
@@ -131,11 +118,11 @@ import mobile3 from '../../assets/img/eaton-mobile-3.png';
     <details class="more">
       <summary>
         <h2>More states</h2>
-        <span class="meta">The monitor state by state, the dark version, the journey map, the phones.</span>
+        <span class="meta">The monitor state by state: its error report, empty, setting a channel, live, recording, exporting.</span>
         <span class="link toggle"><span class="show">Show →</span><span class="hide">Hide ↑</span></span>
       </summary>
       <div class="figs">
-        <Figure set="pair"
+        <Figure set="pair" caption="Six states of the same screen."
           items={[
             { src: monError, name: 'Error report', evidence: 'Shipped', alt: 'The monitor on its Error tab: the most recent entry, a fault with its error code, diagnostics and a suggestion, then two earlier alarm entries' },
             { src: monEmpty, name: 'Empty', evidence: 'Supporting state', alt: 'The monitor before any channel is set: eight empty channel cards, an empty grid and a cursor on the first card' },
@@ -144,26 +131,12 @@ import mobile3 from '../../assets/img/eaton-mobile-3.png';
             { src: monRecording, name: 'Recording', evidence: 'Shipped', alt: 'The monitor while recording: a blue band sweeps the chart, the button reads Stop Recording and a counter shows the samples' },
             { src: monExport, name: 'Export', evidence: 'Shipped', alt: 'The monitor with the Export Waveform dialog open: a name, an address, and PDF or CSV' },
           ]} />
-        <Figure set="pair"
-          items={[
-            { src: monitorLight, name: 'Light', note: 'chosen', evidence: 'Prototype', alt: 'An earlier monitor in light colours: four stacked traces in blue, green, purple and orange over a white grid, the channel cards above' },
-            { src: monitorDark, name: 'Dark', evidence: 'Concept', dim: true, alt: 'The same monitor in dark colours: the four traces over a dark grid, a legend of the four channels floating at the right' },
-          ]} />
-        <Figure narrow src={journey} name="The journey map" evidence="Supporting state"
-          alt="A customer journey map in four stages — product presentation, training, parameter configuration, post-maintenance — with rows for who is involved, what is happening, the tools in use and the issues"
-          caption="Drawn with my mentor from the workshops." />
-        <Figure set="three"
-          items={[
-            { src: mobile1, name: 'Alarm', evidence: 'Concept', alt: 'A phone screen, Alarm, Details tab: frequency, current, voltage and temperature, then the fault name, error code, time, diagnostics and suggestions' },
-            { src: mobile2, name: 'Waveform', evidence: 'Concept', alt: 'A phone screen, Alarm, Waveform tab: the four traces on a grid, a range slider from 15 to 40 seconds, and channel cards beneath' },
-            { src: mobile3, name: 'Parameters', evidence: 'Concept', alt: 'A phone screen, Drive 01 in Auto mode: a list of parameters with values in hertz, a Write-in button and a tab bar of Status, Setting and Error' },
-          ]} />
       </div>
     </details>
   </section>
 
   <Fragment slot="close">
-    <p class="stance">I'd reject the faster editor again.</p>
-    <p>A task 35% faster is the number that sells a <span class="nb">drag-and-drop</span> editor. Its 15% more errors show up later, on a baggage line, not in a demo. The test put both numbers on one page, which is what it was for.</p>
+    <p class="stance">The slower editor was the right one to ship.</p>
+    <p>35% faster is the number that sells a <span class="nb">drag-and-drop</span> editor. Its 15% more errors show up later, on a baggage line, not in a demo. The test put both numbers on one page, which is what it was for.</p>
   </Fragment>
 </Case>
