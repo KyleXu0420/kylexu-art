@@ -34,7 +34,7 @@
    beneath, so a label at column 1 and its value at 6 read as one row; the value keeps the
    chapters' reading measure, 6 to 10, not the About list's run to the edge */
 .snap .facts { gap: 0; }
-.snap .facts dd { grid-column: 6 / span 6; }
+.snap .facts dd { grid-column: 6 / -1; max-width: 72ch; }
 .snap .facts > div { padding: var(--s-1) 0; border-top: 1px solid var(--line); }
 .snap .facts > div:last-child { border-bottom: 1px solid var(--line); }
 
@@ -45,7 +45,7 @@
 .chap .head { grid-column: 1 / span 5; }
 .chap .head h2 { font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; }
 .chap .head h2 .n { display: block; color: var(--fg-3); font-variant-numeric: tabular-nums; }
-.chap .body { grid-column: 6 / span 6; }   /* the words: 6–11, about 66 characters a line, so a long chapter is not a tall narrow column */
+.chap .body { grid-column: 6 / -1; max-width: 72ch; }   /* the words run from 6 to the row's edge, capped at 72 characters a line, on the same edges as the figures beneath */
 .chap .body p { font-size: 17px; line-height: 1.55; color: var(--fg); }
 .chap .body p + p { margin-top: 12px; }
 .chap .figs { grid-column: 1 / -1; margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); }
@@ -77,7 +77,7 @@
    6–10 — so the page's last row keeps the grid every row above it used */
 .sec.close { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); justify-items: stretch; align-items: start; }
 .sec.close .stance { grid-column: 1 / span 5; max-width: none; }
-.sec.close p:not(.stance) { grid-column: 6 / span 6; max-width: none; }
+.sec.close p:not(.stance) { grid-column: 6 / -1; max-width: 72ch; }
 
 @media (max-width: 1023px) {
   .chap, .sec.close { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
