@@ -1,8 +1,9 @@
 ---
 // A case page: Sheet, with the case's hero (eyebrow, claim, deck, the hero figure), the page's
 // chapters, then the page's close (`close` slot: the line it ends on at the site's stance size
-// and the paragraph that earns it). The page ends there. The way to the other case is one line in
-// the footer, above the contact row (Sheet passes `next` down to it). The composition is case.css.
+// and the paragraph that earns it). The page ends there. The way to the other case is a row in
+// the footer, above the contact rule: its title at the title size and its one-line claim (Sheet
+// passes `next` down to it). The composition is case.css.
 // Pass a `signoff` slot only when the page has something to say in the footer as well.
 import Sheet from './Sheet.astro';
 import '../styles/home.css';
@@ -14,7 +15,7 @@ interface Props {
   ogImage?: string;
   eyebrow: string;
   deck?: string;
-  next: { title: string; to: string };
+  next: { title: string; to: string; line?: string };
 }
 const { title, description, ogImage, eyebrow, deck, next } = Astro.props;
 ---

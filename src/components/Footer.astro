@@ -3,14 +3,14 @@ import { href } from '../lib/url';
 const resume = 'https://drive.google.com/file/d/1XlaKtkU-4iRvNvgbC6oJTdFKX5hse0aw/view?usp=sharing';
 interface Props {
   signoff?: boolean;                      // whether the page passed a sign-off paragraph
-  next?: { title: string; to: string };   // a case page's other case: one line above the contact row
+  next?: { title: string; to: string; line?: string };   // a case page's other case: a row above the contact rule, its claim beneath the title
 }
 const { signoff = false, next } = Astro.props;
 ---
 <footer class="foot" id="contact">
   <div class="col">
     {signoff && <div class="close"><slot name="signoff" /></div>}
-    {next && <p class="meta next">Next case <a class="link" href={href(next.to)}>{next.title} →</a></p>}
+    {next && <div class="next"><span class="meta">Next case</span><div><a class="link" href={href(next.to)}>{next.title} →</a>{next.line && <p>{next.line}</p>}</div></div>}
     <div class="reach">
       <div class="who">
         <b>Kyle Xu<span class="cjk">徐匡泓</span></b>

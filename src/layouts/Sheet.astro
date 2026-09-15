@@ -11,7 +11,7 @@ interface Props {
   description: string;
   ogImage?: string;        // site-root path, e.g. "/og/home.png"
   robots?: string;
-  next?: { title: string; to: string };   // a case's way to the other case: one line in the footer
+  next?: { title: string; to: string; line?: string };   // a case's way to the other case: a row in the footer
 }
 const { title, description, ogImage, robots, next } = Astro.props;
 // the index passes its closing paragraph to the footer. A slot handed down through a layout's own

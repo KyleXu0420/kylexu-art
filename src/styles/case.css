@@ -14,7 +14,7 @@
    above it (what it is, then the evidence label) and, when there is one thing to look at, a
    caption beneath. The page ends on its close — the stance line at column 1 and the paragraph
    that earns it on the reading column, the decisions' own row — and the way to the other case is
-   one line in the footer. */
+   a row in the footer (site.css), the other case's title and claim. */
 
 /* the hero's figure: --s-2 below the deck, as the About portrait */
 .hero .fig { margin-top: var(--s-2); }
@@ -45,7 +45,7 @@
 .fig.narrow { grid-column: 6 / -1; }
 .frame { border-radius: 24px; overflow: hidden; background: var(--selection); }
 .frame picture, .frame img { display: block; width: 100%; height: auto; }
-.fig figcaption { margin-top: 4px; max-width: 72ch; }
+.fig figcaption, .fig .item .under { margin-top: 4px; max-width: 72ch; }   /* one caption under the figure, or one under each frame of a pair */
 .fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }   /* the name and the evidence label; the label wraps as one word */
 
 /* a set of frames: strips stacked, two across at one width (the same region of two screens side

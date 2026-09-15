@@ -68,15 +68,19 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 /* ---- footer: the close — a stance line and its argument — then a hairline and one row of contact.
         The page opens and closes on an "I" sentence in ink; the pill is the last thing seen. A page
         with nothing to say in the close (a case, the 404) goes straight from --s-4 to the hairline —
-        a case puts one line above it, the way to the other case, --s-2 from the hairline as the
-        contact row is beneath it. ---- */
+        a case puts one row above it, the way to the other case, on the index's columns (the label
+        at 1, the other case's title at 6 at the title size, its claim beneath), --s-2 from the
+        hairline as the contact row is beneath it. ---- */
 .foot { margin-top: var(--s-4); padding: 0 0 var(--s-2); }
 .close { display: grid; gap: var(--s-1); justify-items: start; }
 .close .stance { margin: 0; font-size: clamp(28px, 2.78vw, 40px); line-height: 1.1; letter-spacing: -.02em; font-weight: 500; max-width: 34ch; text-wrap: balance; color: var(--fg); }
 .close p { color: var(--fg-2); font-size: 17px; line-height: 1.55; max-width: 58ch; }
 .close + .reach { margin-top: 112px; }
-.foot .next { margin-bottom: var(--s-2); }
-.foot .next .link { margin-left: 8px; font-size: 15px; color: var(--fg); }
+.foot .next { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; margin-bottom: var(--s-2); }
+.foot .next .meta { grid-column: 1 / span 2; padding-top: 3px; }
+.foot .next div { grid-column: 6 / span 5; display: grid; gap: 4px; justify-items: start; }
+.foot .next .link { font-size: 20px; line-height: 1.3; letter-spacing: -.02em; color: var(--fg); }
+.foot .next p { color: var(--fg-2); }
 .reach { padding-top: var(--s-2); border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; gap: var(--s-1) var(--s-2); flex-wrap: wrap; }
 .who { display: flex; align-items: baseline; gap: 12px; }
 .who b { font-weight: 600; letter-spacing: -.01em; }
@@ -89,9 +93,9 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 }
 @media (max-width: 1023px) {
   .close + .reach { margin-top: var(--s-3); }
-  .facts > div { grid-template-columns: 136px minmax(0, 1fr); }
-  .facts dt { grid-column: 1; }
-  .facts dd { grid-column: 2; }
+  .facts > div, .foot .next { grid-template-columns: 136px minmax(0, 1fr); }
+  .facts dt, .foot .next .meta { grid-column: 1; }
+  .facts dd, .foot .next div { grid-column: 2; }
 }
 @media (max-width: 767px) {
   .nav .col { height: 64px; }
@@ -99,8 +103,8 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
   .theme { padding: 0 10px; }
   .hero .lead { margin-top: var(--s-1); }
   .facts { gap: 16px; }
-  .facts > div { grid-template-columns: 1fr; row-gap: 4px; }
-  .facts dt, .facts dd { grid-column: 1; }
+  .facts > div, .foot .next { grid-template-columns: 1fr; row-gap: 4px; }
+  .facts dt, .facts dd, .foot .next .meta, .foot .next div { grid-column: 1; }
 }
 @media (max-width: 400px) {
   .pill a { padding: 0 10px; font-size: 13px; }
