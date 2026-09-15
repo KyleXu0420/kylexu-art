@@ -13,7 +13,11 @@ interface Props {
   robots?: string;
 }
 const { title, description, ogImage, robots } = Astro.props;
-const signoff = Astro.slots.has('signoff');   // the index passes its closing paragraph to the footer
+// the index passes its closing paragraph to the footer. A slot handed down through a layout's own
+// <slot> still counts as present when it is empty, so the test is on the rendered content, not on
+// the slot's existence: a page with nothing to say gets no close.
+const signoffHtml = Astro.slots.has('signoff') ? (await Astro.slots.render('signoff')).trim() : '';
+const signoff = signoffHtml.length > 0;
 const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/', Astro.site);
 const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 ---
@@ -51,7 +55,7 @@ const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
   <a class="skip" href="#main">Skip to content</a>
   <Nav />
   <main id="main"><slot /></main>
-  <Footer signoff={signoff}><slot name="signoff" slot="signoff" /></Footer>
+  <Footer signoff={signoff}><Fragment slot="signoff" set:html={signoffHtml} /></Footer>
   <script is:inline>
     (function () {
       var r = document.documentElement, k = 'kx-theme', b = document.getElementById('theme');

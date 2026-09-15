@@ -5,12 +5,14 @@
    title size (the decisions numbered in the label grey, as the About page's years), the words on
    the index's reading column from 6, the figures beneath. The figures change register from
    chapter to chapter: a strip on the full row, a tight pair on the words' column, two strips
-   stacked on the full row, three thin strips on the words' column, a pair at one height, a phone
-   on three columns — so the weight of a chapter is its figure's width, never a label. Every
-   frame is a 24px frame at its own ratio (a screenshot is never stretched) with one caption: what
-   to look at, then the evidence label on the same line — or, where the frames of a set differ in
-   status, on each frame's own label line. The page ends on its close (one line at the site's
-   stance size, site.css), the index's row for the other case, then the contact row. */
+   stacked on the full row, three thin strips on the words' column, a pair at one height, a detail
+   on five of the words' columns — so the weight of a chapter is its figure's width, never a
+   label. Every frame is a 24px frame at its own ratio (a screenshot is never stretched) with one
+   caption: what to look at, then the evidence label on the same line — or, where the frames of a
+   set differ in status, on each frame's own label line. The page ends on its close (the stance
+   line and the paragraph that earns it, site.css), the index's row for the other case, and — if
+   the job had a side project — a coda in the label voice: the same row, its name at the label
+   size, its words in the reading voice. Then the contact row. */
 
 /* the hero's figure: --s-2 below the deck, as the About portrait */
 .hero .fig { margin-top: var(--s-2); }
@@ -26,6 +28,12 @@
 .chap .body p + p { margin-top: 12px; }
 .chap .figs { grid-column: 1 / -1; margin-top: var(--s-2); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); row-gap: var(--s-2); }
 .chap .figs + .body { margin-top: var(--s-2); }
+
+/* a coda: the chapter's row a step down — the name at the label size, the words in the grey
+   reading voice, as the snapshot's rows — so a side story after the way out never outranks the
+   decisions */
+.chap.coda .head h2 { font-size: 14px; line-height: 1.5; letter-spacing: 0; font-weight: 400; color: var(--fg-3); }
+.chap.coda .body p { font-size: 15px; line-height: 1.5; color: var(--fg-2); }
 
 /* a figure: the frame at the image's own ratio; the caption beneath in the noted voice — what to
    look at, then the evidence label after it on the same line, parted by the eyebrow's dot */
@@ -45,8 +53,8 @@
 .fig.stack .frames { grid-template-columns: minmax(0, 1fr); }
 .fig.pair { grid-column: 6 / -1; }
 .fig.pair .frames { grid-template-columns: var(--cols, repeat(2, minmax(0, 1fr))); align-items: end; }   /* frames share a bottom edge even when a label wraps */
-.fig.phone { grid-column: 6 / -1; }   /* a phone screen: the frame on three of the words' seven columns, the caption free to run */
-.fig.phone .frame { width: calc(3 / 7 * (100% - 6 * var(--gutter)) + 2 * var(--gutter)); }
+.fig.crop { grid-column: 6 / -1; }   /* a detail cut from a screen: the frame on five of the words' seven columns, the caption free to run */
+.fig.crop .frame { width: calc(5 / 7 * (100% - 6 * var(--gutter)) + 4 * var(--gutter)); }
 .fig .item { display: grid; gap: 8px; align-content: start; }
 .fig .lab b { font-weight: 500; color: var(--fg-2); white-space: nowrap; }
 
@@ -62,13 +70,13 @@
   .chap { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
   .chap .head, .chap .body, .chap .figs { grid-column: 1; }
   .chap .body { max-width: 612px; }   /* the words keep their measure once the row is one column */
-  .fig.narrow, .fig.pair, .fig.phone { grid-column: 1 / -1; }
-  .fig.phone .frame { width: calc(5 / 12 * (100% - 11 * var(--gutter)) + 4 * var(--gutter)); }   /* five of the row's twelve */
+  .fig.narrow, .fig.pair, .fig.crop { grid-column: 1 / -1; }
+  .fig.crop .frame { width: calc(7 / 12 * (100% - 11 * var(--gutter)) + 6 * var(--gutter)); }   /* seven of the row's twelve */
   .chap .figs { margin-top: calc(var(--s-2) - 12px); }
   .chap .figs + .body { margin-top: calc(var(--s-2) - 12px); }
 }
 @media (max-width: 767px) {
   .fig.pair .frames { column-gap: 12px; }
-  .fig.phone .frame { width: calc(8 / 12 * (100% - 11 * var(--gutter)) + 7 * var(--gutter)); }   /* eight of twelve */
+  .fig.crop .frame { width: 100%; }
   .nums { grid-template-columns: 1fr; gap: 16px; }
 }

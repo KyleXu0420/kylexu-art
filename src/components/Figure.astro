@@ -7,8 +7,8 @@
 // none. A set lays out as strips stacked on the full row (`stack`; with `narrow`, on the words'
 // column) or as two frames side by side on the words' column at one height (`pair`). An item may
 // carry a short label above its frame — a name and a note — set in the page's type, never in the
-// bitmap. A single sits on the full row, on the words' column (`narrow`), or, for a phone screen,
-// on three columns of it (`phone`).
+// bitmap. A single sits on the full row, on the words' column (`narrow`), or, for a detail cut
+// from a screen, on five of the words' seven columns (`crop`).
 import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
@@ -22,10 +22,10 @@ interface Props {
   caption: string;
   evidence?: Evidence;
   narrow?: boolean;
-  phone?: boolean;
+  crop?: boolean;
   loading?: 'eager' | 'lazy';
 }
-const { src, alt = '', items, set = 'stack', caption, evidence, narrow = false, phone = false, loading = 'lazy' } = Astro.props;
+const { src, alt = '', items, set = 'stack', caption, evidence, narrow = false, crop = false, loading = 'lazy' } = Astro.props;
 // every frame carries a label: the figure's, or its own
 if (!evidence && !(items && items.every((it) => it.evidence))) throw new Error(`Figure "${caption.slice(0, 40)}…": no evidence label`);
 const perItem = !!items && !evidence;
@@ -33,9 +33,9 @@ const perItem = !!items && !evidence;
 const full = { widths: [720, 1100, 1600, 2600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px' };
 const words = { widths: [720, 1100, 1440], sizes: '(max-width: 1023px) 100vw, (max-width: 1440px) 50vw, 718px' };
 const half = { widths: [320, 480, 800], sizes: '(max-width: 1023px) 48vw, (max-width: 1440px) 28vw, 400px' };
-const third = { widths: [320, 480, 640], sizes: '(max-width: 767px) 66vw, (max-width: 1023px) 40vw, 294px' };
+const detail = { widths: [480, 720, 1012], sizes: '(max-width: 767px) 100vw, (max-width: 1023px) 58vw, 506px' };
 const sizeFor = () => {
-  if (!items) return phone ? third : narrow ? words : full;
+  if (!items) return crop ? detail : narrow ? words : full;
   if (set === 'pair') return half;
   return narrow ? words : full;
 };
@@ -45,7 +45,7 @@ const p = sizeFor();
 // a pair shares one height: each column as wide as its frame's ratio
 const cols = items && set === 'pair' ? items.map((it) => `${(it.src.width / it.src.height).toFixed(3)}fr`).join(' ') : undefined;
 ---
-<figure class:list={['fig', { narrow, phone, stack: items && set === 'stack', pair: items && set === 'pair' }]}>
+<figure class:list={['fig', { narrow, crop, stack: items && set === 'stack', pair: items && set === 'pair' }]}>
   {items ? (
     <div class="frames" style={cols && `--cols: ${cols}`}>
       {items.map((it) => (
