@@ -2,47 +2,48 @@
 import Case from '../../layouts/Case.astro';
 import Figure from '../../components/Figure.astro';
 import editor from '../../assets/img/eaton-editor.png';
+import starred from '../../assets/img/eaton-starred.png';
 import compare from '../../assets/img/eaton-compare.png';
 import confirm from '../../assets/img/eaton-confirm.png';
 import monitor from '../../assets/img/eaton-monitor.png';
 import monitorDark from '../../assets/img/eaton-monitor-dark.png';
 
-// The short case. The deck is one sentence, the ending; the hero is the form that shipped, cut
-// to its first four rows on a row line. Five frames, each a region of one of the Webflow page's
-// own images cut to the thing its paragraph names: the first decision carries the comparison view
-// on the words' column, the thing the form does that the canvas didn't; the second carries the
-// editor once more, framed as the hero is, with the confirmation inside it; the third carries the
-// dark draft small on the label column beside the shipped monitor on the words' column, each with
-// its own line to look at. The canvas editor that lost the test isn't shown: only what launched
-// can be, and the first decision says so. The snapshot is three rows; the numbers appear once
-// each, with what they were measured against, and the close ends on one line.
+// The short case. The deck is one sentence, the ending; the hero is the form that shipped, the
+// page's one full window, cut to its first four rows. Six frames, each a region of one of the
+// Webflow page's own images cut to the thing its paragraph names: the first decision carries the
+// two things that gave the form its speed back, Starred small on the label column beside Compare
+// on the words' column; the second carries the confirmation cut to the switch, the button and the
+// dialog; the third carries the draft's plot over the shipped plot at one width, four axes over
+// one. The canvas editor that lost the test isn't shown: only what launched can be. The snapshot
+// is three rows; each number appears once, with what it was measured against; the close is the
+// stance and one sentence that holds both halves of the page.
 ---
 <Case
   title="Eaton — Kyle Xu"
   description="UX Design Intern at Eaton, June–August 2022. RapidLinkX, an IoT configuration tool for airport conveyor systems: a parameter editor and a fault monitor for airport engineers. In a comparative usability test the drag-and-drop editor was 35% faster and made 15% more errors, so the form shipped. 14 component variants added to Eaton's design system; in usability testing, operational efficiency +49.7% and error rates −36.8%."
   ogImage="/og-eaton.jpg"
-  eyebrow="Eaton · UX Design Intern · June – August 2022"
+  eyebrow="Eaton · RapidLinkX · UX Design Intern · June – August 2022"
   deck="The faster of the two editors we tested, 35% quicker, made 15% more errors, so the slower one shipped."
   next={{ title: 'Heygen', to: '/projects/heygen', line: 'The video editor, re-architected around the script.' }}
 >
   <Fragment slot="claim">A configuration tool for the drives that run an airport's conveyors.</Fragment>
-  <Figure slot="hero" src={editor} name="The editor" evidence="Shipped" loading="eager"
+  <Figure slot="hero" src={editor} evidence="Shipped" loading="eager"
     alt="RapidLinkX's parameter editor: a blue header and toolbar with a Real-Time switch turned off and a Write In button, linked drives listed on the left with one selected, and a table of four starred parameters with a value field, range, default and display checkbox on each row"
     caption="The slower one: a form with a row per parameter, its value beside its range and default." />
 
   <section class="col sec snap" aria-label="In thirty seconds">
     <dl class="facts">
       <div>
-        <dt class="meta">Role</dt>
-        <dd>Primary designer on the <span class="nb">day-to-day</span> product design; my mentor on planning and communication across teams. RapidLinkX is an IoT configuration tool for the drives in airport conveyor systems, used by airport engineers.</dd>
+        <dt class="meta">Scope</dt>
+        <dd>RapidLinkX, an IoT configuration tool for the drives in airport conveyor systems, used by airport engineers: a parameter editor and a fault monitor, over USB.</dd>
       </div>
       <div>
-        <dt class="meta">Constraints</dt>
-        <dd>The hardware was still being designed; regional stakeholders and an external development team each had a say.</dd>
+        <dt class="meta">Role</dt>
+        <dd>Primary designer on the <span class="nb">day-to-day</span> product design; my mentor on planning and <span class="nb">cross-team</span> communication.</dd>
       </div>
       <div>
         <dt class="meta">Outcome</dt>
-        <dd>A parameter editor and a fault monitor over USB, and 14 component variants added to Eaton's Brightlayer design system. In usability testing of the shipped tool, operational efficiency up 49.7% and error rates down 36.8%.</dd>
+        <dd>Both shipped, with 14 component variants added to Eaton's Brightlayer design system. In usability testing of the shipped tool, operational efficiency was up 49.7% and error rates down 36.8%.</dd>
       </div>
     </dl>
   </section>
@@ -52,13 +53,15 @@ import monitorDark from '../../assets/img/eaton-monitor-dark.png';
       <h2 id="c-editor">The slower editor</h2>
     </div>
     <div class="body">
-      <p>A wrong value on a baggage line stops the line. The comparative usability test split its participants between a <span class="nb">drag-and-drop</span> canvas and this form: the canvas was quicker, and it made more errors, so it lost. Under Eaton's NDA only what launched can be shown, so the canvas isn't here.</p>
-      <p>Two things gave the form part of its speed back. Starred, above the table, keeps it to the parameters that matter on a check. Compare, below, puts the live value in one column and a saved configuration or the defaults in the next, so checking a drive is a read across each row.</p>
+      <p>A wrong value on a baggage line stops the line. The comparative usability test split its participants between a <span class="nb">drag-and-drop</span> canvas and this form: the canvas was quicker, and it made more errors, so it lost (it's under NDA, so it isn't shown).</p>
+      <p>Two things gave the form part of its speed back. Starred keeps a check to the parameters that matter on a round. Compare puts the live value in one column and a saved configuration or the defaults in the next, so checking a drive is a read across each row.</p>
     </div>
     <div class="figs">
-      <Figure narrow src={compare} name="Compare" evidence="Shipped"
-        alt="The comparison view: a breadcrumb reading Parameter Configuration, Parameter Comparison, the title Compare with default values, and a table of four rows with PNU, name, current value, default and range on each"
-        caption="Against the defaults, one row per parameter." />
+      <Figure set="lead"
+        items={[
+          { src: starred, name: 'Starred', evidence: 'Shipped', caption: 'A round reads the starred rows, not the drive’s whole list.', alt: 'The Starred and All toggle with Starred selected, over the table’s header and its first row: a star, P-01, Motor Num Frequency, and a value field reading 50.0' },
+          { src: compare, name: 'Compare', evidence: 'Shipped', caption: 'The live value beside the default: a drift is a read across the row.', alt: 'The comparison view: a breadcrumb reading Parameter Configuration, Parameter Comparison, the title Compare with default values, and a table header with one row, P-01 Motor Num Frequency, its current value, default and range' },
+        ]} />
     </div>
   </section>
 
@@ -68,11 +71,11 @@ import monitorDark from '../../assets/img/eaton-monitor-dark.png';
     </div>
     <div class="body">
       <p>An engineer on a routine round wants the tool linked and watching. One at a drive that has just failed wants nothing written until they've decided what.</p>
-      <p>So <span class="nb">real-time</span> writing is a switch, and it's off when the tool opens. Turning it on, or pressing Write In, brings up the same confirmation, with a backup of the drive's current configuration already ticked. While a write runs, a notice sits over the header and asks not to be unplugged.</p>
+      <p>So <span class="nb">real-time</span> writing is a switch, and it's off when the tool opens. Turning it on, or pressing Write In, brings up the same confirmation, with a backup of the drive's current configuration already ticked.</p>
     </div>
     <div class="figs">
-      <Figure src={confirm} name="The confirmation" evidence="Shipped"
-        alt="The editor with its header and toolbar, the Real-Time switch off and a Write In button at the right, the linked drives on the left, the starred parameters in the table, and a dialog over the table: Confirm Write-in, a note that changes will be written in real time to the connected inverter, a ticked checkbox to back up the config of the connected device, a config name reading DC 01, and Cancel and Confirm buttons"
+      <Figure narrow src={confirm} name="The confirmation" evidence="Shipped"
+        alt="The top-right of the editor: the Real-Time switch off at the toolbar's left and a Write In button at its right, the starred parameters beneath, and a dialog over the table: Confirm Write-in, a note that changes will be written in real time to the connected inverter, a ticked checkbox to back up the config of the connected device, a config name reading DC 01, and Cancel and Confirm buttons"
         caption="Write In pressed with Real-Time off: the backup ticked before anything is written." />
     </div>
   </section>
@@ -82,19 +85,19 @@ import monitorDark from '../../assets/img/eaton-monitor-dark.png';
       <h2 id="c-monitor">The monitor, in colour</h2>
     </div>
     <div class="body">
-      <p>The same test set a <span class="nb">text-heavy</span> monitor against a <span class="nb">colour-coded</span> chart, and with the chart participants found errors 40% faster. In my draft each of the four channels had an axis of its own, so a spike on one couldn't be read against the other three. The shipped chart puts the four on one axis, each in the colour of its channel card above, with a small adjustment to the design system's colours for readability. I'd drawn the draft dark, and dark read well; light shipped because it's the Brightlayer theme the external developers were building from.</p>
+      <p>The same test set a <span class="nb">text-heavy</span> monitor against a <span class="nb">colour-coded</span> chart, and with the chart participants found errors 40% faster. The chart I drew first gave each of the four channels an axis of its own, which is fine until a spike on one needs reading against the other three. The shipped chart puts the four on one axis.</p>
     </div>
     <div class="figs">
-      <Figure set="lead"
+      <Figure narrow set="stack"
         items={[
-          { src: monitorDark, name: 'The dark draft', evidence: 'Concept', dim: true, caption: 'Four channels on four axes of their own.', alt: 'The dark draft of the monitor, everything right of its sidebar: four coloured channel cards in blue, green, purple and orange with live values and four unset, four traces stacked on separate axes over a dark grid with a legend floating over them, and an overview strip beneath with the four traces overlaid' },
-          { src: monitor, name: 'The monitor', evidence: 'Shipped', caption: 'The four on one axis, each in the colour of its card.', alt: 'The shipped monitor, the same region: Waveform Recording and Error tabs, channels 1 to 4 in blue, green, purple and orange with live values and min and max, channels 5 to 8 reading Please Select, the four traces on one axis over a hundred seconds, and an overview strip beneath' },
+          { src: monitorDark, name: 'The draft', evidence: 'Concept', caption: 'Four axes, drawn dark: channel 4’s spike past 60 sits three bands below the channels it should be read against.', alt: 'The draft’s plot: four traces in blue, green, purple and orange, each on its own band of a dark grid with its own 0 to 80% scale, a legend floating over the top two, the orange trace spiking near 66 on the bottom band, and a time axis from 0 to 100 beneath' },
+          { src: monitor, name: 'The monitor', evidence: 'Shipped', caption: 'One axis, and light, the Brightlayer theme the external developers were building from; the four colours adjusted for readability.', alt: 'The shipped plot: the same four colours on one white grid, the traces rising and falling over a hundred seconds, and a time axis from 0 to 100 beneath' },
         ]} />
     </div>
   </section>
 
   <Fragment slot="close">
     <p class="stance">A wrong value was the expensive thing.</p>
-    <p>The chart is there to find the ones that get in.</p>
+    <p>The slower form keeps most of them out, and the chart is there for the ones that get past it.</p>
   </Fragment>
 </Case>

@@ -7,18 +7,23 @@
    the row's edge, as the About page's singles. The page has two right edges: the words' measure
    and the row's. The figures change register from chapter to chapter — a strip under the words,
    four small frames across the row, two strips stacked on the row, three bands under the words,
-   one window on the row, the option that lost small on the label column beside the one that
-   shipped on the words' column to the edge —
+   one window on the row, a small frame on the label column beside a larger one on the words'
+   column to the edge, two plots stacked under the words at one width —
    so the weight of a chapter is its figure's size and the words around it, never a label; a
    chapter whose evidence is the hero above it carries no figure at all.
    Every frame is a 24px frame at its own ratio (a screenshot is never stretched) with a label line
    above it (what it is, then the evidence label) and, when there is one thing to look at, a
    caption beneath. The page ends on its close — the stance line at column 1 and the paragraph
    that earns it on the reading column, the decisions' own row — and the way to the other case is
-   a row in the footer (site.css), the other case's title and claim. */
+   a row in the footer (site.css), the other case's title and claim, one section's air (--s-3)
+   below the close rather than the page break the index puts above its sign-off. */
 
 /* the hero's figure: --s-2 below the deck, as the About portrait */
 .hero .fig { margin-top: var(--s-2); }
+
+/* the footer: a case has no sign-off, so its next-case row follows the close at the sections'
+   own distance */
+.foot { margin-top: var(--s-3); }
 
 /* the snapshot: the facts list, each row ruled above as the index's rows are and the last ruled
    beneath, so a label at column 1 and its value at 6 read as one row; the value keeps the
@@ -51,9 +56,9 @@
 
 /* a set of frames: strips stacked, four across at one height, or two across on the page's own two
    edges (`lead`: the first frame on the label column, 1–5, the second on the words' column to the
-   row's edge, so the one that shipped is the larger and the one that lost sits beside it at the
-   size of a note). A dimmed item is an option that lost, beside the one that shipped at full
-   colour */
+   row's edge, so the larger frame is the one that shipped, or the view, and the smaller sits
+   beside it at the size of a note: the option that lost, or a detail). A dimmed item is an option
+   that lost, beside the one that shipped at full colour */
 .fig .frames { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gutter); row-gap: var(--s-1); align-items: start; }
 .fig.lead .frames { grid-template-columns: repeat(12, minmax(0, 1fr)); }
 .fig.lead .item:first-child { grid-column: 1 / span 5; }
