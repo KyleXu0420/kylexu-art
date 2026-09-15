@@ -34,7 +34,7 @@
    beneath, so a label at column 1 and its value at 6 read as one row; the value keeps the
    chapters' reading measure, 6 to 10, not the About list's run to the edge */
 .snap .facts { gap: 0; }
-.snap .facts dd { grid-column: 6 / span 5; }
+.snap .facts dd { grid-column: 6 / span 6; }
 .snap .facts > div { padding: var(--s-1) 0; border-top: 1px solid var(--line); }
 .snap .facts > div:last-child { border-bottom: 1px solid var(--line); }
 
@@ -77,7 +77,7 @@
    6–10 — so the page's last row keeps the grid every row above it used */
 .sec.close { grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); justify-items: stretch; align-items: start; }
 .sec.close .stance { grid-column: 1 / span 5; max-width: none; }
-.sec.close p:not(.stance) { grid-column: 6 / span 5; max-width: none; }
+.sec.close p:not(.stance) { grid-column: 6 / span 6; max-width: none; }
 
 @media (max-width: 1023px) {
   .chap, .sec.close { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
