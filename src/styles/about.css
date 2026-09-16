@@ -40,8 +40,6 @@
 
 /* a link inside the prose: the site's link anatomy with the underline showing, in the hairline
    grey until hovered */
-.ref { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--line); transition: text-decoration-color var(--t); }
-.ref:hover { text-decoration-color: currentColor; }
 
 @media (max-width: 1023px) {
   .tl.story li { grid-template-columns: minmax(0, 1fr); }

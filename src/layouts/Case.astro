@@ -16,11 +16,10 @@ interface Props {
   eyebrow: string;
   deck?: string;
   next: { title: string; to: string; line?: string };
-  caseId: string;          // heygen | eaton | … — the hue the page carries
 }
-const { title, description, ogImage, eyebrow, deck, next, caseId } = Astro.props;
+const { title, description, ogImage, eyebrow, deck, next } = Astro.props;
 ---
-<Sheet {title} {description} {ogImage} {next} {caseId}>
+<Sheet {title} {description} {ogImage} {next}>
   <section class="col hero" aria-labelledby="h1">
     <p class="eyebrow">{eyebrow}</p>
     <h1 class="display" id="h1"><slot name="claim" /></h1>

@@ -17,12 +17,6 @@
    a row in the footer (site.css), the other case's title and claim, one section's air (--s-3)
    below the close rather than the page break the index puts above its sign-off. */
 
-/* the case's hue: the eyebrow, the numbers of the decisions, the links in the prose and captions */
-[data-case] .hero .eyebrow { color: var(--accent); }
-[data-case] .chap .head h2 .n { color: var(--accent); }
-[data-case] .ref { text-decoration-color: var(--accent); }
-[data-case] .ref:hover { color: var(--accent); }
-
 /* the hero's figure: --s-2 below the deck, as the About portrait */
 .hero .fig { margin-top: var(--s-2); }
 
