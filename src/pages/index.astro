@@ -40,7 +40,7 @@ const cards = [
     <ul class="cards">
       {cards.map((c) => (
         <li class="card">
-          <a href={c.href} rel={c.ext ? 'noopener' : undefined}>
+          <a href={c.href} rel={c.ext ? 'noopener' : undefined} data-cursor={c.ext ? 'File ↗' : 'Case →'}>
             <Picture src={c.src} {...card} alt={c.alt} loading={c === cards[0] ? 'eager' : 'lazy'} />
             <span class="cap"><b>{c.title}</b><span>{c.sub}</span></span>
           </a>
@@ -118,6 +118,33 @@ const cards = [
       </li>
     </ul>
   </section>
+
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <script is:inline>
+    // The cursor label: over a project card, the pointer becomes the card's own link word — Case →
+    // for a case page here, File ↗ for a Figma file — so the destination is read before the click.
+    // Pointer devices with hover only; the native cursor comes back the moment the pointer leaves.
+    (function () {
+      if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      var el = document.getElementById('cursor'); if (!el) return;
+      var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var x = 0, y = 0, tx = 0, ty = 0, on = false, raf = 0, cur = null;
+      function frame() {
+        if (still) { x = tx; y = ty; } else { x += (tx - x) * 0.28; y += (ty - y) * 0.28; }
+        el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) translate(-50%, -50%)';
+        raf = (on || Math.abs(tx - x) > 0.5) ? requestAnimationFrame(frame) : 0;
+      }
+      document.addEventListener('pointermove', function (e) {
+        var a = e.target.closest && e.target.closest('[data-cursor]');
+        tx = e.clientX; ty = e.clientY;
+        if (a && a !== cur) { cur = a; el.textContent = a.getAttribute('data-cursor'); }   /* a new card, or straight from one card to the next */
+        if (a && !on) { on = true; x = tx; y = ty; el.classList.add('on'); document.documentElement.classList.add('cursor-on'); }
+        if (!a && on) { on = false; cur = null; el.classList.remove('on'); document.documentElement.classList.remove('cursor-on'); }
+        if (!raf) raf = requestAnimationFrame(frame);
+      }, { passive: true });
+      document.addEventListener('pointerleave', function () { on = false; cur = null; el.classList.remove('on'); document.documentElement.classList.remove('cursor-on'); });
+    })();
+  </script>
 
   <Fragment slot="signoff">
     <p class="stance">I start from what the agent is allowed to do, not from the chat box.</p>
