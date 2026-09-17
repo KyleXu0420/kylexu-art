@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """check-site.py — three checks on the hand-written site, each with a control fixture.
 
-  theme-parity      every colour role authored in the light block of src/styles/tokens.css is
-                    authored again (not restated) in the dark media block and the [data-theme] block
+  theme-parity      if tokens.css has a dark theme (a prefers-color-scheme block and a
+                    [data-theme="dark"] block), every colour role authored in light is authored
+                    again (not restated) in both; a single-theme file passes
   hardcoded-colour  no colour literal outside the @primitives block of tokens.css — in any
                     src/**/*.css or *.astro (the <meta name="theme-color"> line is the one exception)
   dead-class        every class in the built Astro pages has a rule in src/**/*.css, and every
@@ -62,6 +63,7 @@ def theme_parity(tokens_css):
     media = next((props(b) for s, b in blocks if 'prefers-color-scheme' in s and 'not([data-theme="light"])' in s), {})
     roles = {k: v for k, v in light.items() if v.startswith('var(--') and re.match(r'var\((--[\w-]+)\)', v).group(1) in prims}
     findings = []
+    if not dark and not media: return len(roles), []   # one theme: nothing to keep in step
     for k in sorted(roles):
         for name, theme in (('dark', dark), ('media', media)):
             if k not in theme: findings.append(f'{k}: no {name} value')
@@ -92,7 +94,7 @@ def dead_classes(css_texts, html_texts):
     for h in html_texts:
         for attr in re.findall(r'class="([^"]*)"', h): used.update(attr.split())
     used = {c for c in used if not c.startswith('astro-')}
-    state = {'theming'}   # applied by the theme-toggle script for 260ms; never in markup
+    state = set()   # classes a script applies that never appear in markup (none today)
     return sorted(used - ruled - state), sorted(ruled - used - state)
 
 
@@ -107,6 +109,7 @@ def controls():
     assert f == ['--bg: no dark value'], ('parity planted defect', f)
     _, f = theme_parity(good.replace(':root[data-theme="dark"]{--fg:var(--b-1);', ':root[data-theme="dark"]{--fg:var(--a-1);'))
     assert f and 'restates' in f[0], ('parity restated defect', f)
+    n, f = theme_parity(good.split('@media')[0]); assert n == 2 and f == [], ('parity single theme', f)
     assert hardcoded_colour({'x.css': 'a{color:var(--fg)} /* #fff in a comment */', 'tokens.css': good}) == []
     assert hardcoded_colour({'x.css': 'a{color:#fff}'}) != [], 'hex planted defect'
     assert hardcoded_colour({'x.astro': '<meta name="theme-color" content="#F3F0E8" />'}) == []
@@ -128,7 +131,7 @@ def main():
 
     ok = True
     n, f = theme_parity(css_files['src/styles/tokens.css'])
-    print(f'parity    {n} colour roles authored in light; dark + media blocks {"complete" if not f else "INCOMPLETE"}')
+    print(f'parity    {n} colour roles; {"one theme" if "data-theme" not in css_files["src/styles/tokens.css"] else ("dark + media blocks complete" if not f else "dark + media blocks INCOMPLETE")}')
     for x in f: print('   ', x); ok = False
 
     f = hardcoded_colour({**css_files, **astro_files})

@@ -1,0 +1,37 @@
+/* heygen.css — the Heygen case's own rules, over case.css. The page has two registers: the
+   decisions first (case.css alone), then the record — the same chapters, the same row — with
+   three things case.css doesn't have: a part opener, a list inside a chapter's words, and a
+   quotation. The record is long enough to need parts, so the opener is used eight times: once to
+   turn the page from the decisions to the record, then once at the head of each of its seven
+   parts. It is a ruled row, as the snapshot's rows are ruled: a hairline across the row, then at
+   column 1 the label in the label grey (the record's own opener) or the part's number over its
+   name — the decisions' own anatomy, the number in the label grey on its own line above the name
+   at the title size — and the signpost at 6–10 in the reading voice. The record's opener and the
+   first part stack as the snapshot's rows do, --s-1 apart. */
+
+/* the part opener: a ruled row, the label or the number-and-name at 1–5, the signpost at 6–10 */
+.part { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+.part::before { content: ''; grid-column: 1 / -1; border-top: 1px solid var(--line); margin-bottom: var(--s-1); }   /* the hairline stays inside the column, as the snapshot's rules do */
+.part + .part { margin-top: var(--s-1); }
+.part .meta { grid-column: 1 / span 5; padding-top: 3px; }
+.part h2 { grid-column: 1 / span 5; font-size: 20px; line-height: 1.3; letter-spacing: -.02em; font-weight: 500; text-wrap: balance; color: var(--fg); }
+.part h2 .n { display: block; color: var(--fg-3); font-variant-numeric: tabular-nums; }   /* as .chap .head h2 .n, case.css */
+.part .sign { grid-column: 6 / -1; max-width: 72ch; font-size: 17px; line-height: 1.55; color: var(--fg-2); }
+
+/* the words a chapter needs here: a list set as its paragraphs are (the three rules the design
+   system was written to), and the one customer the page quotes, set off by a hairline */
+.chap .body ul { margin: 12px 0 0; padding-left: 1.1em; font-size: 17px; line-height: 1.55; color: var(--fg); }
+.chap .body li + li { margin-top: 6px; }
+.chap .body blockquote { margin: 12px 0 0; padding-left: calc(var(--gutter) - 1px); border-left: 1px solid var(--line); }
+.chap .body blockquote p { color: var(--fg-2); }
+.chap .body blockquote .meta { display: block; margin-top: 8px; }
+
+/* the question the research was run against: one line at the deck's size */
+.chap .body .ask { font-size: 20px; line-height: 1.4; font-weight: 500; letter-spacing: -.02em; text-wrap: balance; }
+
+@media (max-width: 1023px) {
+  .part { grid-template-columns: minmax(0, 1fr); row-gap: 12px; }
+  .part::before { margin-bottom: calc(var(--s-1) - 12px); }
+  .part .meta, .part h2, .part .sign { grid-column: 1; }
+  .part .sign { max-width: 612px; }   /* the words keep their measure once the row is one column */
+}
