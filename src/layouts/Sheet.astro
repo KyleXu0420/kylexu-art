@@ -38,38 +38,14 @@ const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
   {og && <meta property="og:image" content={og} />}
   <meta name="twitter:card" content={og ? 'summary_large_image' : 'summary'} />
   {robots && <meta name="robots" content={robots} />}
-  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F5F5F5" />
-  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#141414" />
+  <meta name="theme-color" content="#F5F5F5" />
   <link rel="icon" href={href('/favicon.png')} type="image/png" />
   <link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
-  <script is:inline>
-    // Apply a remembered theme before first paint so there is no flash.
-    (function () {
-      try {
-        var t = new URLSearchParams(location.search).get('theme') || localStorage.getItem('kx-theme');
-        if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
-      } catch (e) {}
-    })();
-  </script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <Nav />
   <main id="main"><slot /></main>
   <Footer signoff={signoff} {next}><Fragment slot="signoff" set:html={signoffHtml} /></Footer>
-  <script is:inline>
-    (function () {
-      var r = document.documentElement, k = 'kx-theme', b = document.getElementById('theme');
-      if (!b) return;
-      b.addEventListener('click', function () {
-        var dark = r.getAttribute('data-theme') === 'dark' ||
-          (!r.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
-        var n = dark ? 'light' : 'dark';
-        r.classList.add('theming'); setTimeout(function () { r.classList.remove('theming'); }, 260);
-        r.setAttribute('data-theme', n);
-        try { localStorage.setItem(k, n); } catch (e) {}
-      });
-    })();
-  </script>
 </body>
 </html>

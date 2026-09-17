@@ -9,7 +9,6 @@ body {
   letter-spacing: -.01em; font-variant-numeric: lining-nums;
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overflow-x: clip;
 }
-html.theming body, html.theming .pill { transition: background-color 200ms, color 200ms, border-color 200ms; }
 img { max-width: 100%; display: block; height: auto; }
 a { color: inherit; text-decoration: none; }
 p { margin: 0; text-wrap: pretty; }
@@ -58,15 +57,13 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .facts dd { grid-column: 6 / -1; margin: 0; color: var(--fg-2); }
 .facts dd .line { display: block; }   /* degrees: one per line, never joined */
 
-/* ---- nav: the name left, one outlined pill right, the theme toggle inside it ---- */
+/* ---- nav: the name left, one outlined pill right ---- */
 .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .nav .col { display: flex; justify-content: space-between; align-items: center; height: 72px; gap: 16px; }
 .brand { font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
 .pill { display: flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: var(--r-pill); }
-.pill a, .pill .theme { display: flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; line-height: 1; color: var(--fg-3); white-space: nowrap; transition: color var(--t); }
-.pill a:hover, .pill .theme:hover, .pill a[aria-current] { color: var(--fg); }
-.theme { appearance: none; background: none; border: 0; cursor: pointer; font: inherit; padding: 0 12px; }
-.theme svg { width: 14px; height: 14px; }
+.pill a { display: flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); font-size: 14px; font-weight: 500; line-height: 1; color: var(--fg-3); white-space: nowrap; transition: color var(--t); }
+.pill a:hover, .pill a[aria-current] { color: var(--fg); }
 
 /* ---- footer: the close — a stance line and its argument — then a hairline and one row of contact.
         The page opens and closes on an "I" sentence in ink; the pill is the last thing seen. A page
@@ -102,8 +99,7 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 }
 @media (max-width: 767px) {
   .nav .col { height: 64px; }
-  .pill a, .pill .theme { padding: 0 12px; }
-  .theme { padding: 0 10px; }
+  .pill a { padding: 0 12px; }
   .hero .lead { margin-top: var(--s-1); }
   .facts { gap: 16px; }
   .facts > div, .foot .next { grid-template-columns: 1fr; row-gap: 4px; }
@@ -113,5 +109,5 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
   .pill a { padding: 0 10px; font-size: 13px; }
 }
 @media print {
-  .nav, .theme, .skip { display: none; }
+  .nav, .skip { display: none; }
 }
