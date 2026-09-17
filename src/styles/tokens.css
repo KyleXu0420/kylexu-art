@@ -4,22 +4,22 @@
    the dark theme and its toggle went with the colour). A second theme, if one ever comes back,
    is a second block of the same roles and the parity check wakes up on its own.
 
-   The colour logic (2026-09-16, Kyle's call): the chrome carries no colour at all. A neutral
-   grey-white ground with no cast — the Webflow ground — one ink, one grey ramp, and nothing that
+   The colour logic (2026-09-16, Kyle's call): the chrome carries no colour at all. A white
+   ground with no cast, one ink, one grey ramp, and nothing that
    is yellow, warm, or a hue. The colour on the site is the work's own: the five cards and the
    screenshots. Eyebrows, decision numbers and links are ink or grey. */
 
 /* @primitives */
 :root {
   --white: #FFFFFF;
-  --grey-50: #F5F5F5;   --grey-100: #EAEAEA;  --grey-200: #E2E2E2;
-  --grey-500: #6E6E6E;  --grey-600: #525252;  --ink-900: #171717;
+  --grey-100: #EAEAEA;  --grey-200: #E2E2E2;  --grey-500: #6E6E6E;  --grey-600: #525252;
+  --ink-900: #171717;
 }
 /* @end-primitives */
 
 /* @roles */
 :root {
-  --bg: var(--grey-50);         /* the page */
+  --bg: var(--white);           /* the page: white, no cast */
   --fg: var(--ink-900);         /* reading text */
   --fg-2: var(--grey-600);      /* secondary text, the eyebrows */
   --fg-3: var(--grey-500);      /* meta, captions, the decision numbers */
@@ -28,7 +28,7 @@
   --fill-fg: var(--white);      /* text on the fill */
   --focus: var(--ink-900);
   --selection: var(--grey-100); /* text selection; the ground under a card or photo while it loads */
-  --sheet: var(--white);        /* the ground under a transparent screenshot */
+  --sheet: var(--white);        /* the ground under a transparent screenshot; on the white page the frame is drawn by its hairline */
 
   --sans: "Manrope", "Helvetica Neue", Helvetica, Arial, system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
