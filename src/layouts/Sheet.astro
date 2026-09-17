@@ -47,5 +47,40 @@ const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
   <Nav />
   <main id="main"><slot /></main>
   <Footer signoff={signoff} {next}><Fragment slot="signoff" set:html={signoffHtml} /></Footer>
+  <div class="cursor" id="cursor" aria-hidden="true"></div>
+  <script is:inline>
+    // The cursor, in three states: a dot everywhere, a ring over anything that can be clicked, and
+    // over a project card the card's own link word in the filled pill (Case → here, File ↗ for a
+    // Figma file). Pointer devices with hover only; touch and keyboard never see it; reduced motion
+    // drops the follow lag. The browser's arrow is hidden while the dot is on the page.
+    (function () {
+      if (!matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+      var el = document.getElementById('cursor'); if (!el) return;
+      var k = matchMedia('(prefers-reduced-motion: reduce)').matches ? 1 : 0.45;
+      var x = 0, y = 0, tx = 0, ty = 0, raf = 0, cur = null, shown = false;
+      var root = document.documentElement;
+      function frame() {
+        x += (tx - x) * k; y += (ty - y) * k;
+        el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) translate(-50%, -50%)';
+        raf = (Math.abs(tx - x) > 0.3 || Math.abs(ty - y) > 0.3) ? requestAnimationFrame(frame) : 0;
+      }
+      function state(t) {
+        var a = t.closest && t.closest('[data-cursor]');
+        var l = !a && t.closest && t.closest('a, button');
+        if (a && a !== cur) { cur = a; el.textContent = a.getAttribute('data-cursor'); }
+        if (!a && cur) { cur = null; el.textContent = ''; }
+        el.setAttribute('data-state', a ? 'label' : (l ? 'ring' : 'dot'));
+      }
+      document.addEventListener('pointermove', function (e) {
+        tx = e.clientX; ty = e.clientY;
+        if (!shown) { shown = true; x = tx; y = ty; root.classList.add('dot'); el.classList.add('on'); }
+        state(e.target);
+        if (!raf) raf = requestAnimationFrame(frame);
+      }, { passive: true });
+      document.addEventListener('pointerdown', function () { el.classList.add('down'); });
+      document.addEventListener('pointerup', function () { el.classList.remove('down'); });
+      document.addEventListener('pointerout', function (e) { if (!e.relatedTarget) { shown = false; root.classList.remove('dot'); el.classList.remove('on'); } });
+    })();
+  </script>
 </body>
 </html>

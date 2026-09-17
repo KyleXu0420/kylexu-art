@@ -57,9 +57,3 @@
 @media (prefers-reduced-motion: reduce) { .card .cap { transition: none; } }
 @media (max-width: 767px) { .card, .card:first-child { flex-basis: 100%; } .card a { height: 62vw; } }
 
-/* the cursor label: over a card the pointer is the card's link word in the filled pill; the native
-   arrow is hidden only while the label is up (html.cursor-on), so nothing changes off the cards */
-.cursor { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; padding: 8px 14px; border-radius: var(--r-pill); background: var(--fill); color: var(--fill-fg); font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap; opacity: 0; scale: .8; transition: opacity 140ms ease-out, scale 140ms ease-out; will-change: transform; }
-.cursor.on { opacity: 1; scale: 1; }
-html.cursor-on .card a { cursor: none; }
-@media (prefers-reduced-motion: reduce) { .cursor { transition: none; } }

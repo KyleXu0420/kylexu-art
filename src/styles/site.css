@@ -57,6 +57,15 @@ h1, h2, h3 { margin: 0; font-weight: 500; }
 .facts dd { grid-column: 6 / -1; margin: 0; color: var(--fg-2); }
 .facts dd .line { display: block; }   /* degrees: one per line, never joined */
 
+/* ---- the cursor: a dot, a ring over anything clickable, the link word over a card ---- */
+html.dot, html.dot a, html.dot button { cursor: none; }
+.cursor { position: fixed; left: 0; top: 0; z-index: 30; pointer-events: none; display: flex; align-items: center; justify-content: center; box-sizing: border-box; width: 10px; height: 10px; border-radius: var(--r-pill); background: var(--fill-fg); border: 0 solid var(--fill-fg); mix-blend-mode: difference; color: var(--fill-fg); font-size: 14px; font-weight: 500; line-height: 1; white-space: nowrap; opacity: 0; will-change: transform; transition: width 160ms ease-out, height 160ms ease-out, border-width 160ms ease-out, background-color 160ms ease-out, padding 160ms ease-out, opacity 120ms ease-out, scale 120ms ease-out; }   /* white in difference: ink on the page, light on ink and on the cards */
+.cursor.on { opacity: 1; }
+.cursor[data-state="ring"] { width: 30px; height: 30px; border-width: 1.5px; background: transparent; }
+.cursor[data-state="label"] { width: auto; height: 32px; padding: 0 14px; background: var(--fill); mix-blend-mode: normal; }   /* the pill reads as the site's own: ink, white word, no blend */
+.cursor.down { scale: .8; }
+@media (prefers-reduced-motion: reduce) { .cursor { transition: opacity 120ms ease-out; } }
+
 /* ---- nav: the name left, one outlined pill right ---- */
 .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
 .nav .col { display: flex; justify-content: space-between; align-items: center; height: 72px; gap: 16px; }
