@@ -94,7 +94,7 @@ def dead_classes(css_texts, html_texts):
     for h in html_texts:
         for attr in re.findall(r'class="([^"]*)"', h): used.update(attr.split())
     used = {c for c in used if not c.startswith('astro-')}
-    state = {'theming'}   # applied by the theme-toggle script for 260ms; never in markup
+    state = set()   # classes a script applies that never appear in markup (none today)
     return sorted(used - ruled - state), sorted(ruled - used - state)
 
 
