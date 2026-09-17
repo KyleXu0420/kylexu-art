@@ -149,7 +149,7 @@ const cards = [
         if (a) on(a); else if (cur) off();
         if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); }
       }, { passive: true });
-      document.addEventListener('scroll', function () { if (cur && !under(document.elementFromPoint(tx, ty))) off(); }, { passive: true });
+      document.addEventListener('scroll', function () { if (!cur) return; var a = under(document.elementFromPoint(tx, ty)); if (a) on(a); else off(); }, { passive: true });   /* the page moved under a resting pointer */
       document.addEventListener('pointerout', function (e) { if (!e.relatedTarget) off(); });
       document.addEventListener('dragstart', off);
       document.addEventListener('pointercancel', off);
