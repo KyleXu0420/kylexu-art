@@ -50,6 +50,13 @@ PR 4 `/projects/temper`, `/projects/dify` → PR 5 heygen, eaton → PR 6 redire
 PR 7 delete `legacy/` → PR 8 checkers in CI. Each PR leaves the site fully working; rollback
 is re-running the previous deployment.
 
+## Vercel
+
+The same build deploys to Vercel from this repo: `vercel.json` sets the Astro preset,
+`npm run build` (Astro + the legacy overlay), `dist/`, and `cleanUrls` so `/about` serves
+`about.html` exactly as GitHub Pages does. Leave `SITE_BASE` unset on Vercel — the site is at
+the root there. Every branch and PR gets its own preview URL from Vercel automatically.
+
 ## Moving the domain to GitHub Pages
 
 Do it in this order — the old Webflow-hosted site sent a one-year HSTS header, so returning
