@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
+import HalftonePortrait from '../components/HalftonePortrait.astro';
 import { href } from '../lib/url';
 import '../styles/home.css';   // the same rows and the same card treatment as the index
 import '../styles/about.css';
@@ -43,10 +44,12 @@ const facts = [
   description="Kyle Xu, AI product designer. Six years of architecture, then HCI at the University of Michigan; since 2022 at Eaton, Heygen, Infloww, Curio Digital Therapeutics, Dify and Temper."
   ogImage="/og-about.jpg"
 >
-  <section class="col hero" aria-labelledby="h1">
-    <h1 class="display claim" id="h1">I trained as an architect for six years before I moved to AI products.</h1>
-    <p class="lead deck">At fifteen I was already sketching buildings instead of studying for the gaokao.</p>
-    <div class="photo portrait"><Picture src={portrait} {...hero} alt="Kyle in kendo uniform, holding a helmet, in front of a wall of labelled equipment shelves" /></div>
+  <section class="col hero split" aria-labelledby="h1">
+    <div class="text">
+      <h1 class="display claim" id="h1">I trained as an architect for six years before I moved to AI products.</h1>
+      <p class="lead deck">At fifteen I was already sketching buildings instead of studying for the gaokao.</p>
+    </div>
+    <HalftonePortrait />
   </section>
 
   <section class="col sec" aria-label="Organisations, skills, tools and languages">
@@ -60,6 +63,10 @@ const facts = [
         </div>
       ))}
     </dl>
+  </section>
+
+  <section class="col sec" aria-label="Kendo">
+    <div class="photo portrait"><Picture src={portrait} {...hero} alt="Kyle in kendo uniform, holding a helmet, in front of a wall of labelled equipment shelves" /></div>
   </section>
 
   <section class="col sec" aria-label="How I got here">

@@ -1,0 +1,11 @@
+---
+// Kyle as a live halftone (src/scripts/halftone-portrait.js). The element is the portrait: a 3:4 box
+// that carries the same halftone as a still background, so it reads with no JS, no WebGL2, and
+// before the script runs; the script then draws over it and clears the still.
+import still from '../assets/img/about-halftone.png';
+---
+<div class="halftone" data-halftone role="img" aria-label="Portrait of Kyle, in black-and-white halftone dots" style={`background-image: url(${still.src})`}></div>
+<script>
+  import { init } from '../scripts/halftone-portrait.js';
+  document.querySelectorAll<HTMLElement>('[data-halftone]').forEach((el) => init(el));
+</script>
