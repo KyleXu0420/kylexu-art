@@ -6,8 +6,16 @@
    reading column from 6, the chapter's pictures beneath the words as the index's rows carry their
    figures; and the links the story makes to the work. No hairline in the body. */
 
-/* the hero: the claim, its deck (site.css), then the portrait as the hero's figure */
-.hero .portrait { margin-top: var(--s-2); }
+/* the hero: the claim and its deck on the first seven columns, the live halftone portrait (3:4) on
+   the last five, top-aligned; one column under 1024px, the portrait under the deck */
+.hero.split { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+.hero.split .text { grid-column: 1 / span 7; }
+.hero.split .lead { max-width: none; }
+.halftone { grid-column: 8 / -1; justify-self: end; width: 100%; max-width: 520px; aspect-ratio: 3 / 4; color: var(--fg); background: center / contain no-repeat; touch-action: pan-y pinch-zoom; }
+@media (max-width: 1023px) {
+  .hero.split .text, .halftone { grid-column: 1 / -1; }
+  .halftone { justify-self: start; max-width: 420px; margin-top: var(--s-2); }
+}
 
 /* the frames: one ratio. The portrait is drawn larger than its frame and offset so the frame holds
    the figure half-length on its left third — the helmet in, the hand out, the shelf grid and the

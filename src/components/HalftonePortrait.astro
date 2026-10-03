@@ -1,0 +1,13 @@
+---
+// Kyle as a live halftone (src/scripts/halftone-portrait.js). The element is the portrait: a 3:4 box.
+// A still of the same halftone is named on it (data-still) and shown only where the live one can't
+// run: no JS (the <noscript> rule), no WebGL2, or a lost GPU context. The dots grow in from an empty
+// box, so nothing is shown before the script runs and the still is not downloaded for nothing.
+import still from '../assets/img/about-halftone.png';
+---
+<div class="halftone" data-halftone data-still={still.src} role="img" aria-label="Portrait of Kyle, in black-and-white halftone dots"></div>
+<noscript><style is:inline set:html={`.halftone{background-image:url(${still.src})}`}></style></noscript>
+<script>
+  import { init } from '../scripts/halftone-portrait.js';
+  document.querySelectorAll<HTMLElement>('[data-halftone]').forEach((el) => init(el));
+</script>
