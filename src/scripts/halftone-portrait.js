@@ -1,8 +1,8 @@
 // halftone-portrait.js — Kyle as a newspaper halftone on a 45° screen (~90×120 dots), drawn in WebGL2.
 // The glasses resolve first, the face fills in behind them; at rest the dots breathe; the pointer moves
-// through them like a stone through water and they spring back. The element carries a still of the
-// same halftone as its background (no JS, no WebGL2, before init); init() clears it once the canvas
-// owns the box. Reduced motion draws the finished portrait once. Built from Kyle's photo, background
+// through them like a stone through water and they spring back. A still of the same halftone
+// (data-still) is shown instead when there is no WebGL2 or the GPU drops the context; with no JS a
+// <noscript> rule shows it. With WebGL2 the still is never downloaded. Reduced motion draws the finished portrait once. Built from Kyle's photo, background
 // removed; the tone field below is 180×240 darkness values (0 = paper, 255 = ink), person only.
 /* Halftone portrait — Kyle Xu.
    180x240 darkness field (0 = paper, 255 = ink), person only; sampled under each dot of a 45-degree screen. */
@@ -29,10 +29,13 @@ export function init(el) {
   // ---------- canvas / GL ----------
   if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
   const cv = document.createElement('canvas');
-  cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;';
+  cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y pinch-zoom;';
   el.appendChild(cv);
   const gl = cv.getContext('webgl2', { antialias: false, alpha: true, premultipliedAlpha: true });
-  if (!gl) { cv.remove(); return; }          // the static halftone background stays as the portrait
+  const showStill = () => { el.style.backgroundImage = `url(${el.dataset.still})`; };   // the same halftone, as a picture
+  if (!gl) { cv.remove(); showStill(); return; }   // no WebGL2: the still is the portrait
+  let dead = false;                            // the GPU dropped the context (reset, driver, a reclaimed background tab)
+  cv.addEventListener('webglcontextlost', () => { dead = true; stop(); cv.remove(); showStill(); });
 
   const vs = `#version 300 es
   layout(location=0) in vec2 corner;
@@ -71,7 +74,6 @@ export function init(el) {
   gl.enableVertexAttribArray(1); gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, 0); gl.vertexAttribDivisor(1, 1);
   gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
   gl.clearColor(0, 0, 0, 0);
-  el.style.backgroundImage = 'none';           // from here the canvas draws the portrait
 
   // ---------- layout: a 45-degree screen over the 3:4 box ----------
   let N = 0, dpr = 1, W = 0, H = 0, bx = 0, by = 0, bw = 0, bh = 0, pitch = 1;
@@ -227,7 +229,7 @@ export function init(el) {
     draw(false);
     schedule();
   }
-  function schedule() { if (!raf && visible && !document.hidden && !rm.matches) { raf = requestAnimationFrame(frame); } }
+  function schedule() { if (!dead && !raf && visible && !document.hidden && !rm.matches) { raf = requestAnimationFrame(frame); } }
   function stop() { if (raf) cancelAnimationFrame(raf); raf = 0; last = 0; }
   function refresh() {
     if (rm.matches) { stop(); draw(true); }
@@ -237,6 +239,12 @@ export function init(el) {
   layout();
   if (rm.matches) draw(true); else { draw(false); schedule(); }
   new ResizeObserver(() => { if (layout() && (rm.matches || !raf)) draw(rm.matches); }).observe(el);
+  (function watchDpr() {                       // the window moved to a screen with another pixel ratio: redraw sharp
+    matchMedia(`(resolution: ${window.devicePixelRatio}dppx)`).addEventListener('change', () => {
+      if (!dead && layout() && (rm.matches || !raf)) draw(rm.matches);
+      watchDpr();
+    }, { once: true });
+  })();
   new IntersectionObserver(es => { visible = es[es.length - 1].isIntersecting; refresh(); }).observe(el);
   document.addEventListener('visibilitychange', refresh);
   rm.addEventListener('change', refresh);
