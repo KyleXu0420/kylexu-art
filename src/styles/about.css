@@ -7,13 +7,16 @@
    figures; and the links the story makes to the work. No hairline in the body. */
 
 /* the hero: the claim and its deck on the first seven columns, the live halftone portrait (3:4) on
-   the last five, top-aligned; one column under 1024px, the portrait under the deck */
-.hero.split { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
-.hero.split .text { grid-column: 1 / span 7; }
+   the last five. The two share both edges: the claim starts at the portrait's top, the deck ends at
+   its bottom, so the words hold the full height of the picture and no corner is left empty. One
+   column under 1024px, the portrait under the deck */
+.hero.split { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: stretch; }
+.hero.split .text { grid-column: 1 / span 7; display: flex; flex-direction: column; justify-content: space-between; }
 .hero.split .lead { max-width: none; }
-.halftone { grid-column: 8 / -1; justify-self: end; width: 100%; max-width: 520px; aspect-ratio: 3 / 4; color: var(--fg); background: center / contain no-repeat; touch-action: pan-y pinch-zoom; }
+.halftone { grid-column: 8 / -1; justify-self: end; align-self: start; width: 100%; max-width: 520px; aspect-ratio: 3 / 4; color: var(--fg); background: center / contain no-repeat; touch-action: pan-y pinch-zoom; }
 @media (max-width: 1023px) {
   .hero.split .text, .halftone { grid-column: 1 / -1; }
+  .hero.split .text { display: block; }
   .halftone { justify-self: start; max-width: 420px; margin-top: var(--s-2); }
 }
 
