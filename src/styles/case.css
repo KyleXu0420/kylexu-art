@@ -63,7 +63,11 @@
 .fig.lead .frames { grid-template-columns: repeat(12, minmax(0, 1fr)); }
 .fig.lead .item:first-child { grid-column: 1 / span 5; }
 .fig.lead .item:last-child { grid-column: 6 / -1; }
-.fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }   /* frames share a bottom edge even when a label wraps */
+.fig.four .frames { grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: end; }
+.fig.pair .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }   /* two stills, 6 + 6: the frames share their top edge (and, at one ratio, the bottom); captions hang beneath at whatever length */
+.frame.bare { padding: 0; background: none; }   /* an artwork's own image: no mat, the hairline drawn over it */
+.frame.bare { position: relative; }
+.frame.bare::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px var(--line); pointer-events: none; }   /* frames share a bottom edge even when a label wraps */
 .fig .item { display: grid; gap: 8px; align-content: start; }
 .fig .item.dim .frame { opacity: .55; }
 
@@ -82,7 +86,7 @@
   .snap .facts dd { grid-column: 2; }
   .fig.narrow { grid-column: 1 / -1; }
   .fig.four .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }   /* two by two once the row is one column */
-  .fig.lead .frames { grid-template-columns: minmax(0, 1fr); }   /* the two frames stack once the row is one column, each at the row's width */
+  .fig.lead .frames, .fig.pair .frames { grid-template-columns: minmax(0, 1fr); }   /* the two frames stack once the row is one column, each at the row's width */
   .fig.lead .item:first-child, .fig.lead .item:last-child { grid-column: 1; }
 }
 @media (max-width: 767px) {

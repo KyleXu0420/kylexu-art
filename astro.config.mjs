@@ -11,8 +11,9 @@ export default defineConfig({
   base,
   trailingSlash: 'never',
   build: {
-    // emit about.html (not about/index.html) so /about resolves exactly as the legacy
-    // mirror does on GitHub Pages, and tools/check.py keeps passing on dist/
-    format: 'file',
+    // 'preserve': a page file stays a file (about.astro → about.html, as the legacy mirror's
+    // /about), and a folder's index stays an index (art/index.astro → art/index.html), so a
+    // section with pages under it (/art, /art/<work>) never has a file and a folder of one name
+    format: 'preserve',
   },
 });

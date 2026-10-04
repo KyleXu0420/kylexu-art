@@ -1,0 +1,1274 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="../../favicon.png" type="image/png">
+</head>
+<body>
+<title>The Vellum Stacks</title>
+<meta name="description" content="An archive of translucent paper over black water that opens where it is read.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap">
+<style>
+/* Layout: one fixed WebGL canvas fills the viewport; a few lines of small type sit in the corners like wall labels in a gallery. */
+:root {
+  --void: #000000;
+  --paper: #ece4d2;
+  --label: rgba(236, 228, 210, 0.74);
+  --label-dim: rgba(236, 228, 210, 0.42);
+  --label-faint: rgba(236, 228, 210, 0.24);
+  --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body { margin: 0; background: var(--void); color: var(--label); font-family: var(--font-display); overflow: hidden; -webkit-font-smoothing: antialiased; }
+#c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; background: var(--void); }
+#c.dragging { cursor: grabbing; }
+.ui { position: fixed; inset: 0; pointer-events: none; }
+.ui > * { position: absolute; }
+.title { left: 24px; top: calc(22px + env(safe-area-inset-top, 0px)); }
+.title h1 { margin: 0; font-weight: 400; font-size: 15px; letter-spacing: 0.26em; text-transform: uppercase; text-wrap: balance; }
+.title p { margin: 5px 0 0; font-size: 14px; font-style: italic; font-weight: 300; color: var(--label-dim); letter-spacing: 0.03em; }
+.hint { left: 24px; right: 140px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--label-dim); line-height: 1.9; transition: opacity 3s ease; }
+.hint.faded { opacity: 0; }
+.index { right: 24px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: flex-end; gap: 8px; text-align: right; }
+.index .others { font-style: italic; font-weight: 300; font-size: 13px; letter-spacing: 0.06em; color: var(--label-dim); min-height: 1.2em; }
+.index button { pointer-events: auto; background: none; border: 0; padding: 4px 0 0; margin: 0; color: var(--label-faint); font: inherit; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; }
+.index button:hover, .index button:focus-visible { color: var(--label); outline: none; }
+.index .leave { pointer-events: auto; padding: 4px 0 0; color: var(--label-faint); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; }   /* added for kylexu.art: back to the work's page */
+.index .leave:hover, .index .leave:focus-visible { color: var(--label); outline: none; }
+.index button:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
+.fallback { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(36ch, calc(100% - 48px)); text-align: center; font-size: 15px; line-height: 1.6; color: var(--label-dim); }
+@media (max-width: 600px) {
+  .title { left: 18px; }
+  .hint { left: 18px; right: 100px; font-size: 10px; }
+  .index { right: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .hint { transition: none; } }
+</style>
+<canvas id="c" aria-label="Translucent paper sheets hanging over black water; they rise where a reader stands"></canvas>
+<div class="ui">
+  <div class="title">
+    <h1>The Vellum Stacks</h1>
+    <p>an archive that opens where it is read</p>
+  </div>
+  <div class="hint" id="hint">drag to look &middot; scroll to walk &middot; click to walk on &middot; stay, and the paper rises &middot; sound starts at your first touch</div>
+  <div class="index">
+    <div class="others" id="others"></div>
+    <button type="button" id="snd">Sound off</button>
+    <button type="button" id="fs">Fullscreen</button>
+    <a class="leave" href="../vellum-stacks">Leave</a>
+  </div>
+  <div class="fallback" id="fallback" hidden>This piece needs WebGL 2, which this browser or device does not provide.</div>
+</div>
+<script type="module">
+import * as THREE from './vendor/three.module.min.js';
+
+const canvas = document.getElementById('c');
+const hintEl = document.getElementById('hint');
+const fsBtn = document.getElementById('fs');
+const othersEl = document.getElementById('others');
+const sndBtn = document.getElementById('snd');
+
+const coarse = matchMedia('(pointer: coarse)').matches;
+const small = Math.min(innerWidth, innerHeight) < 640;
+let lite = coarse || small;
+if (new URLSearchParams(location.search).has('full')) lite = false;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let renderer = null;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, stencil: false, depth: true, powerPreference: 'high-performance' });
+} catch (e) { renderer = null; }
+if (!renderer) {
+  document.getElementById('fallback').hidden = false;
+  throw new Error('WebGL 2 unavailable');
+}
+renderer.autoClear = false;
+renderer.setClearColor(0x000000, 1);
+
+// ---------------------------------------------------------------- the rule
+// Five things: light, paper, thread, water, readers.
+// Light falls through openings in an unseen roof. Paper gathers under the
+// light, each sheet on a thread that runs up to the roof. Where a reader
+// stands, the threads draw the paper up toward the light; the opening grows
+// the longer they stay, and closes again slowly after they leave. The water
+// reflects it all. Units are metres; the plan repeats every T metres.
+const T = 360;
+const ROOF = 52;
+const EYE = 1.6;
+const FOG_NEAR = 14, FOG_FAR = lite ? 130 : 170;
+const Q = lite ? 0.6 : 1.0;
+const NREAD = 12;                                   // reader 0 is the viewer
+
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const rand = mulberry32(20261003);
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const smooth = (a, b, t) => { t = clamp((t - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+function hash2(i, j, s) { const h = Math.sin(i * 127.1 + j * 311.7 + s * 74.7) * 43758.5453; return h - Math.floor(h); }
+function pnoise(x, z, n, s) {
+  const X = x * n, Z = z * n, xi = Math.floor(X), zi = Math.floor(Z);
+  const xf = X - xi, zf = Z - zi, sx = xf * xf * (3 - 2 * xf), sz = zf * zf * (3 - 2 * zf);
+  const h = (i, j) => hash2(((i % n) + n) % n, ((j % n) + n) % n, s);
+  return lerp(lerp(h(xi, zi), h(xi + 1, zi), sx), lerp(h(xi, zi + 1), h(xi + 1, zi + 1), sx), sz);
+}
+function fbm(x, z, n, s, oct) { let v = 0, w = 0.5, tot = 0; for (let o = 0; o < oct; o++) { v += w * pnoise(x, z, n, s + o * 17); tot += w; w *= 0.5; n *= 2; } return v / tot; }
+function wdelta(a, b) { let d = a - b; d -= Math.round(d / T) * T; return d; }
+function wdist(x, z, cx, cz) { return Math.hypot(wdelta(x, cx), wdelta(z, cz)); }
+
+// the openings in the roof: centre, full size (A-series proportions), rotation, intensity
+const SKY = [
+  { x: 80,  z: 80,  w: 24, h: 34, rot: 0.2,  i: 1.0 },
+  { x: 230, z: 70,  w: 17, h: 24, rot: -0.6, i: 0.9 },
+  { x: 170, z: 190, w: 34, h: 48, rot: 0.9,  i: 1.0 },
+  { x: 60,  z: 250, w: 17, h: 24, rot: 0.4,  i: 0.8 },
+  { x: 270, z: 260, w: 24, h: 34, rot: -1.1, i: 0.9 },
+];
+function skyFoot(x, z, s, grow) {
+  const dx = wdelta(x, s.x), dz = wdelta(z, s.z), c = Math.cos(s.rot), sn = Math.sin(s.rot);
+  const u = Math.abs(dx * c + dz * sn), v = Math.abs(-dx * sn + dz * c);
+  return (1 - smooth(s.w / 2 + grow * 0.3, s.w / 2 + grow, u)) * (1 - smooth(s.h / 2 + grow * 0.3, s.h / 2 + grow, v));
+}
+// the plan is the light map: paper gathers under the openings
+function density(x, z) {
+  let d = 0;
+  for (const s of SKY) d += skyFoot(x, z, s, 16) * s.i;
+  d = clamp(d, 0, 1);
+  const n = fbm(x / T, z / T, 6, 11, 3);
+  return clamp(0.07 + 0.8 * d * (0.7 + 0.6 * n) + 0.12 * smooth(0.55, 0.8, n), 0, 1);
+}
+function orientation(x, z) { return Math.PI * 1.6 * fbm(x / T, z / T, 3, 23, 2); }
+function scatter(cell, perM2, fn) {
+  const nc = Math.round(T / cell), cs = T / nc;
+  for (let i = 0; i < nc; i++) for (let j = 0; j < nc; j++) {
+    const d = density((i + 0.5) * cs, (j + 0.5) * cs);
+    const expected = perM2(d) * cs * cs;
+    let n = Math.floor(expected); if (rand() < expected - n) n++;
+    for (let k = 0; k < n; k++) fn(i * cs + rand() * cs, j * cs + rand() * cs, d);
+  }
+}
+// places readers go to: under each opening, and a few in the dark
+const PLACES = [];
+for (const s of SKY) for (let k = 0; k < 2; k++) {
+  const a = rand() * 6.2832, r = 2 + rand() * Math.min(s.w, s.h) * 0.35;
+  PLACES.push({ x: s.x + Math.cos(a) * r, z: s.z + Math.sin(a) * r });
+}
+for (let k = 0; k < 4; k++) {
+  let x, z, tries = 0;
+  do { x = rand() * T; z = rand() * T; tries++; } while (density(x, z) > 0.25 && tries < 40);
+  PLACES.push({ x, z });
+}
+
+// ---------------------------------------------------------------- generate the paper
+// three sheet sizes in the A-series ratio: A0, 16A0 and 256A0
+// two families of tall translucent slabs, towers and mid-rises, aligned to a street grid that turns slowly by district
+const SIZES = [
+  { w: [3.0, 7.0], h: [14, 30], bottom: [0.4, 2.0], lift: 20, per: 0.020, per0: 0.0022, cell: 12, op: 0.80 },
+  { w: [2.5, 5.0], h: [6, 13],  bottom: [0.3, 1.5], lift: 12, per: 0.040, per0: 0.0030, cell: 8,  op: 0.90 },
+];
+const S = { pos: [], size: [], rot: [], liftMax: [] };
+function addSheet(x, yTop, z, w, h, op, yaw, kind, seed, liftMax) {
+  S.pos.push(x, yTop, z); S.size.push(w, h, op); S.rot.push(yaw, kind, seed, rand() * 6.2832); S.liftMax.push(liftMax);
+}
+function gridYaw(x, z) {
+  const base = orientation(x, z) * 0.5;
+  return Math.round(base / (Math.PI / 2)) * (Math.PI / 2) + (rand() - 0.5) * 0.06;
+}
+SIZES.forEach((sz, k) => {
+  scatter(sz.cell, d => (sz.per * d + sz.per0) * Q, (x, z, d) => {
+    const bottom = lerp(sz.bottom[0], sz.bottom[1], rand());
+    const w = lerp(sz.w[0], sz.w[1], rand()), h = lerp(sz.h[0], sz.h[1], Math.pow(rand(), 1.4));
+    const top = bottom + h;
+    const liftMax = Math.min(sz.lift, ROOF - 0.8 - top);
+    addSheet(x, top, z, w, h, sz.op * (0.7 + 0.6 * rand()), gridYaw(x, z), k, rand(), Math.max(0, liftMax));
+  });
+});
+const sheetCount = S.pos.length / 3;
+
+// readers: the viewer and the others
+const readers = [];
+for (let k = 0; k < NREAD; k++) {
+  const p = PLACES[(k * 3 + 1) % PLACES.length];
+  readers.push({ x: k === 0 ? 0 : p.x + (rand() - 0.5) * 4, z: k === 0 ? 0 : p.z + (rand() - 0.5) * 4, tx: 0, tz: 0, yaw: rand() * 6.2832, walking: false, timer: 20 + rand() * 60, dwell: 10 + rand() * 60, speed: 0.7 + rand() * 0.35, R: 4, s: 0, active: k === 0 || k < (lite ? 7 : NREAD), simActive: k === 0 || k < (lite ? 7 : NREAD), real: false });
+}
+function pickPlace(r) {
+  let p;
+  do { p = PLACES[Math.floor(rand() * PLACES.length)]; } while (wdist(p.x, p.z, r.x, r.z) < 6);
+  r.tx = p.x + (rand() - 0.5) * 5; r.tz = p.z + (rand() - 0.5) * 5; r.walking = true;
+}
+function readerField(r) {
+  // the opening grows with the time spent standing still
+  r.R = 4 + 8 * (1 - Math.exp(-r.dwell / 40));
+  r.s = r.walking ? 0.55 : 0.6 + 0.4 * (1 - Math.exp(-r.dwell / 20));
+}
+
+// ---------------------------------------------------------------- shared GLSL
+const U = {
+  uTime: { value: 0 }, uTile: { value: T }, uFogNear: { value: FOG_NEAR }, uFogFar: { value: FOG_FAR },
+  uRoof: { value: ROOF }, uDpr: { value: 1 }, uCamPos: { value: new THREE.Vector3() },
+  uSkyA: { value: SKY.map(s => new THREE.Vector4(s.x, s.z, Math.cos(s.rot), Math.sin(s.rot))) },
+  uSkyB: { value: SKY.map(s => new THREE.Vector4(s.w / 2, s.h / 2, s.i, 5.0)) },
+  uRead: { value: readers.map(() => new THREE.Vector4(0, 0, 0, 0)) },
+  uDensity: { value: null },
+};
+
+const COMMON = /* glsl */`
+#define NSKY 5
+#define NREAD ${NREAD}
+uniform float uTime;
+uniform float uTile;
+uniform float uFogNear;
+uniform float uFogFar;
+uniform float uRoof;
+uniform vec3 uCamPos;
+uniform vec4 uSkyA[NSKY];
+uniform vec4 uSkyB[NSKY];
+uniform vec4 uRead[NREAD];
+uniform sampler2D uDensity;
+vec2 pdelta(vec2 a, vec2 b) { vec2 d = a - b; return mod(d + 0.5 * uTile, uTile) - 0.5 * uTile; }
+vec2 wrapXZ(vec2 p) { return uCamPos.xz + pdelta(p, uCamPos.xz); }
+float fogAt(vec3 wp) { return smoothstep(uFogNear, uFogFar, distance(wp, uCamPos)); }
+float skyBox(int i, vec2 xz, float spread) {
+  vec4 A = uSkyA[i]; vec4 B = uSkyB[i];
+  vec2 d = pdelta(xz, A.xy);
+  float u = abs(d.x * A.z + d.y * A.w);
+  float v = abs(-d.x * A.w + d.y * A.z);
+  float soft = B.w + spread * 0.16;
+  float hw = B.x + spread * 0.05, hh = B.y + spread * 0.05;
+  return (1.0 - smoothstep(hw - soft, hw + soft, u)) * (1.0 - smoothstep(hh - soft, hh + soft, v)) * B.z;
+}
+float openAt(vec2 xz) {
+  float o = 0.0;
+  for (int i = 0; i < NREAD; i++) {
+    vec4 r = uRead[i];
+    if (r.w <= 0.0) continue;
+    float d = length(pdelta(xz, r.xy));
+    o += r.w * (1.0 - smoothstep(r.z * 0.45, r.z, d));
+  }
+  return clamp(o, 0.0, 1.0);
+}
+float densityAt(vec2 xz) { return texture2D(uDensity, xz / uTile).r; }
+float transAt(vec3 wp) {
+  return exp(-0.035 * max(0.0, uRoof - wp.y) * densityAt(wp.xz) * (1.0 - openAt(wp.xz)));
+}
+vec3 illumAt(vec3 wp, out float direct) {
+  float spread = max(0.0, uRoof - wp.y);
+  float s = 0.0;
+  for (int i = 0; i < NSKY; i++) s += skyBox(i, wp.xz, spread);
+  float vert = 0.40 + 0.60 * pow(clamp(wp.y / uRoof, 0.0, 1.0), 1.2);
+  s *= vert * transAt(wp);
+  direct = s;
+  return vec3(0.64, 0.68, 0.78) * 0.26 + vec3(1.0, 0.93, 0.80) * s * 1.3;
+}
+float reflAt(vec3 wpm) {
+  vec3 d = normalize(wpm - uCamPos);
+  float cosT = max(0.0, -d.y);
+  float F = 0.2 + 0.8 * pow(1.0 - cosT, 3.0);
+  return F * exp(-max(0.0, -wpm.y) * 0.016);
+}
+float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+float vnoise(vec2 p) {
+  vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f);
+  float a = hash12(i), b = hash12(i + vec2(1.0, 0.0)), c = hash12(i + vec2(0.0, 1.0)), d = hash12(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+`;
+
+// ---------------------------------------------------------------- paper
+const sheetVert = COMMON + /* glsl */`
+attribute vec3 iPos;
+attribute vec3 iSize;
+attribute vec4 iRot;
+attribute float iLift;
+attribute float iSway;
+uniform float uMirror;
+varying vec2 vUv;
+varying vec3 vWorld;
+varying vec3 vLit;
+varying vec3 vNormal;
+varying float vFog;
+varying vec4 vData;
+varying float vOp;
+varying float vRefl;
+varying float vLift;
+mat3 rotY(float a) { float c = cos(a), s = sin(a); return mat3(c, 0.0, -s, 0.0, 1.0, 0.0, s, 0.0, c); }
+void main() {
+  vUv = uv;
+  float w = iSize.x, h = iSize.y;
+  float yaw = iRot.x, seed = iRot.z, phase = iRot.w;
+  vec2 axz = wrapXZ(iPos.xz);
+  vec3 anchor = vec3(axz.x, iPos.y + iLift, axz.y);
+  if (distance(axz, uCamPos.xz) > uFogFar + 25.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFog = 1.0; return; }
+  float hang = 1.0 - uv.y;
+  mat3 R = rotY(yaw);
+  vec3 n = R * vec3(0.0, 0.0, 1.0);
+  vec3 local = vec3((uv.x - 0.5) * w, -hang * h, 0.0);
+  float bend = pow(hang, 1.6);
+  float sway = sin(uTime * 0.19 + phase) * 0.006 * h + sin(uTime * 0.07 + phase * 2.0) * 0.004 * h;
+  float curl = sin(uv.x * 3.14159) * 0.014 * h * sin(seed * 12.0);
+  float swing = iSway * sin(uTime * 2.1 + phase) * 0.05 * h;
+  local.z += bend * (sway + curl + swing);
+  local.x += bend * iSway * sin(uTime * 1.3 + phase * 1.7) * 0.012 * h;
+  local = R * local;
+  vec3 wp = anchor + local;
+  vLit = wp;
+  vRefl = 1.0;
+  if (uMirror < 0.0) { wp.y = -wp.y; n.y = -n.y; vRefl = reflAt(wp); }
+  vWorld = wp; vNormal = n; vData = vec4(seed, iRot.y, w, h); vOp = iSize.z; vLift = iLift;
+  vFog = fogAt(wp);
+  gl_Position = projectionMatrix * viewMatrix * vec4(wp, 1.0);
+}
+`;
+const sheetFrag = COMMON + /* glsl */`
+varying vec2 vUv;
+varying vec3 vWorld;
+varying vec3 vLit;
+varying vec3 vNormal;
+varying float vFog;
+varying vec4 vData;
+varying float vOp;
+varying float vRefl;
+varying float vLift;
+uniform float uOpacity;
+float textBlock(vec2 uv, float seed) {
+  vec2 m = vec2(0.13, 0.11);
+  vec2 q = (uv - m) / (1.0 - 2.0 * m);
+  if (q.x < 0.0 || q.x > 1.0 || q.y < 0.0 || q.y > 1.0) return 0.0;
+  float nl = 22.0 + floor(fract(seed * 4.7) * 18.0);
+  float ly = (1.0 - q.y) * nl;
+  float li = floor(ly), lf = fract(ly);
+  float vis = smoothstep(1.2, 0.4, fwidth(ly));
+  float len = 0.6 + 0.4 * hash12(vec2(li, seed * 100.0));
+  float on = step(lf, 0.5) * step(q.x, len);
+  on *= step(0.1, hash12(vec2(li * 3.0 + 1.0, seed * 50.0)));
+  on *= 0.55 + 0.45 * hash12(vec2(floor(q.x * 40.0), li + seed));
+  return mix(0.28, on, vis);
+}
+void main() {
+  if (vFog > 0.995) discard;
+  float seed = vData.x, kind = vData.y, w = vData.z, h = vData.w;
+  vec2 pu = vUv * vec2(w, h);
+  vec2 fc = pu * 6.0 + seed * 37.0;
+  float lod = smoothstep(1.0, 0.25, fwidth(fc.x));
+  float lod2 = smoothstep(1.0, 0.25, fwidth(fc.x) * 5.0);
+  float fiber = mix(0.5, vnoise(fc) * 0.5 + vnoise(fc * 2.7 + 11.0) * 0.3 + mix(0.5, vnoise(fc * 5.3 + 23.0), lod2) * 0.2, lod);
+  float stain = vnoise(pu * 0.3 + seed * 9.0);
+  float ink = 0.0;
+  float ks = fract(seed * 17.31);
+  if (ks < 0.6) ink = textBlock(vUv, seed) * (0.10 + 0.16 * fract(seed * 5.7));
+  vec3 paper = mix(vec3(0.93, 0.90, 0.84), vec3(0.95, 0.86, 0.68), 0.7 * fract(seed * 3.9));
+  paper = mix(paper, vec3(0.84, 0.87, 0.90), 0.7 * step(0.86, fract(seed * 9.1)));
+  vec3 col = paper * (0.9 + 0.16 * (fiber - 0.5)) * (0.9 + 0.2 * (stain - 0.5)) * (1.0 - ink);
+  float so; vec3 light = illumAt(vLit, so);
+  light *= 1.0 + 0.7 * smoothstep(0.0, 8.0, vLift);
+  vec3 V = normalize(uCamPos - vWorld);
+  float nv = abs(dot(normalize(vNormal), V));
+  float facing = smoothstep(0.0, 0.22, nv);
+  float ew = max(0.012, fwidth(vUv.x) * 1.6);
+  float ewy = max(0.012 * w / h, fwidth(vUv.y) * 1.6);
+  float edge = 1.0 - smoothstep(0.0, ew, min(vUv.x, 1.0 - vUv.x));
+  edge = max(edge, 1.0 - smoothstep(0.0, ewy, vUv.y));
+  col *= 0.66 + 0.5 * vUv.y;
+  col = col * light;
+  vec3 edgeCol = light * (0.3 + 0.2 * so) * edge;
+  col = mix(col, col * vec3(0.78, 0.88, 1.08), vFog * 0.7);
+  float a = uOpacity * vOp * facing * (1.0 - vFog) * vRefl;
+  gl_FragColor = vec4(col * a + edgeCol * (1.0 - vFog) * vRefl * smoothstep(0.0, 0.08, nv), 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- hairlines: threads and the roof grid
+const lineVert = COMMON + /* glsl */`
+attribute vec2 aMid;
+attribute float aShade;
+attribute float aLift;
+attribute float aTop;
+uniform float uMirror;
+varying vec3 vCol;
+void main() {
+  vec2 m = wrapXZ(aMid);
+  vec3 wp = position; wp.xz += m - aMid; wp.y += aLift * (1.0 - aTop);
+  if (distance(m, uCamPos.xz) > uFogFar + 25.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vCol = vec3(0.0); return; }
+  float so; vec3 l = illumAt(wp, so);
+  float refl = 1.0;
+  if (uMirror < 0.0) { wp.y = -wp.y; refl = reflAt(wp); }
+  float fog = fogAt(wp);
+  vCol = vec3(0.6, 0.6, 0.64) * aShade * l * (1.0 - fog) * 1.7 * refl;
+  gl_Position = projectionMatrix * viewMatrix * vec4(wp, 1.0);
+}
+`;
+const lineFrag = /* glsl */`
+varying vec3 vCol;
+void main() { gl_FragColor = vec4(vCol, 1.0); }
+`;
+
+// ---------------------------------------------------------------- readers
+const solidVert = COMMON + /* glsl */`
+uniform float uMirror;
+varying vec3 vWorld;
+varying vec3 vLit;
+varying vec3 vN;
+varying float vFog;
+varying float vRefl;
+void main() {
+  vec4 wp4 = instanceMatrix * vec4(position, 1.0);
+  vec2 c = vec2(instanceMatrix[3][0], instanceMatrix[3][2]);
+  vec2 m = wrapXZ(c);
+  wp4.xz += m - c;
+  if (distance(m, uCamPos.xz) > uFogFar + 25.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFog = 1.0; return; }
+  vec3 n = normalize((instanceMatrix * vec4(normal, 0.0)).xyz);
+  vLit = wp4.xyz; vRefl = 1.0;
+  if (uMirror < 0.0) { wp4.y = -wp4.y; n.y = -n.y; vRefl = reflAt(wp4.xyz); }
+  vN = n; vWorld = wp4.xyz; vFog = fogAt(vWorld);
+  gl_Position = projectionMatrix * viewMatrix * wp4;
+}
+`;
+const solidFrag = COMMON + /* glsl */`
+varying vec3 vWorld;
+varying vec3 vLit;
+varying vec3 vN;
+varying float vFog;
+varying float vRefl;
+uniform vec3 uBase;
+void main() {
+  if (vFog > 0.995) discard;
+  float so; vec3 l = illumAt(vLit, so);
+  vec3 n = normalize(vN);
+  float lam = 0.55 + 0.45 * max(0.0, n.y) + 0.25 * abs(n.x) * so;
+  gl_FragColor = vec4(uBase * l * lam * (1.0 - vFog) * 1.3 * vRefl, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- the shafts of light: ray-marched volumes under each opening
+const beamVert = /* glsl */`
+varying vec3 vWorld;
+void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
+`;
+const beamFrag = COMMON + /* glsl */`
+varying vec3 vWorld;
+uniform vec3 uBoxC;
+uniform vec3 uBoxH;
+uniform vec2 uBoxR;
+uniform int uSkyIndex;
+uniform float uMirror;
+uniform float uSteps;
+vec3 toLocal(vec3 p) { vec3 d = p - uBoxC; return vec3(d.x * uBoxR.x + d.z * uBoxR.y, d.y, -d.x * uBoxR.y + d.z * uBoxR.x); }
+void main() {
+  vec3 ro = uCamPos, rd = vWorld - uCamPos;
+  vec3 lo = toLocal(ro), ld = toLocal(vWorld) - lo;
+  ld += vec3(lessThan(abs(ld), vec3(1e-4))) * 1e-4;
+  vec3 t1 = (-uBoxH - lo) / ld, t2 = (uBoxH - lo) / ld;
+  vec3 tn = min(t1, t2);
+  float t0 = clamp(max(max(tn.x, tn.y), tn.z), 0.0, 1.0);
+  float refl = 1.0;
+  if (uMirror < 0.0) refl = reflAt(vWorld);
+  float n = uSteps;
+  float dt = (1.0 - t0) / n;
+  float acc = 0.0;
+  float jitter = hash12(gl_FragCoord.xy + fract(uTime) * 100.0) * dt;
+  for (float i = 0.0; i < 32.0; i += 1.0) {
+    if (i >= n) break;
+    float t = t0 + jitter + i * dt;
+    vec3 p = ro + rd * t;
+    p.y = abs(p.y);
+    float spread = max(0.0, uRoof - p.y);
+    float box = skyBox(uSkyIndex, p.xz, spread);
+    float vert = 0.15 + 0.85 * pow(clamp(p.y / uRoof, 0.0, 1.0), 1.1);
+    float tr = transAt(p);
+    float dust = 0.6 + 0.6 * vnoise(p.xz * 0.12 + vec2(uTime * 0.012, p.y * 0.05)) * vnoise(vec2(p.y * 0.18 - uTime * 0.06, p.x * 0.07 + p.z * 0.05));
+    float fog = 1.0 - fogAt(vec3(p.x, p.y * uMirror, p.z));
+    acc += box * vert * tr * dust * fog;
+  }
+  acc *= dt * length(rd) * 0.034 * refl;
+  gl_FragColor = vec4(vec3(1.0, 0.93, 0.80) * acc, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- dust in the beams
+const dustVert = COMMON + /* glsl */`
+attribute float aSeed;
+uniform float uDpr;
+varying float vI;
+void main() {
+  vec3 box = vec3(90.0, 40.0, 90.0);
+  vec3 p = position + vec3(sin(uTime * 0.07 + aSeed * 6.28) * 2.0, -uTime * (0.08 + 0.08 * aSeed), cos(uTime * 0.05 + aSeed * 3.0));
+  vec3 rel = mod(p - uCamPos + box * 0.5, box) - box * 0.5;
+  vec3 wp = uCamPos + rel;
+  wp.y = clamp(wp.y, 0.3, uRoof - 0.5);
+  float so; vec3 l = illumAt(wp, so);
+  vI = (so * 1.2 + 0.01) * (1.0 - fogAt(wp));
+  vec4 mv = viewMatrix * vec4(wp, 1.0);
+  gl_PointSize = clamp(80.0 / max(1.0, -mv.z), 1.2, 4.5) * uDpr;
+  gl_Position = projectionMatrix * mv;
+}
+`;
+const dustFrag = /* glsl */`
+varying float vI;
+void main() {
+  float d = length(gl_PointCoord - 0.5);
+  float a = smoothstep(0.5, 0.05, d) * vI * 0.5;
+  gl_FragColor = vec4(vec3(1.0, 0.95, 0.85) * a, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- water and the openings seen from below
+const waterVert = /* glsl */`
+varying vec3 vWorld;
+void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
+`;
+const waterFrag = COMMON + /* glsl */`
+varying vec3 vWorld;
+void main() {
+  vec3 c = uCamPos;
+  vec2 w = vWorld.xz;
+  vec2 hit = w + (w - c.xz) * (uRoof / max(0.5, c.y));
+  hit += (vec2(vnoise(w * 0.25 + uTime * 0.03), vnoise(w * 0.25 + 7.0 - uTime * 0.02)) - 0.5) * 1.2;
+  float s = 0.0;
+  for (int i = 0; i < NSKY; i++) s += skyBox(i, hit, 6.0);
+  s *= transAt(vec3(w.x, 0.0, w.y));
+  vec3 d = normalize(vWorld - c);
+  float cosT = max(0.0, -d.y);
+  float F = 0.08 + 0.92 * pow(1.0 - cosT, 4.0);
+  float dm = length(vec3(hit.x - c.x, uRoof + c.y, hit.y - c.z));
+  float a = s * F * 0.28 * (1.0 - smoothstep(uFogNear, uFogFar, dm));
+  gl_FragColor = vec4(vec3(1.0, 0.94, 0.82) * a, 1.0);
+}
+`;
+const skyVert = /* glsl */`
+varying vec2 vUv;
+varying vec3 vWorld;
+void main() { vUv = uv; vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
+`;
+const skyFrag = COMMON + /* glsl */`
+varying vec2 vUv;
+varying vec3 vWorld;
+uniform float uIntensity;
+void main() {
+  float bx = 1.0 - smoothstep(0.40, 0.5, abs(vUv.x - 0.5));
+  float by = 1.0 - smoothstep(0.40, 0.5, abs(vUv.y - 0.5));
+  float n = 0.85 + 0.15 * vnoise(vUv * 6.0 + uTime * 0.01);
+  float a = bx * by * n * uIntensity * 0.82 * (1.0 - fogAt(vWorld));
+  gl_FragColor = vec4(vec3(1.0, 0.94, 0.82) * a, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- post
+const quadVert = /* glsl */`
+varying vec2 vUv;
+void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
+`;
+const downFrag = /* glsl */`
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform vec2 uTexel;
+uniform float uThresh;
+void main() {
+  vec3 c = (texture2D(tDiffuse, vUv + uTexel * vec2(-0.5, -0.5)).rgb + texture2D(tDiffuse, vUv + uTexel * vec2(0.5, -0.5)).rgb
+          + texture2D(tDiffuse, vUv + uTexel * vec2(-0.5, 0.5)).rgb + texture2D(tDiffuse, vUv + uTexel * vec2(0.5, 0.5)).rgb) * 0.25;
+  gl_FragColor = vec4(max(c - uThresh, 0.0), 1.0);
+}
+`;
+const blurFrag = /* glsl */`
+varying vec2 vUv;
+uniform sampler2D tDiffuse;
+uniform vec2 uDir;
+void main() {
+  vec3 c = texture2D(tDiffuse, vUv).rgb * 0.2270270270;
+  c += (texture2D(tDiffuse, vUv + uDir * 1.3846153846).rgb + texture2D(tDiffuse, vUv - uDir * 1.3846153846).rgb) * 0.3162162162;
+  c += (texture2D(tDiffuse, vUv + uDir * 3.2307692308).rgb + texture2D(tDiffuse, vUv - uDir * 3.2307692308).rgb) * 0.0702702703;
+  gl_FragColor = vec4(c, 1.0);
+}
+`;
+const compFrag = /* glsl */`
+varying vec2 vUv;
+uniform sampler2D tScene;
+uniform sampler2D tA;
+uniform sampler2D tB;
+uniform vec2 uRes;
+uniform float uTime;
+uniform float uFade;
+float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+void main() {
+  vec3 c = texture2D(tScene, vUv).rgb;
+  vec3 bloom = texture2D(tA, vUv).rgb * 0.55 + texture2D(tB, vUv).rgb * 0.85;
+  c += bloom * 0.3;
+  c = c / (1.0 + 0.1 * c);
+  vec2 q = vUv - 0.5; q.x *= uRes.x / uRes.y;
+  c *= 1.0 - 0.35 * smoothstep(0.45, 1.15, length(q));
+  c += (hash12(gl_FragCoord.xy + vec2(fract(uTime * 7.1) * 311.0, fract(uTime * 3.3) * 173.0)) - 0.5) * 0.014;
+  gl_FragColor = vec4(max(c, 0.0) * uFade, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- build the scene
+const scene = new THREE.Scene();
+function makeMat(vert, frag, extra, opts) {
+  return new THREE.ShaderMaterial(Object.assign({ uniforms: Object.assign({}, U, extra), vertexShader: vert, fragmentShader: frag }, opts));
+}
+const SHEET_OPTS = { transparent: true, depthWrite: false, depthTest: true, side: THREE.DoubleSide, blending: THREE.CustomBlending, blendEquation: THREE.AddEquation, blendSrc: THREE.OneMinusDstColorFactor, blendDst: THREE.OneFactor };
+const ADD_OPTS = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending };
+
+// the plan as a texture, so the shaders know how much paper the light has to pass through
+{
+  const N = 128, data = new Uint8Array(N * N);
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) data[j * N + i] = Math.round(255 * density((i + 0.5) / N * T, (j + 0.5) / N * T));
+  const tex = new THREE.DataTexture(data, N, N, THREE.RedFormat, THREE.UnsignedByteType);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.needsUpdate = true;
+  U.uDensity.value = tex;
+}
+
+// paper, upright and mirrored
+const plane = new THREE.PlaneGeometry(1, 1, lite ? 3 : 4, lite ? 5 : 7);
+const sheetGeo = new THREE.InstancedBufferGeometry();
+sheetGeo.index = plane.index;
+sheetGeo.setAttribute('position', plane.attributes.position);
+sheetGeo.setAttribute('uv', plane.attributes.uv);
+sheetGeo.setAttribute('iPos', new THREE.InstancedBufferAttribute(new Float32Array(S.pos), 3));
+sheetGeo.setAttribute('iSize', new THREE.InstancedBufferAttribute(new Float32Array(S.size), 3));
+sheetGeo.setAttribute('iRot', new THREE.InstancedBufferAttribute(new Float32Array(S.rot), 4));
+const liftAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1);
+liftAttr.setUsage(THREE.DynamicDrawUsage);
+sheetGeo.setAttribute('iLift', liftAttr);
+const swayAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1);
+swayAttr.setUsage(THREE.DynamicDrawUsage);
+sheetGeo.setAttribute('iSway', swayAttr);
+sheetGeo.instanceCount = sheetCount;
+for (const mirror of [1, -1]) {
+  const mesh = new THREE.Mesh(sheetGeo, makeMat(sheetVert, sheetFrag, { uOpacity: { value: 0.16 }, uMirror: { value: mirror } }, SHEET_OPTS));
+  mesh.frustumCulled = false; mesh.renderOrder = 10; scene.add(mesh);
+}
+
+// threads from every sheet up to the roof, plus the roof's own hairline grid
+const L = { pos: [], mid: [], shade: [], top: [] };
+const threadOf = new Int32Array(sheetCount).fill(-1);
+for (let i = 0; i < sheetCount; i++) {
+  const x = S.pos[3 * i], y = S.pos[3 * i + 1], z = S.pos[3 * i + 2];
+  threadOf[i] = L.pos.length / 3;
+  L.pos.push(x, y, z, x, ROOF, z); L.mid.push(x, z, x, z); L.shade.push(0.55, 0.2); L.top.push(0, 1);
+}
+const threadVerts = L.pos.length / 3;
+{
+  const step = 8, n = T / step;
+  for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) {
+    const x = a * step, z = b * step;
+    L.pos.push(x, ROOF, z, x + step, ROOF, z); L.mid.push(x + step / 2, z, x + step / 2, z); L.shade.push(0.45, 0.45); L.top.push(1, 1);
+    L.pos.push(x, ROOF, z, x, ROOF, z + step); L.mid.push(x, z + step / 2, x, z + step / 2); L.shade.push(0.45, 0.45); L.top.push(1, 1);
+  }
+}
+const lineGeo = new THREE.BufferGeometry();
+lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(L.pos, 3));
+lineGeo.setAttribute('aMid', new THREE.Float32BufferAttribute(L.mid, 2));
+lineGeo.setAttribute('aShade', new THREE.Float32BufferAttribute(L.shade, 1));
+lineGeo.setAttribute('aTop', new THREE.Float32BufferAttribute(L.top, 1));
+const threadLift = new THREE.Float32BufferAttribute(new Float32Array(L.pos.length / 3), 1);
+threadLift.setUsage(THREE.DynamicDrawUsage);
+lineGeo.setAttribute('aLift', threadLift);
+for (const mirror of [1, -1]) {
+  const lines = new THREE.LineSegments(lineGeo, makeMat(lineVert, lineFrag, { uMirror: { value: mirror } }));
+  lines.frustumCulled = false; scene.add(lines);
+}
+
+// the other readers
+function mergeGeos(list) {
+  const pos = [], nor = [];
+  for (const g of list) { const ng = g.toNonIndexed(); pos.push(...ng.attributes.position.array); nor.push(...ng.attributes.normal.array); }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  return geo;
+}
+function figureGeometry() {
+  const parts = [];
+  const b = (w, h, d, x, y, z) => { const g = new THREE.BoxGeometry(w, h, d); g.translate(x, y, z); return g; };
+  parts.push(b(0.36, 0.70, 0.20, 0, 1.08, 0));
+  parts.push(b(0.13, 0.78, 0.16, -0.09, 0.39, 0));
+  parts.push(b(0.13, 0.78, 0.16, 0.09, 0.39, 0));
+  parts.push(b(0.09, 0.62, 0.11, -0.24, 1.05, 0));
+  parts.push(b(0.09, 0.62, 0.11, 0.24, 1.05, 0));
+  const head = new THREE.SphereGeometry(0.115, 8, 6); head.translate(0, 1.58, 0); parts.push(head);
+  return mergeGeos(parts);
+}
+const figGeo = figureGeometry();
+const figMain = new THREE.InstancedMesh(figGeo, makeMat(solidVert, solidFrag, { uBase: { value: new THREE.Vector3(0.34, 0.31, 0.28) }, uMirror: { value: 1 } }), NREAD - 1);
+const figTwin = new THREE.InstancedMesh(figGeo, makeMat(solidVert, solidFrag, { uBase: { value: new THREE.Vector3(0.34, 0.31, 0.28) }, uMirror: { value: -1 } }), NREAD - 1);
+figTwin.instanceMatrix = figMain.instanceMatrix;
+figMain.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+for (const m of [figMain, figTwin]) { m.frustumCulled = false; scene.add(m); }
+const M = new THREE.Matrix4(), Qt = new THREE.Quaternion(), V3 = new THREE.Vector3(), SC = new THREE.Vector3();
+
+// the shafts under each opening, upright and mirrored
+const beams = [];
+SKY.forEach((s, i) => {
+  const hx = s.w / 2 + 16, hz = s.h / 2 + 16;
+  const geo = new THREE.BoxGeometry(2 * hx, ROOF, 2 * hz);
+  for (const mirror of [1, -1]) {
+    const mat = makeMat(beamVert, beamFrag, {
+      uBoxC: { value: new THREE.Vector3(s.x, mirror * ROOF / 2, s.z) }, uBoxH: { value: new THREE.Vector3(hx, ROOF / 2, hz) },
+      uBoxR: { value: new THREE.Vector2(Math.cos(s.rot), Math.sin(s.rot)) }, uSkyIndex: { value: i }, uMirror: { value: mirror },
+      uSteps: { value: lite ? 10 : 20 },
+    }, Object.assign({ side: THREE.BackSide, depthTest: false }, ADD_OPTS));
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.rotation.y = -s.rot; mesh.position.set(s.x, mirror * ROOF / 2, s.z);
+    mesh.frustumCulled = false; mesh.renderOrder = 15 + (mirror < 0 ? 0 : 1);
+    scene.add(mesh); beams.push({ mesh, s, mirror });
+  }
+});
+
+// dust, water, and the openings seen from below
+{
+  const n = lite ? 1000 : 2200;
+  const pos = new Float32Array(n * 3), seed = new Float32Array(n);
+  for (let k = 0; k < n; k++) { pos[3 * k] = (rand() - 0.5) * 90; pos[3 * k + 1] = rand() * 40; pos[3 * k + 2] = (rand() - 0.5) * 90; seed[k] = rand(); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+  const dust = new THREE.Points(g, makeMat(dustVert, dustFrag, {}, ADD_OPTS));
+  dust.frustumCulled = false; dust.renderOrder = 20; scene.add(dust);
+}
+const water = new THREE.Mesh(new THREE.PlaneGeometry(2 * FOG_FAR + 60, 2 * FOG_FAR + 60), makeMat(waterVert, waterFrag, {}, Object.assign({ side: THREE.DoubleSide }, ADD_OPTS)));
+water.rotation.x = -Math.PI / 2; water.frustumCulled = false; water.renderOrder = 5; scene.add(water);
+const skyMeshes = SKY.map(s => {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(s.w, s.h), makeMat(skyVert, skyFrag, { uIntensity: { value: s.i } }, Object.assign({ side: THREE.DoubleSide }, ADD_OPTS)));
+  m.rotation.set(Math.PI / 2, 0, s.rot); m.position.y = ROOF; m.frustumCulled = false; m.renderOrder = 14; scene.add(m);
+  return m;
+});
+
+// the far city: soft rectangles of light standing on the horizon, in the openings' own language, mirrored by the water
+const horizonVert = /* glsl */`
+varying vec3 vWorld;
+void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
+`;
+const horizonFrag = /* glsl */`
+varying vec3 vWorld;
+uniform float uTime;
+uniform vec3 uCamPos;
+float hash11(float p) { p = fract(p * 0.1031); p *= p + 33.33; return fract(p * (p + p)); }
+float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+float vnoise(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f); float a = hash12(i), b = hash12(i + vec2(1.0, 0.0)), c = hash12(i + vec2(0.0, 1.0)), d = hash12(i + vec2(1.0, 1.0)); return mix(mix(a, b, f.x), mix(c, d, f.x), f.y); }
+float cityLayer(float th, float cells, float seed, float y, float hmax, float prob, float edgeW, float edgeH) {
+  float fc = th * cells / 6.2831853;
+  float c = floor(fc), u = fract(fc);
+  float r0 = hash11(c + seed), r1 = hash11(c * 1.7 + seed + 3.0), r2 = hash11(c * 2.3 + seed + 9.0);
+  float cluster = 0.6 + 0.4 * smoothstep(0.42, 0.68, vnoise(vec2(c * 0.05 + seed, 0.5)));
+  float on = step(1.0 - prob * cluster, r0);
+  float w = 0.3 + 0.5 * r1;
+  float h = 1.5 + hmax * pow(r2, 1.6);
+  float ex = 1.0 - smoothstep(w * 0.5 - edgeW, w * 0.5 + edgeW, abs(u - 0.5));
+  float ey = smoothstep(0.0, 0.6, y) * (1.0 - smoothstep(h - edgeH, h + edgeH, y));
+  float life = smoothstep(0.15, 0.55, 0.5 + 0.5 * sin(uTime * (0.012 + 0.02 * hash11(c * 5.3 + seed)) + c * 1.3));
+  return on * ex * ey * (0.5 + 0.5 * hash11(c * 3.9 + seed)) * (0.35 + 0.65 * life);
+}
+void main() {
+  vec2 d = vWorld.xz - uCamPos.xz;
+  float th = atan(d.y, d.x) + 3.14159265;
+  float y = abs(vWorld.y);
+  float mirror = vWorld.y < 0.0 ? 0.75 : 1.0;
+  float far = cityLayer(th, 220.0, 1.0, y, 14.0, 0.92, 0.05, 0.2);
+  float near = cityLayer(th, 90.0, 2.0, y, 30.0, 0.75, 0.04, 0.25);
+  float city = far * 0.6 + near * 0.9;
+  float n = 0.9 + 0.2 * vnoise(vec2(th * 20.0, y * 0.3 + uTime * 0.01));
+  gl_FragColor = vec4(vec3(1.0, 0.93, 0.80) * city * 0.14 * n * mirror, 1.0);
+}
+`;
+const horizon = new THREE.Mesh(new THREE.CylinderGeometry(FOG_FAR + 24, FOG_FAR + 24, 60, 96, 1, true), new THREE.ShaderMaterial({ uniforms: { uTime: U.uTime, uCamPos: U.uCamPos }, vertexShader: horizonVert, fragmentShader: horizonFrag, side: THREE.BackSide, depthWrite: false, depthTest: false }));
+horizon.frustumCulled = false; horizon.renderOrder = -10; scene.add(horizon);
+
+// ---------------------------------------------------------------- post pipeline
+const quadGeo = new THREE.BufferGeometry();
+quadGeo.setAttribute('position', new THREE.Float32BufferAttribute([-1, -1, 0, 3, -1, 0, -1, 3, 0], 3));
+quadGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 2, 0, 0, 2], 2));
+const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+const quadScene = new THREE.Scene();
+const quad = new THREE.Mesh(quadGeo, null);
+quad.frustumCulled = false; quadScene.add(quad);
+const rtOpts = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, depthBuffer: false, stencilBuffer: false, type: THREE.UnsignedByteType };
+const sceneRT = new THREE.WebGLRenderTarget(2, 2, Object.assign({}, rtOpts, { depthBuffer: true, samples: lite ? 0 : 4 }));
+const rtA = new THREE.WebGLRenderTarget(2, 2, rtOpts), rtA2 = new THREE.WebGLRenderTarget(2, 2, rtOpts);
+const rtB = new THREE.WebGLRenderTarget(2, 2, rtOpts), rtB2 = new THREE.WebGLRenderTarget(2, 2, rtOpts);
+const downMat = new THREE.ShaderMaterial({ uniforms: { tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2() }, uThresh: { value: 0.2 } }, vertexShader: quadVert, fragmentShader: downFrag, depthTest: false, depthWrite: false });
+const blurMat = new THREE.ShaderMaterial({ uniforms: { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2() } }, vertexShader: quadVert, fragmentShader: blurFrag, depthTest: false, depthWrite: false });
+const compMat = new THREE.ShaderMaterial({ uniforms: { tScene: { value: sceneRT.texture }, tA: { value: rtA.texture }, tB: { value: rtB.texture }, uRes: { value: new THREE.Vector2(1, 1) }, uTime: U.uTime, uFade: { value: 0 } }, vertexShader: quadVert, fragmentShader: compFrag, depthTest: false, depthWrite: false });
+function pass(mat, target) { quad.material = mat; renderer.setRenderTarget(target); renderer.render(quadScene, quadCam); }
+function down(src, dst, thresh) {
+  downMat.uniforms.tDiffuse.value = src.texture;
+  downMat.uniforms.uTexel.value.set(2 / src.width, 2 / src.height);
+  downMat.uniforms.uThresh.value = thresh;
+  pass(downMat, dst);
+}
+function blur(a, b, radius) {
+  blurMat.uniforms.tDiffuse.value = a.texture; blurMat.uniforms.uDir.value.set(radius / a.width, 0); pass(blurMat, b);
+  blurMat.uniforms.tDiffuse.value = b.texture; blurMat.uniforms.uDir.value.set(0, radius / a.height); pass(blurMat, a);
+}
+
+const camera = new THREE.PerspectiveCamera(46, 1, 0.2, 600);
+camera.rotation.order = 'YXZ';
+let dpr = Math.min(devicePixelRatio || 1, lite ? 1.5 : 1.75);
+function resize() {
+  const w = Math.max(1, innerWidth), h = Math.max(1, innerHeight);
+  renderer.setPixelRatio(dpr);
+  renderer.setSize(w, h, false);
+  const pw = Math.max(2, Math.floor(w * dpr)), ph = Math.max(2, Math.floor(h * dpr));
+  sceneRT.setSize(pw, ph);
+  rtA.setSize(Math.max(2, pw >> 2), Math.max(2, ph >> 2)); rtA2.setSize(Math.max(2, pw >> 2), Math.max(2, ph >> 2));
+  rtB.setSize(Math.max(2, pw >> 3), Math.max(2, ph >> 3)); rtB2.setSize(Math.max(2, pw >> 3), Math.max(2, ph >> 3));
+  compMat.uniforms.uRes.value.set(pw, ph);
+  U.uDpr.value = dpr;
+  camera.aspect = w / h;
+}
+addEventListener('resize', resize);
+resize();
+
+// ---------------------------------------------------------------- the rule, each frame
+const sheetX = new Float32Array(sheetCount), sheetZ = new Float32Array(sheetCount), liftMax = Float32Array.from(S.liftMax), riseT = new Float32Array(sheetCount);
+for (let i = 0; i < sheetCount; i++) { sheetX[i] = S.pos[3 * i]; sheetZ[i] = S.pos[3 * i + 2]; riseT[i] = 1.1 + 0.08 * S.size[3 * i + 1]; }
+const lifts = liftAttr.array, tl = threadLift.array, sways = swayAttr.array;
+// ---------------------------------------------------------------- sound: made by the same rule, nothing sampled
+// A quiet hall of pink noise that breathes with the light. Paper that is being drawn up or let
+// down rustles, pitched by its size and placed by where it hangs; the largest sheets make the
+// threads creak. A page that stays sounds once, low, like something set down on water.
+let AC = null, snd = null, soundWanted = true, soundOn = false;
+const ac = { l: 0, r: 0, big: 0, hw: 0, tot: 0 };
+function noiseSource(ctx) {
+  const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), data = buf.getChannelData(0);
+  let b0 = 0, b1 = 0, b2 = 0;
+  for (let i = 0; i < len; i++) {
+    const w = Math.random() * 2 - 1;
+    b0 = 0.99765 * b0 + w * 0.0990460; b1 = 0.96300 * b1 + w * 0.2965164; b2 = 0.57000 * b2 + w * 1.0526913;
+    data[i] = (b0 + b1 + b2 + w * 0.1848) * 0.11;
+  }
+  const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; src.start();
+  return src;
+}
+function initSound() {
+  if (AC) return;
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  if (!Ctx) return;
+  AC = new Ctx();
+  const master = AC.createGain(); master.gain.value = 0; master.connect(AC.destination);
+  const air = noiseSource(AC), airLP = AC.createBiquadFilter(); airLP.type = 'lowpass'; airLP.frequency.value = 160; airLP.Q.value = 0.4;
+  const airG = AC.createGain(); airG.gain.value = 0; air.connect(airLP); airLP.connect(airG); airG.connect(master);
+  const voices = [-0.75, 0.75].map(pan => {
+    const src = noiseSource(AC);
+    const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.9;
+    const g = AC.createGain(); g.gain.value = 0;
+    const p = AC.createStereoPanner ? AC.createStereoPanner() : null;
+    const creak = AC.createBiquadFilter(); creak.type = 'bandpass'; creak.frequency.value = 2300; creak.Q.value = 9;
+    const cg = AC.createGain(); cg.gain.value = 0;
+    src.connect(bp); bp.connect(g); src.connect(creak); creak.connect(cg);
+    if (p) { p.pan.value = pan; g.connect(p); cg.connect(p); p.connect(master); } else { g.connect(master); cg.connect(master); }
+    return { bp, g, cg };
+  });
+  snd = { master, airG, voices };
+}
+function setSound(on) {
+  soundWanted = on;
+  sndBtn.textContent = on ? 'Sound on' : 'Sound off';
+  if (on && !AC) initSound();
+  if (!AC || !snd) return;
+  if (on && AC.state === 'suspended') AC.resume().catch(() => {});
+  snd.master.gain.setTargetAtTime(on ? 0.7 : 0, AC.currentTime, on ? 1.2 : 0.4);
+  soundOn = on;
+}
+function wakeSound() { if (soundWanted && !soundOn) setSound(true); }
+sndBtn.addEventListener('click', () => setSound(!soundOn));
+function pageTone(x, z) {
+  if (!snd || !soundOn) return;
+  const dx = wdelta(x, cam.x), dz = wdelta(z, cam.z), dist = Math.hypot(dx, dz);
+  const att = 1 / (1 + (dist / 18) * (dist / 18));
+  if (att < 0.02) return;
+  const t0 = AC.currentTime, f = 98 + 50 * Math.random();
+  const o = AC.createOscillator(); o.type = 'sine';
+  o.frequency.setValueAtTime(f * 1.03, t0); o.frequency.exponentialRampToValueAtTime(f, t0 + 0.8);
+  const g = AC.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(0.22 * att, t0 + 0.06); g.gain.exponentialRampToValueAtTime(0.0004, t0 + 3.2);
+  o.connect(g);
+  if (AC.createStereoPanner) { const p = AC.createStereoPanner(); p.pan.value = clamp((dx * Math.cos(cam.yaw) - dz * Math.sin(cam.yaw)) / Math.max(1, dist), -0.8, 0.8); g.connect(p); p.connect(snd.master); } else g.connect(snd.master);
+  o.start(t0); o.stop(t0 + 3.4);
+}
+function updateSound(dt) {
+  if (!snd || !soundOn) return;
+  const now = AC.currentTime, inv = 1 / Math.max(dt, 1e-3);
+  const gl = clamp(ac.l * inv * 0.012, 0, 0.5), gr = clamp(ac.r * inv * 0.012, 0, 0.5);
+  const meanH = ac.tot > 0 ? ac.hw / ac.tot : 10;
+  const freq = clamp(1600 - 40 * meanH, 420, 1600);
+  const creak = clamp(ac.big * inv * 0.0035, 0, 0.12);
+  snd.voices[0].g.gain.setTargetAtTime(gl, now, 0.06); snd.voices[1].g.gain.setTargetAtTime(gr, now, 0.06);
+  for (const v of snd.voices) { v.bp.frequency.setTargetAtTime(freq, now, 0.12); v.cg.gain.setTargetAtTime(creak, now, 0.08); }
+  const breath = clamp((U.uSkyB.value[2].z / SKY[2].i - 0.86) / 0.14, 0, 1);
+  snd.airG.gain.setTargetAtTime(0.035 + 0.03 * breath, now, 0.5);
+  ac.l = ac.r = ac.big = ac.hw = ac.tot = 0;
+}
+
+// after a reader leaves, the page they read stays up. The viewer's own pages are written to the
+// artifact's shared store, so the archive remembers where it has been read, across visits.
+const kept = { real: new Uint8Array(sheetCount), until: new Float32Array(sheetCount) };
+let keptList = [], dbRef = null, dbWriting = false, dbPending = null, roomRef = null, lastSent = 0, sentKey = '';
+function nearestSheet(x, z) {
+  let bi = -1, bd = 4;
+  for (let i = 0; i < sheetCount; i++) { const dd = Math.hypot(wdelta(sheetX[i], x), wdelta(sheetZ[i], z)); if (dd < bd) { bd = dd; bi = i; } }
+  return bi;
+}
+function leavePage(r, persist) {
+  let bi = -1, best = 0.5;
+  for (let i = 0; i < sheetCount; i++) {
+    if (Math.hypot(wdelta(sheetX[i], r.x), wdelta(sheetZ[i], r.z)) > r.R) continue;
+    const fr = liftMax[i] > 0 ? lifts[i] / liftMax[i] : 0;
+    if (fr > best) { best = fr; bi = i; }
+  }
+  if (bi < 0) return;
+  if (persist) { kept.real[bi] = 1; persistKept(sheetX[bi], sheetZ[bi]); } else kept.until[bi] = tNow + 1800;
+  pageTone(sheetX[bi], sheetZ[bi]);
+}
+async function persistKept(x, z) {
+  keptList.push([Math.round(x * 2) / 2, Math.round(z * 2) / 2]);
+  if (keptList.length > 240) keptList = keptList.slice(-240);
+  if (!dbRef) return;
+  const body = { pages: keptList.map(p => [p[0], p[1]]) };
+  if (dbWriting) { dbPending = body; return; }
+  dbWriting = true;
+  try { await dbRef.set(body); } catch (e) { /* a read-only viewer: the page stays lifted here only */ }
+  dbWriting = false;
+  if (dbPending) { const b = dbPending; dbPending = null; dbWriting = true; try { await dbRef.set(b); } catch (e) { /* same */ } dbWriting = false; }
+}
+function applyKept(list) {
+  kept.real.fill(0);
+  for (const p of list) {
+    if (!Array.isArray(p) || p.length < 2) continue;
+    const x = +p[0], z = +p[1];
+    if (!isFinite(x) || !isFinite(z)) continue;
+    const i = nearestSheet(x, z);
+    if (i >= 0) kept.real[i] = 1;
+  }
+}
+const peerSlot = new Map();
+function freeSlot() { for (let k = 1; k < NREAD; k++) if (!readers[k].real) return k; return -1; }
+function setupRoom(room) {
+  roomRef = room;
+  room.onPeers(change => {
+    const live = new Set();
+    for (const p of change.peers) {
+      if (p.sameTab || p.kind !== 'viewer') continue;
+      const pr = p.presence || {};
+      const x = +pr.x, z = +pr.z;
+      if (!isFinite(x) || !isFinite(z)) continue;
+      live.add(p.peer);
+      let k = peerSlot.get(p.peer);
+      if (k === undefined) {
+        k = freeSlot(); if (k < 0) continue;
+        peerSlot.set(p.peer, k);
+        const r = readers[k]; r.real = true; r.active = true; r.x = ((x % T) + T) % T; r.z = ((z % T) + T) % T;
+      }
+      const r = readers[k];
+      r.tx = ((x % T) + T) % T; r.tz = ((z % T) + T) % T;
+      r.walking = !!pr.w; r.dwell = clamp(+pr.d || 0, 0, 600);
+    }
+    for (const [peer, k] of [...peerSlot]) if (!live.has(peer)) { peerSlot.delete(peer); const r = readers[k]; r.real = false; r.active = r.simActive; r.dwell = 0; pickPlace(r); }
+    othersEl.textContent = peerSlot.size ? (peerSlot.size === 1 ? 'one other reading here' : peerSlot.size + ' others reading here') : '';
+  }, () => {});
+}
+(async () => {
+  const cl = window.claude;
+  if (!cl || typeof cl.use !== 'function') return;
+  try {
+    const db = await cl.use('db');
+    if (db) {
+      dbRef = db.doc('archive/kept');
+      dbRef.onSnapshot(snap => {
+        const data = snap.exists ? snap.data() : null;
+        const list = data && Array.isArray(data.pages) ? data.pages.slice(-240) : [];
+        keptList = list.map(p => [+p[0], +p[1]]);
+        applyKept(keptList);
+      }, () => {});
+    }
+  } catch (e) { /* no store here */ }
+  try {
+    const room = await cl.use('room');
+    if (room) setupRoom(room);
+  } catch (e) { /* alone here */ }
+})();
+function updateLifts(dt) {
+  const downK = 1 - Math.exp(-dt / 160);
+  const act = readers.filter(r => r.active && r.s > 0);
+  for (let i = 0; i < sheetCount; i++) {
+    let o = 0;
+    const x = sheetX[i], z = sheetZ[i];
+    for (let k = 0; k < act.length; k++) {
+      const r = act[k];
+      let dx = x - r.x; dx -= Math.round(dx / T) * T; if (dx > r.R || dx < -r.R) continue;
+      let dz = z - r.z; dz -= Math.round(dz / T) * T; if (dz > r.R || dz < -r.R) continue;
+      o += r.s * (1 - smooth(r.R * 0.45, r.R, Math.hypot(dx, dz)));
+    }
+    if (kept.real[i]) o = 1; else if (kept.until[i] > tNow && o < 0.9) o = 0.9;
+    if (o > 1) o = 1;
+    const target = liftMax[i] * o, cur = lifts[i];
+    const v = cur + (target - cur) * (target > cur ? 1 - Math.exp(-dt / riseT[i]) : downK);
+    const dv = Math.abs(v - cur);
+    sways[i] = Math.min(1, sways[i] * Math.exp(-dt / 3.5) + dv * 2.2);
+    if (soundOn && dv > 1e-4) {
+      const ex = wdelta(x, cam.x), ez = wdelta(z, cam.z), dist = Math.hypot(ex, ez);
+      if (dist < 60) {
+        const att = 1 / (1 + (dist / 10) * (dist / 10)), h = S.size[3 * i + 1];
+        const pan = (ex * Math.cos(cam.yaw) - ez * Math.sin(cam.yaw)) / Math.max(1, dist);
+        const e = dv * att * h;
+        ac.l += e * (1 - pan) * 0.5; ac.r += e * (1 + pan) * 0.5; ac.tot += e; ac.hw += e * h;
+        if (h > 12) ac.big += e;
+      }
+    }
+    lifts[i] = v; const ti = threadOf[i]; if (ti >= 0) { tl[ti] = v; tl[ti + 1] = v; }
+  }
+  liftAttr.needsUpdate = true; threadLift.needsUpdate = true; swayAttr.needsUpdate = true;
+}
+function updateReaders(dt) {
+  for (let k = 1; k < NREAD; k++) {
+    const r = readers[k];
+    if (!r.active) continue;
+    if (r.real) {
+      const dx = wdelta(r.tx, r.x), dz = wdelta(r.tz, r.z), kk = 1 - Math.exp(-dt / 0.6);
+      r.x += dx * kk; r.z += dz * kk;
+      if (Math.hypot(dx, dz) > 0.3) r.yaw = Math.atan2(dx, dz);
+      r.x = ((r.x % T) + T) % T; r.z = ((r.z % T) + T) % T;
+      readerField(r);
+      place(figMain, k - 1, r.x, 0, r.z, 1, 1, 1, r.yaw);
+      continue;
+    }
+    if (r.walking) {
+      const dx = wdelta(r.tx, r.x), dz = wdelta(r.tz, r.z), d = Math.hypot(dx, dz);
+      if (d < 0.4) { r.walking = false; r.timer = 30 + rand() * 90; r.dwell = 0; }
+      else { const v = Math.min(d, r.speed * dt); r.x += dx / d * v; r.z += dz / d * v; r.yaw = Math.atan2(dx, dz); r.dwell = 0; }
+    } else {
+      r.dwell += dt; r.timer -= dt;
+      if (r.timer < 0) { if (r.dwell > 20) leavePage(r, false); pickPlace(r); }
+    }
+    r.x = ((r.x % T) + T) % T; r.z = ((r.z % T) + T) % T;
+    readerField(r);
+    place(figMain, k - 1, r.x, 0, r.z, 1, 1, 1, r.yaw);
+  }
+  figMain.instanceMatrix.needsUpdate = true;
+}
+function place(mesh, idx, x, y, z, sx, sy, sz, yaw) {
+  Qt.setFromAxisAngle(V3.set(0, 1, 0), yaw || 0);
+  M.compose(V3.set(x, y, z), Qt, SC.set(sx, sy, sz));
+  mesh.setMatrixAt(idx, M);
+}
+
+// ---------------------------------------------------------------- the viewer: a reader who may walk on their own or be led
+const cam = { x: 0, y: EYE, z: 0, yaw: 0, pitch: 0.2 };
+{
+  const dx = wdelta(PLACES[10].x, SKY[2].x), dz = wdelta(PLACES[10].z, SKY[2].z), dl = Math.hypot(dx, dz) || 1;
+  cam.x = ((SKY[2].x + dx / dl * 85) % T + T) % T; cam.z = ((SKY[2].z + dz / dl * 85) % T + T) % T;
+  cam.yaw = Math.atan2(-wdelta(SKY[2].x, cam.x), -wdelta(SKY[2].z, cam.z));
+}
+const man = Object.assign({}, cam);
+const ap = { x: cam.x, z: cam.z, yaw: cam.yaw, pitch: 0.2, fov: 46, walking: false, tx: 0, tz: 0, timer: 18, baseYaw: 0, phase: 0 };
+const vel = { f: 0, yaw: 0, pitch: 0 };
+const lean = { x: 0, y: 0, yaw: 0, pitch: 0 };
+let auto = 1, lastInput = -1e9, tNow = 0, mx = 0, my = 0, fovNow = 46;
+function alerp(a, b, t) { let d = b - a; d -= Math.round(d / (2 * Math.PI)) * 2 * Math.PI; return a + d * t; }
+function apPick() {
+  let p; do { p = PLACES[Math.floor(rand() * PLACES.length)]; } while (wdist(p.x, p.z, ap.x, ap.z) < 10);
+  ap.tx = p.x + (rand() - 0.5) * 4; ap.tz = p.z + (rand() - 0.5) * 4; ap.walking = true;
+}
+function updateAuto(dt, t) {
+  if (ap.walking) {
+    const dx = wdelta(ap.tx, ap.x), dz = wdelta(ap.tz, ap.z), d = Math.hypot(dx, dz);
+    if (d < 0.5) { ap.walking = false; ap.timer = 30 + rand() * 40; ap.baseYaw = ap.yaw; ap.phase = rand() * 6.28; }
+    else {
+      const v = Math.min(d, 0.9 * dt);
+      ap.x += dx / d * v; ap.z += dz / d * v;
+      const want = Math.atan2(-dx, -dz);
+      ap.yaw = alerp(ap.yaw, want, 1 - Math.exp(-dt / 2.5));
+      let pitchWant = 0.05 + 0.03 * Math.sin(t / 7);
+      for (const sk of SKY) {
+        if (wdist(ap.tx, ap.tz, sk.x, sk.z) > 30) continue;
+        const ds = Math.max(8, wdist(ap.x, ap.z, sk.x, sk.z));
+        pitchWant = clamp(Math.atan((ROOF - 6 - EYE) / ds) * 0.75, 0.05, 0.45);
+      }
+      ap.pitch = lerp(ap.pitch, pitchWant, 1 - Math.exp(-dt / 2.5));
+      ap.fov = lerp(ap.fov, 48, 1 - Math.exp(-dt / 4));
+    }
+  } else {
+    ap.timer -= dt;
+    if (ap.timer < 0) apPick();
+    const look = ap.baseYaw + 0.45 * Math.sin(t / 11 + ap.phase);
+    ap.yaw = alerp(ap.yaw, look, 1 - Math.exp(-dt / 3));
+    const up = 0.08 + 0.26 * Math.max(0, Math.sin(t / 17 + ap.phase));
+    ap.pitch = lerp(ap.pitch, up, 1 - Math.exp(-dt / 3));
+    ap.fov = lerp(ap.fov, 40, 1 - Math.exp(-dt / 6));
+  }
+  ap.x = ((ap.x % T) + T) % T; ap.z = ((ap.z % T) + T) % T;
+}
+{
+  const r = readers[1];
+  const dx = wdelta(SKY[2].x, cam.x), dz = wdelta(SKY[2].z, cam.z), dl = Math.hypot(dx, dz) || 1;
+  r.x = ((cam.x + dx / dl * 27 - dz / dl * 9) % T + T) % T; r.z = ((cam.z + dz / dl * 27 + dx / dl * 9) % T + T) % T;
+  r.walking = false; r.dwell = 70; r.timer = 80 + rand() * 60; r.yaw = cam.yaw + 0.6; r.active = true; readerField(r);
+}
+function touched() { if (auto >= 0.999) Object.assign(man, cam); lastInput = tNow; }
+function walkOn() { lastInput = -1e9; ap.x = cam.x; ap.z = cam.z; ap.yaw = cam.yaw; ap.pitch = cam.pitch; apPick(); }
+
+// ---------------------------------------------------------------- input
+const keys = new Set();
+const MOVE_KEYS = new Set(['KeyW', 'KeyS', 'KeyA', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight']);
+addEventListener('keydown', e => {
+  wakeSound();
+  if (MOVE_KEYS.has(e.code)) { keys.add(e.code); touched(); e.preventDefault(); }
+  else if (e.code === 'Space') { if (!e.repeat) { if (auto > 0.5) touched(); else walkOn(); } e.preventDefault(); }
+  else if (e.code === 'KeyF') goFullscreen();
+});
+addEventListener('keyup', e => keys.delete(e.code));
+addEventListener('blur', () => keys.clear());
+const pointers = new Map();
+let dragInfo = null;
+canvas.addEventListener('pointerdown', e => {
+  wakeSound();
+  pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  dragInfo = { t0: performance.now(), moved: 0 };
+  canvas.classList.add('dragging');
+  if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* fine */ } }
+});
+addEventListener('pointermove', e => {
+  const p = pointers.get(e.pointerId);
+  if (p) {
+    const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+    if (dragInfo) dragInfo.moved += Math.abs(dx) + Math.abs(dy);
+    if (pointers.size === 1) {
+      if (dragInfo && dragInfo.moved > 4) touched();
+      man.yaw -= dx * 0.0032; man.pitch = clamp(man.pitch - dy * 0.0024, -0.9, 1.2);
+      vel.yaw = -dx * 0.05; vel.pitch = -dy * 0.04;
+    } else { vel.f = clamp(vel.f - dy * 0.02, -3.5, 3.5); touched(); }
+  } else if (e.pointerType !== 'touch') {
+    mx = (e.clientX / innerWidth) * 2 - 1; my = (e.clientY / innerHeight) * 2 - 1;
+  }
+});
+function endPointer(e) {
+  if (!pointers.has(e.pointerId)) return;
+  pointers.delete(e.pointerId);
+  if (pointers.size === 0) {
+    canvas.classList.remove('dragging');
+    if (dragInfo && dragInfo.moved < 8 && performance.now() - dragInfo.t0 < 500) walkOn();
+    dragInfo = null;
+  }
+}
+addEventListener('pointerup', endPointer);
+addEventListener('pointercancel', endPointer);
+addEventListener('wheel', e => { e.preventDefault(); wakeSound(); vel.f = clamp(vel.f + e.deltaY * 0.012, -3.5, 3.5); touched(); }, { passive: false });
+function goFullscreen() {
+  const el = document.documentElement;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen;
+  if (!req) return;
+  try { const p = req.call(el); if (p && p.catch) p.catch(() => {}); } catch (e) { /* not available here */ }
+}
+fsBtn.addEventListener('click', goFullscreen);
+setTimeout(() => hintEl.classList.add('faded'), 16000);
+
+// ---------------------------------------------------------------- frame
+const t0 = performance.now() / 1000;
+let last = t0, ema = 1 / 60, adaptAt = t0 + 3, prevX = cam.x, prevZ = cam.z;
+apPick();
+ap.tx = PLACES[4].x + 1; ap.tz = PLACES[4].z - 1;
+man.yaw = cam.yaw;
+readers.forEach((rd, i) => U.uRead.value[i].set(rd.x, rd.z, rd.R, rd.active ? rd.s : 0));
+updateLifts(60);
+{
+  const qs = new URLSearchParams(location.search);
+  if (qs.has('pitch') || qs.has('yaw') || qs.has('at')) { auto = 0; man.pitch = parseFloat(qs.get('pitch') || '0'); man.yaw = parseFloat(qs.get('yaw') || '0'); lastInput = 1e9; }
+  if (qs.has('at')) { const p = PLACES[parseInt(qs.get('at'), 10) % PLACES.length]; man.x = p.x; man.z = p.z; }
+}
+function frame() {
+  requestAnimationFrame(frame);
+  const nowS = performance.now() / 1000;
+  const dt = Math.min(0.05, nowS - last);
+  last = nowS;
+  const t = nowS - t0; tNow = t;
+  U.uTime.value = t;
+  SKY.forEach((sk, i) => { const b = sk.i * (0.86 + 0.14 * Math.sin(t * (0.021 + 0.004 * i) + i * 1.7)); U.uSkyB.value[i].z = b; skyMeshes[i].material.uniforms.uIntensity.value = b; });
+
+  ema += (dt - ema) * 0.05;
+  if (nowS > adaptAt) {
+    adaptAt = nowS + 2.5;
+    const cap = Math.min(devicePixelRatio || 1, lite ? 1.5 : 2);
+    if (ema > 1 / 36 && dpr > 0.75) { dpr = Math.max(0.75, dpr - 0.25); resize(); }
+    else if (ema < 1 / 70 && dpr < cap) { dpr = Math.min(dpr + 0.25, cap); resize(); }
+  }
+
+  // who leads: the walk, or the hand
+  const wantAuto = (t - lastInput) > 25;
+  auto = clamp(auto + (wantAuto ? dt / 8 : -dt / 0.6), 0, 1);
+  const k = smooth(0, 1, auto);
+  if (auto > 0.001) updateAuto(dt, t);
+  if (keys.has('KeyW') || keys.has('ArrowUp')) vel.f = clamp(vel.f + 2.2 * dt, -3.5, 3.5);
+  if (keys.has('KeyS') || keys.has('ArrowDown')) vel.f = clamp(vel.f - 2.2 * dt, -3.5, 3.5);
+  if (keys.has('KeyA') || keys.has('ArrowLeft')) vel.yaw += 1.2 * dt;
+  if (keys.has('KeyD') || keys.has('ArrowRight')) vel.yaw -= 1.2 * dt;
+  if (keys.size) touched();
+  man.yaw += vel.yaw * dt; man.pitch = clamp(man.pitch + vel.pitch * dt, -0.9, 1.2);
+  man.x += -Math.sin(man.yaw) * vel.f * dt; man.z += -Math.cos(man.yaw) * vel.f * dt;
+  vel.f *= Math.exp(-dt * 1.4); vel.yaw *= Math.exp(-dt * 3.5); vel.pitch *= Math.exp(-dt * 3.5);
+  man.x = ((man.x % T) + T) % T; man.z = ((man.z % T) + T) % T;
+  cam.x = man.x + wdelta(ap.x, man.x) * k; cam.z = man.z + wdelta(ap.z, man.z) * k; cam.y = EYE;
+  cam.yaw = alerp(man.yaw, ap.yaw, k); cam.pitch = lerp(man.pitch, ap.pitch, k);
+  if (auto >= 0.999) Object.assign(man, cam);
+  fovNow = lerp(fovNow, lerp(48, ap.fov, k), 1 - Math.exp(-dt / 3));
+
+  // the viewer is reader zero: standing still opens the archive
+  const moved = Math.hypot(wdelta(cam.x, prevX), wdelta(cam.z, prevZ)); prevX = cam.x; prevZ = cam.z;
+  const me = readers[0];
+  me.x = cam.x; me.z = cam.z;
+  const still = moved / Math.max(dt, 1e-3) < 0.2;
+  const prevDwell = me.dwell;
+  me.walking = !still;
+  me.dwell = still ? me.dwell + dt : Math.max(0, me.dwell - dt * 3);
+  if (me.wasStill && !still && prevDwell > 20) leavePage(me, true);
+  me.wasStill = still;
+  readerField(me);
+  if (roomRef && t - lastSent > 0.5) {
+    const px = Math.round(cam.x * 10) / 10, pz = Math.round(cam.z * 10) / 10, pd = Math.round(me.dwell);
+    const key = px + ',' + pz + ',' + pd + ',' + me.walking;
+    if (key !== sentKey) { sentKey = key; lastSent = t; roomRef.presence({ x: px, z: pz, d: pd, w: me.walking }).catch(() => {}); }
+  }
+  updateReaders(dt);
+  updateLifts(dt);
+  updateSound(dt);
+  readers.forEach((r, i) => U.uRead.value[i].set(r.x, r.z, r.R, r.active ? r.s : 0));
+
+  const lk = 1 - Math.exp(-dt * 1.3), amp = reduceMotion ? 0.3 : 1;
+  lean.x += (mx * 0.6 * amp - lean.x) * lk; lean.y += (-my * 0.3 * amp - lean.y) * lk;
+  lean.yaw += (-mx * 0.03 * amp - lean.yaw) * lk; lean.pitch += (-my * 0.02 * amp - lean.pitch) * lk;
+  const rx = Math.cos(cam.yaw), rz = -Math.sin(cam.yaw);
+  camera.position.set(cam.x + rx * lean.x, cam.y + lean.y, cam.z + rz * lean.x);
+  camera.rotation.set(cam.pitch + lean.pitch, cam.yaw + lean.yaw, 0);
+  camera.fov = camera.aspect < 1 ? 2 * Math.atan(Math.tan(fovNow * Math.PI / 360) / camera.aspect) * 180 / Math.PI : fovNow;
+  camera.updateProjectionMatrix();
+  U.uCamPos.value.copy(camera.position);
+  water.position.set(camera.position.x, 0, camera.position.z);
+  horizon.position.set(camera.position.x, 0, camera.position.z);
+  for (const b of beams) { b.mesh.position.x = camera.position.x + wdelta(b.s.x, camera.position.x); b.mesh.position.z = camera.position.z + wdelta(b.s.z, camera.position.z); b.mesh.material.uniforms.uBoxC.value.set(b.mesh.position.x, b.mirror * ROOF / 2, b.mesh.position.z); }
+  SKY.forEach((s, i) => { const m = skyMeshes[i]; m.position.x = camera.position.x + wdelta(s.x, camera.position.x); m.position.z = camera.position.z + wdelta(s.z, camera.position.z); });
+  compMat.uniforms.uFade.value = clamp((t - 0.3) / 4.0, 0, 1);
+
+  renderer.setRenderTarget(sceneRT);
+  renderer.clear(true, true, false);
+  renderer.render(scene, camera);
+  down(sceneRT, rtA, 0.2);
+  blur(rtA, rtA2, 1.0);
+  blur(rtA, rtA2, 1.6);
+  down(rtA, rtB, 0.0);
+  blur(rtB, rtB2, 1.2);
+  blur(rtB, rtB2, 2.0);
+  pass(compMat, null);
+}
+frame();
+console.log('sheets', sheetCount, 'thread vertices', threadVerts, 'line vertices', L.pos.length / 3, 'readers', readers.filter(r => r.active).length, 'places', PLACES.length);
+</script>
+
+</body>
+</html>
