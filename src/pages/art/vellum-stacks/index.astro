@@ -10,6 +10,7 @@ import Sheet from '../../../layouts/Sheet.astro';
 import Figure from '../../../components/Figure.astro';
 import CursorLabel from '../../../components/CursorLabel.astro';
 import { href } from '../../../lib/url';
+import { nextAfter } from '../../../data/art';
 import '../../../styles/home.css';
 import '../../../styles/case.css';
 import '../../../styles/art.css';
@@ -26,7 +27,7 @@ const live = href('/art/vellum-stacks/live');
   title="The Vellum Stacks — Kyle Xu"
   description="The Vellum Stacks (2026), an interactive spatial artwork by Kyle Xu: an impossible archive of translucent paper over black water that opens where it is read. WebGL, sound generated in the browser."
   ogImage="/og-vellum-stacks.jpg"
-  next={{ label: 'Next', title: 'Selected work', to: '/#work', line: 'I design how AI products behave, and the interface that keeps people in control of it.' }}
+  next={nextAfter('vellum-stacks', 'I design how AI products behave, and the interface that keeps people in control of it.')}
 >
   <section class="col hero work-head" aria-labelledby="h1">
     <div class="id">
