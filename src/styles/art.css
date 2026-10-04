@@ -39,11 +39,6 @@
 @media (hover: none) { .play span { opacity: 1; } }
 .film.playing .play { display: none; }
 
-/* the statement's Chinese, under the English at the same size */
-.zh { margin-top: var(--s-1); }
-.zh p { font-family: var(--cjk); }
-.zh p + p { margin-top: 12px; }
-
 /* the close: the work's rule at the stance size, then the way in again */
 .close .go { grid-column: 6 / -1; display: grid; gap: var(--s-1); justify-items: start; max-width: 72ch; }
 .close .go p { margin: 0; color: var(--fg-2); }
