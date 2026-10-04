@@ -1,0 +1,63 @@
+---
+// The Art section's index: the work Kyle makes outside client briefs. Each work is a plate — the
+// home page's card (24px, the hairline, the image covering a 16:10 box) — with its tombstone in one
+// line underneath, never on the image: the title in ink, the medium in grey, the year at the right.
+// A plate with a loop plays it, silent, while it is in view. The page names itself at the title
+// size; the claims are the product work's, on the home page.
+import { Picture } from 'astro:assets';
+import Sheet from '../../layouts/Sheet.astro';
+import CursorLabel from '../../components/CursorLabel.astro';
+import { href } from '../../lib/url';
+import { works } from '../../data/art';
+import '../../styles/home.css';
+import '../../styles/art.css';
+
+const plate = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px', decoding: 'async' as const };
+---
+<Sheet
+  title="Art — Kyle Xu"
+  description="Work Kyle Xu makes outside client briefs, mostly in code: interactive and generative pieces. The Vellum Stacks, 2026."
+  ogImage="/og-vellum-stacks.jpg"
+>
+  <section class="col hero art-head" aria-labelledby="h1">
+    <h1 id="h1">Art</h1>
+    <p>Work I make outside client briefs, mostly in code.</p>
+  </section>
+
+  <section class="col sec plates-sec" aria-label="Works">
+    <ul class="plates">
+      {works.map((w, i) => (
+        <li class:list={['plate', { full: works.length % 2 === 1 && i === 0 }]}>
+          <a href={href('/art/' + w.slug)} data-cursor="View →">
+            <span class="media">
+              <Picture src={w.poster} {...plate} alt={w.alt} loading={i === 0 ? 'eager' : 'lazy'} />
+              {w.loop && <video data-src={href(w.loop)} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>}
+            </span>
+            <span class="tomb"><b>{w.title}</b><span class="medium">{w.medium}</span><span class="year">{w.year}</span></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <CursorLabel />
+  <script is:inline>
+    // A plate's loop: fetched and played only once the plate is half in view, paused when it leaves;
+    // never under reduced motion or Save-Data, where the still stays. Shown once it is actually playing.
+    (function () {
+      var calm = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData);
+      if (calm || !('IntersectionObserver' in window)) return;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          var v = e.target;
+          if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+          else v.pause();
+        });
+      }, { threshold: 0.5 });
+      document.querySelectorAll('.plate video').forEach(function (v) {
+        v.addEventListener('playing', function () { v.classList.add('playing'); });
+        io.observe(v);
+      });
+    })();
+  </script>
+</Sheet>

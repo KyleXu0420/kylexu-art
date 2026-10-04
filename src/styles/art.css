@@ -1,0 +1,59 @@
+/* art.css — the Art section. A gallery of plates (the home page's cards, captioned underneath in one
+   line) and a page per work (the case grammar at the title size, so the work is the largest thing on
+   the page). The page stays white; black and warm light belong to the work, inside its frames. */
+
+/* the headers: one row on the twelve columns — the name at 1–5 at the title size, the reading voice at 6–10 */
+.art-head, .work-head { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gutter); align-items: start; }
+.art-head h1, .work-head h1 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 500; letter-spacing: -.02em; }
+.art-head h1 { grid-column: 1 / span 5; }
+.art-head p { grid-column: 6 / span 5; margin: 0; color: var(--fg-2); }
+.work-head .id { grid-column: 1 / span 5; display: grid; gap: 4px; }
+.work-head .about { grid-column: 6 / span 5; display: grid; gap: 8px; }
+.work-head .about p { margin: 0; }
+.work-head .about p:first-child { color: var(--fg-2); }
+.work-head .enter { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
+
+/* the plates: the home card at 16:10 — the film's own ratio — with the tombstone under it. An odd
+   count opens with the newest on the full row; the rest go in pairs */
+.plates-sec { margin-top: var(--s-2); }
+.plates { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2) var(--gutter); }
+.plate.full { grid-column: 1 / -1; }
+.plate a { display: grid; gap: 12px; color: inherit; text-decoration: none; }
+.plate .media { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: var(--selection); }
+.plate .media::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px var(--line); pointer-events: none; }
+.plate .media picture, .plate .media img, .plate .media video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.plate video { opacity: 0; transition: opacity 400ms ease-out; }
+.plate video.playing { opacity: 1; }
+.tomb { display: flex; align-items: baseline; gap: 12px; }
+.tomb b { font-size: 15px; font-weight: 500; }
+.tomb .medium, .tomb .year { font-size: 14px; color: var(--fg-2); }
+.tomb .year { margin-left: auto; font-variant-numeric: tabular-nums; }
+
+/* the film: the page's one big frame at 16:10. A click plays it with sound; until then nothing loads.
+   On a pointer the cursor says Play; on touch, and to the keyboard, the same pill sits at the centre */
+.film { position: relative; aspect-ratio: 16 / 10; background: var(--fill); }
+.film video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.play { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: grid; place-items: center; padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }
+.play span { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); background: var(--fill); color: var(--fill-fg); font-size: 14px; font-weight: 500; opacity: 0; transition: opacity 140ms ease-out; }
+.play:focus-visible span { opacity: 1; }
+@media (hover: none) { .play span { opacity: 1; } }
+.film.playing .play { display: none; }
+
+/* the statement's Chinese, under the English at the same size */
+.zh { margin-top: var(--s-1); }
+.zh p { font-family: var(--cjk); }
+.zh p + p { margin-top: 12px; }
+
+/* the close: the work's rule at the stance size, then the way in again */
+.close .go { grid-column: 6 / -1; display: grid; gap: var(--s-1); justify-items: start; max-width: 72ch; }
+.close .go p { margin: 0; color: var(--fg-2); }
+
+@media (max-width: 1023px) {
+  .art-head, .work-head { row-gap: var(--s-1); }
+  .art-head h1, .art-head p, .work-head .id, .work-head .about, .work-head .enter { grid-column: 1 / -1; }
+  .work-head .enter { justify-self: start; }
+  .close .go { grid-column: 1; }
+}
+@media (max-width: 767px) {
+  .plates { grid-template-columns: minmax(0, 1fr); }
+}
