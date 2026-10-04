@@ -2,6 +2,7 @@
 // The Art section's index: the work Kyle makes outside client briefs. Each work is a plate — the
 // home page's card (24px, the hairline, the image covering a 16:10 box) — with its tombstone in one
 // line underneath, never on the image: the title in ink, the medium in grey, the year at the right.
+// The first plate takes the full row, the rest go in pairs, and one left alone takes the row too.
 // A plate with a loop plays it, silent, while it is in view. The page names itself at the title
 // size; the claims are the product work's, on the home page.
 import { Picture } from 'astro:assets';
@@ -27,7 +28,7 @@ const plate = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600], s
   <section class="col sec plates-sec" aria-label="Works">
     <ul class="plates">
       {works.map((w, i) => (
-        <li class:list={['plate', { full: works.length % 2 === 1 && i === 0 }]}>
+        <li class:list={['plate', { full: i === 0 || (i === works.length - 1 && (works.length - 1) % 2 === 1) }]}>
           <a href={href('/art/' + w.slug)} data-cursor="View →">
             <span class="media">
               <Picture src={w.poster} {...plate} alt={w.alt} loading={i === 0 ? 'eager' : 'lazy'} />

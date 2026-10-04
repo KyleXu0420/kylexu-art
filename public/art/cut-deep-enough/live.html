@@ -1,0 +1,780 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cut Deep Enough</title>
+<link rel="icon" href="../../favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;height:100%;background:#050506;overflow:hidden}
+  canvas{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:none;touch-action:none}
+  #fade{position:fixed;inset:0;background:#050506;pointer-events:none;opacity:1;transition:opacity 1.2s ease}
+  #leave{position:fixed;left:22px;bottom:18px;font:600 11px "Cormorant Garamond",Georgia,serif;letter-spacing:.32em;text-transform:uppercase;color:rgba(222,226,232,.34);text-decoration:none;z-index:2;cursor:pointer}
+  #leave:hover,#leave:focus-visible{color:rgba(222,226,232,.8);outline:none}
+  #snd{position:fixed;right:22px;bottom:18px;font:600 11px "Cormorant Garamond",Georgia,serif;letter-spacing:.32em;text-transform:uppercase;color:rgba(222,226,232,.34);pointer-events:none;transition:opacity 1.6s ease}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="fade"></div>
+<div id="snd">click for sound</div>
+<a id="leave" href="../cut-deep-enough">Leave</a>
+<script>/* added for kylexu.art: a way back to the work's page when it runs on its own; not when it is framed */
+if (window.top !== window.self) document.getElementById('leave').remove();</script>
+
+<script id="common" type="x-shader/x-common">
+precision highp float;
+uniform vec2 uRes;
+uniform float uSeed;
+float hash12(vec2 p){ vec3 p3=fract(vec3(p.xyx)*0.1031); p3+=dot(p3,p3.yzx+33.33); return fract((p3.x+p3.y)*p3.z); }
+vec2  hash22(vec2 p){ vec3 p3=fract(vec3(p.xyx)*vec3(0.1031,0.1030,0.0973)); p3+=dot(p3,p3.yzx+33.33); return fract((p3.xx+p3.yz)*p3.zy); }
+float vn(vec2 p){
+  vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
+  return mix(mix(hash12(i),hash12(i+vec2(1.0,0.0)),u.x), mix(hash12(i+vec2(0.0,1.0)),hash12(i+vec2(1.0,1.0)),u.x), u.y);
+}
+float fbm3(vec2 p){ return 0.5*vn(p)+0.25*vn(p*2.03+7.1)+0.125*vn(p*4.07+3.3); }
+
+/* The floor is laid in slabs. Joints: two rows across, one column, a few extra cuts. */
+float jointDist(vec2 q, vec2 res){
+  vec2 w = vec2(vn(q.yx*23.0+uSeed)-0.5, vn(q.xy*23.0+uSeed+9.0)-0.5)*0.0035;
+  q += w;
+  float d = 1e5;
+  d = min(d, abs(q.y-0.26)*res.y);
+  d = min(d, abs(q.x-0.68)*res.x);
+  if (q.x > 0.68) { d = min(d, abs(q.y-0.48)*res.y); d = min(d, abs(q.y-0.70)*res.y); }
+  return d;
+}
+float slabId(vec2 q){
+  float row = q.y < 0.26 ? 0.0 : 1.0;
+  float col = q.x < 0.68 ? 0.0 : 1.0;
+  if (col == 1.0) row = q.y < 0.48 ? 0.0 : (q.y < 0.70 ? 1.0 : 2.0);
+  return hash12(vec2(row*7.0+1.0, col*3.0+2.0) + uSeed);
+}
+</script>
+
+<script id="vs" type="x-shader/x-vertex">
+attribute vec2 aPos;
+void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }
+</script>
+
+<!-- Static floor, baked once: axe-dressed tooling, wear, undulation, joints. Height packed in RG. -->
+<script id="bake" type="x-shader/x-fragment">
+void main(){
+  vec2 px = gl_FragCoord.xy; vec2 q = px/uRes;
+  float id = slabId(q);
+  float ang0 = 0.35 + 2.6*id;
+  vec2 dir0 = vec2(cos(ang0), sin(ang0));
+  float band = floor(dot(px, vec2(dir0.y,-dir0.x))/(110.0 + 60.0*hash12(vec2(id, 4.0))));
+  float ang = ang0 + (hash12(vec2(band, id*7.0))-0.5)*0.22;
+  vec2 dir = vec2(cos(ang), sin(ang));
+  float spacing = 4.5 + 2.5*hash12(vec2(id*9.0, 1.0));
+  float v = dot(px, dir)/spacing + 0.22*vn(px*0.03 + id*10.0) + hash12(vec2(band, id));
+  float tri = 1.0 - abs(fract(v) - 0.5)*2.0;
+  float strokeVar = 0.5 + 0.5*vn(vec2(dot(px, vec2(dir.y,-dir.x))*0.06, floor(v)*0.41) + id*3.0);
+  float deep = step(0.93, hash12(vec2(floor(v), id)));
+  float tool = -0.32 * pow(tri, 2.2) * strokeVar * (1.0 + 0.8*deep);
+
+  float wear = smoothstep(0.52, 0.80, fbm3(q*vec2(3.0,2.0) + uSeed*2.0)) * 0.6;
+  vec2 qa = vec2(q.x*uRes.x/uRes.y, q.y);
+  vec2 A = vec2(1.02*uRes.x/uRes.y, -0.06), Bc = vec2(0.80*uRes.x/uRes.y, 0.22), C = vec2(0.42*uRes.x/uRes.y, 0.40);
+  float pd2 = 1e5;
+  for (int i=0;i<=10;i++){ float tt = float(i)/10.0; vec2 bp = mix(mix(A,Bc,tt), mix(Bc,C,tt), tt); pd2 = min(pd2, length(qa-bp)); }
+  float path = smoothstep(0.11, 0.02, pd2) * (0.75 + 0.25*vn(px*0.01+uSeed));
+  wear = max(wear, path);
+  tool *= 1.0 - 0.85*wear;
+
+  float und = (vn(px*0.003 + uSeed)*2.0-1.0)*0.7 + (vn(px*0.0012+uSeed*1.7+40.0)*2.0-1.0)*1.0;
+  float slabOff = (id-0.5)*0.8;
+  float grain = (vn(px*0.11+3.7)-0.5)*0.22 + (vn(px*0.37+9.1)-0.5)*0.10;
+
+  vec2 c = px/58.0; vec2 ci = floor(c), cf = fract(c);
+  vec2 cc = 0.25 + 0.5*hash22(ci+2.0); float pr = 1.5 + 3.5*hash12(ci+8.0);
+  float pd = length((cf-cc)*58.0);
+  float pit = smoothstep(pr, pr*0.3, pd) * step(hash12(ci+4.0), 0.10) * step(0.45, vn(px*0.002+21.0));
+
+  float jd = jointDist(q, uRes);
+  float joint = smoothstep(5.0, 1.3, jd);
+  vec2 sc = px/420.0; vec2 sci = floor(sc), scf = fract(sc);
+  float sang = hash12(sci+31.0)*3.14159; vec2 sdir = vec2(cos(sang), sin(sang));
+  vec2 scen = 0.2 + 0.6*hash22(sci+17.0);
+  vec2 rel = (scf - scen)*420.0;
+  float along = dot(rel, sdir), across = abs(dot(rel, vec2(-sdir.y, sdir.x)));
+  float slen = 60.0 + 220.0*hash12(sci+5.0);
+  float scratch = exp(-across*across*0.9) * step(abs(along), slen) * step(hash12(sci+9.0), 0.35) * (0.5+0.5*vn(px*0.05));
+  float h = tool + und + slabOff + grain - 0.9*pit - 1.3*joint - 0.35*scratch;
+
+  float alb = 0.86 + 0.14*vn(px*0.015+2.0) + 0.08*(vn(px*0.05+8.0)-0.5);
+  float cloudy = fbm3(px*0.0022 + uSeed*9.0 + id*20.0);
+  alb *= 0.86 + 0.30*smoothstep(0.35, 0.75, cloudy);
+  alb *= 1.0 - 0.35*step(0.9965, hash12(floor(px*0.6)+13.0));
+  alb *= 1.0 - 0.10*smoothstep(0.6, 0.9, vn(px*vec2(0.004,0.03) + id*5.0));
+  alb *= 1.0 + 0.05*wear;
+  alb *= 1.0 - 0.35*joint;
+  alb *= 1.0 - 0.22*step(0.993, hash12(floor(px*0.45)));
+  alb += 0.07*(id-0.5);
+  alb *= 1.0 - 0.12*scratch;
+
+  float hv = clamp((h + 5.0)/10.0, 0.0, 1.0);
+  float hi = floor(hv*255.0)/255.0; float lo = fract(hv*255.0);
+  gl_FragColor = vec4(hi, lo, clamp(alb*0.5, 0.0, 1.0), wear);
+}
+</script>
+
+<!-- Lichen: a slow map that grows toward the damp places (cuts, crack, joints) and is scraped by the hand. -->
+<script id="lichen" type="x-shader/x-fragment">
+uniform sampler2D uPrev, uText;
+uniform vec4 uBrush;      /* xy: uv, z: radius (px, this res), w: strength */
+uniform float uFrame, uGrow, uWet, uInit, uInitScale;
+void main(){
+  vec2 px = gl_FragCoord.xy; vec2 uv = px/uRes;
+  vec4 T = texture2D(uText, uv);
+  float cut = T.r, crack = T.g;
+  float jd = jointDist(uv, uRes);
+  float joint = smoothstep(6.0, 1.0, jd);
+  float patches = smoothstep(0.60, 0.76, fbm3(px*0.006 + uSeed*3.0));
+  float low = smoothstep(0.62, 0.30, vn(px*0.0024 + uSeed*1.7 + 40.0));
+  float target = clamp(0.55*smoothstep(0.0,0.12,cut) + 0.4*smoothstep(0.0,0.3,crack) + 0.35*joint + 0.25*patches*(0.5+0.5*low), 0.0, 1.0);
+  target *= 0.75 + 0.25*vn(px*0.08 + uSeed);
+  if (uInit > 0.5) {
+    float start = target * uInitScale * (0.02 + 0.40*smoothstep(0.5, 0.85, vn(px*0.02 + uSeed*4.0)));
+    gl_FragColor = vec4(start, 0.0, 0.0, 1.0); return;
+  }
+  vec4 P = texture2D(uPrev, uv);
+  float prev = P.r, recent = P.g;
+  vec2 e = 1.0/uRes;
+  float nb = 0.25*(texture2D(uPrev, uv+vec2(e.x,0.0)).r + texture2D(uPrev, uv-vec2(e.x,0.0)).r
+                 + texture2D(uPrev, uv+vec2(0.0,e.y)).r + texture2D(uPrev, uv-vec2(0.0,e.y)).r);
+  float goal = max(target, nb*0.80);
+  float gap = goal - prev;
+  float r = hash12(px + fract(uFrame*0.618)*vec2(97.0, 57.0));
+  float r2 = hash12(px*1.3 + fract(uFrame*0.381)*vec2(31.0, 71.0));
+  float p = uGrow * max(gap, 0.0) * (0.6 + 0.9*uWet) * (1.0 - 0.92*recent);
+  float next = prev + (r < p ? 1.0/255.0 : 0.0);
+  next -= (r < uGrow*0.35*max(-gap, 0.0)) ? 1.0/255.0 : 0.0;
+  vec2 b = (uv - uBrush.xy)*uRes; float bd = length(b);
+  float brush = smoothstep(uBrush.z, uBrush.z*0.35, bd) * uBrush.w;
+  next -= brush*0.10;
+  float rec = max(recent - (r2 < 0.025 ? 1.0/255.0 : 0.0), brush > 0.05 ? 1.0 : 0.0);
+  gl_FragColor = vec4(clamp(next,0.0,1.0), clamp(rec,0.0,1.0), 0.0, 1.0);
+}
+</script>
+
+<script id="fs" type="x-shader/x-fragment">
+uniform sampler2D uText, uBake, uLichen;
+uniform vec2 uTexel, uLightPos, uPlumb, uDown, uEllipse, uStaple, uDrain;
+uniform vec3 uSunDir;
+uniform float uTime, uDepth, uSunStr, uWarm, uMoon, uSky, uFog, uRain, uWet, uPool, uFront, uCloud, uRainWet;
+uniform vec4 uDrops[12];
+
+float Hh(vec2 uv){
+  vec4 T = texture2D(uText, uv); vec4 B = texture2D(uBake, uv); float l = texture2D(uLichen, uv).r;
+  float hs = (B.r + B.g/255.0)*10.0 - 5.0;
+  float cut = T.r;
+  float a = 0.10; float cr = cut < a ? cut*cut/(2.0*a) : cut - a*0.5;
+  float h = hs - uDepth*cr - 1.7*T.g + 1.3*T.b;
+  float crust = smoothstep(0.25, 0.85, l);
+  h = mix(h, hs, crust*0.85*smoothstep(0.0, 0.05, cut));
+  h += crust*0.45 + crust*0.35*(vn(uv*uRes*0.25 + 3.0)-0.5);
+  return h;
+}
+float Ht(vec2 uv){ vec4 T = texture2D(uText, uv); float l = texture2D(uLichen, uv).r; return -uDepth*T.r*(1.0 - 0.85*smoothstep(0.25,0.85,l)) + 1.3*T.b; }
+
+float oculus(vec2 uv, vec2 tilt, float blur){
+  vec2 d = (uv + tilt*0.30 - uPlumb)*vec2(uRes.x/uRes.y, 1.0);
+  return 1.0 - smoothstep(0.045 - blur, 0.075 + blur, length(d));
+}
+vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14), 0.0, 1.0); }
+float shadow(vec2 uv, float h0, vec3 L){
+  vec2 dir = L.xy; float lxy = max(length(dir), 1e-4); dir /= lxy;
+  float slope = L.z / lxy;
+  float s = 1.0; float t = 0.9;
+  for (int i=0;i<10;i++){
+    float hs = Ht(uv + dir*t*uTexel);
+    float hr = h0 + slope*t + 0.12;
+    s = min(s, clamp(0.5 + (hr - hs)*1.1, 0.0, 1.0));
+    t += 1.5;
+  }
+  return s;
+}
+
+vec3 ripples(vec2 px, float t, float density, float cell){
+  vec3 n = vec3(0.0);
+  for (int k=0;k<2;k++){
+    float fk = float(k);
+    vec2 q = px/cell + vec2(0.5,0.37)*fk;
+    vec2 id = floor(q), f = fract(q);
+    float rate = 0.8 + 0.7*hash12(id+3.0+fk*11.0);
+    float ph = hash12(id + 7.0 + fk*31.0);
+    float cyc = floor(t*rate + ph);
+    float age = fract(t*rate + ph);
+    float gate = step(hash12(id + cyc*0.37 + fk*5.0), density);
+    vec2 c = 0.2 + 0.6*hash22(id + cyc + fk*19.0);
+    vec2 d = (f - c)*cell; float dist = length(d);
+    float r = age*cell*0.6; float w = 1.5 + age*4.0;
+    float rr = (dist - r)/w; float ring = exp(-rr*rr) * (1.0-age)*(1.0-age) * gate;
+    n.xy += (d/max(dist,1e-3)) * ring * sin((dist - r)*1.4);
+    n.z += exp(-dist*dist/9.0) * gate * (1.0 - smoothstep(0.0, 0.14, age));
+  }
+  return n;
+}
+float specks(vec2 px, float t){
+  float s = 0.0;
+  for (int k=0;k<2;k++){
+    float fk = float(k);
+    vec2 q = px/44.0 + vec2(0.5,0.3)*fk;
+    vec2 id = floor(q), f = fract(q);
+    float ph = hash12(id + fk*7.0); float rate = 0.7 + 0.9*hash12(id + 3.0 + fk);
+    float cyc = floor(t*rate + ph); float age = fract(t*rate + ph);
+    vec2 c = 0.15 + 0.7*hash22(id + cyc + fk*13.0);
+    float gate = step(hash12(id + cyc*0.7 + fk*5.0), 0.12);
+    float d = length((f - c)*44.0 + vec2(0.0, age*6.0));
+    float vis = smoothstep(0.0, 0.08, age) * (1.0 - smoothstep(0.08, 0.30, age));
+    s += exp(-d*d*0.7) * vis * gate;
+  }
+  return s;
+}
+
+vec3 skyColor(vec2 px, float t){
+  float c = 0.6*fbm3(px*0.0035 + vec2(t*0.010, t*0.004) + uSeed) + 0.4*vn(px*0.012 + vec2(t*0.02, -t*0.01));
+  vec3 clear = vec3(0.56,0.68,0.86);
+  vec3 cloud = vec3(0.93,0.93,0.94);
+  vec3 storm = vec3(0.38,0.40,0.43);
+  vec3 sky = mix(clear, cloud, smoothstep(0.38,0.68,c));
+  sky = mix(storm*(0.75+0.5*c), sky, uSky);
+  return mix(sky, vec3(0.05,0.07,0.12), uMoon);
+}
+
+vec3 stoneAlb(vec4 B, float cut, float crack, float staple){
+  float alb = B.b*2.0; float wear = B.a;
+  vec3 base = vec3(0.305, 0.32, 0.33) * alb;
+  base = mix(base, vec3(0.37,0.375,0.37)*alb, wear*0.6);
+  base *= 1.0 - 0.30*smoothstep(0.2, 0.9, cut);
+  base *= mix(vec3(1.0), vec3(0.88,0.93,1.0), smoothstep(0.1, 0.6, cut));
+  base = mix(base, vec3(0.14,0.13,0.12), smoothstep(0.1,0.5,crack)*0.85);
+  base = mix(base, vec3(0.58,0.44,0.22), smoothstep(0.3,0.7,staple));
+  return base;
+}
+
+vec3 lichenAlb(vec2 px, float cut, float wet){
+  vec2 c = px/22.0; vec2 ci = floor(c); vec2 cf = fract(c);
+  float best = 1.0; float idc = 0.0;
+  for (int j=-1;j<=1;j++) for (int i=-1;i<=1;i++){
+    vec2 o = vec2(float(i),float(j)); vec2 pnt = hash22(ci+o+5.0);
+    float d = length(cf - o - pnt); if (d < best){ best = d; idc = hash12(ci+o+9.0); }
+  }
+  vec3 pale = vec3(0.56, 0.58, 0.57)*(0.85 + 0.3*idc);
+  vec3 greyGreen = vec3(0.46, 0.52, 0.46);
+  vec3 col = mix(pale, greyGreen, step(0.6, idc));
+  col = mix(col, vec3(0.13, 0.20, 0.15), smoothstep(0.45, 0.9, cut)*0.7);
+  col *= 0.9 + 0.2*smoothstep(0.5, 0.0, best);
+  return mix(col, col*vec3(0.42,0.50,0.46), wet);
+}
+
+void main(){
+  vec2 px = gl_FragCoord.xy; vec2 uv = px/uRes; float t = uTime;
+  vec4 T = texture2D(uText, uv); vec4 B = texture2D(uBake, uv);
+  float cut = T.r, crack = T.g, staple = T.b;
+  float lich = texture2D(uLichen, uv).r;
+  float crust = smoothstep(0.25, 0.85, lich);
+  float lichVis = smoothstep(0.12, 0.5, lich);
+
+  vec2 e = uTexel*0.75;
+  float hL=Hh(uv-vec2(e.x,0.0)), hR=Hh(uv+vec2(e.x,0.0)), hD=Hh(uv-vec2(0.0,e.y)), hU=Hh(uv+vec2(0.0,e.y));
+  vec3 N = normalize(vec3(hL-hR, hD-hU, 1.5));
+  vec2 e3 = uTexel*3.0;
+  float gL=Hh(uv-vec2(e3.x,0.0)), gR=Hh(uv+vec2(e3.x,0.0)), gD=Hh(uv-vec2(0.0,e3.y)), gU=Hh(uv+vec2(0.0,e3.y));
+  vec3 Nsm = normalize(vec3(gL-gR, gD-gU, 6.0));
+  vec3 L = normalize(uSunDir);
+  float lowness = 1.0 - L.z;
+
+  /* the patch of light from the opening: an ellipse stretched away from the plumb point */
+  vec2 dpx = (uv - uLightPos)*uRes;
+  vec2 ax = (uLightPos - uPlumb)*uRes; float axl = length(ax);
+  vec2 adir = axl > 1.0 ? ax/axl : vec2(1.0, 0.0);
+  float ea = dot(dpx, adir)/uEllipse.y, eb = dot(dpx, vec2(-adir.y, adir.x))/uEllipse.x;
+  float ed = sqrt(ea*ea + eb*eb);
+  float pen = 0.08 + 0.35*uFog;
+  float patch = 1.0 - smoothstep(1.0 - pen, 1.0 + pen, ed);
+  float glow = 1.0 - smoothstep(0.7, 2.6, ed);
+
+  /* skylight through the opening, strongest beneath it */
+  vec2 dpl = (uv - uPlumb)*vec2(uRes.x/uRes.y, 1.0);
+  float well = 0.07 + 0.93*exp(-dot(dpl,dpl)*3.4);
+
+  /* touches: a bead of water */
+  vec2 dropN = vec2(0.0); float splat = 0.0;
+  for (int i=0;i<12;i++){
+    vec4 d = uDrops[i];
+    if (d.w < 0.5) continue;
+    float age = t - d.z;
+    if (age < 0.0 || age > 9.0) continue;
+    vec2 c = d.xy*uRes; vec2 dv = px - c; float dist = length(dv);
+    float r = 6.0 + age*140.0; float w = 3.0 + age*7.0;
+    float rr = (dist - r)/w; float ring = exp(-rr*rr) * exp(-age*1.6);
+    dropN += (dv/max(dist,1e-3)) * ring * 1.4 * sin((dist - r)*0.9);
+    float rad = 18.0 + 8.0*hash12(d.xy*100.0) + age*2.0;
+    rad *= 0.9 + 0.2*vn(dv*0.25 + d.xy*50.0);
+    splat = max(splat, smoothstep(rad, rad*0.3, dist) * (1.0 - smoothstep(4.0, 9.0, age)));
+  }
+
+  /* water arrives from the opening and runs downhill toward the words, along the joints */
+  vec2 dp = (uv - uPlumb)*uRes;
+  float along = dot(dp, uDown), perp = dot(dp, vec2(-uDown.y, uDown.x));
+  float cost = sqrt(perp*perp*4.0 + (along > 0.0 ? along*along*0.6 : along*along*8.0));
+  cost *= 0.85 + 0.22*fbm3(px*0.006 + uSeed*7.0);
+  float jd = jointDist(uv, uRes);
+  cost *= 1.0 - 0.6*smoothstep(12.0, 2.5, jd);
+  cost = max(cost - uRes.x*0.10, 0.0);
+  float gate = smoothstep(cost - 70.0, cost + 30.0, uFront);
+
+  float wetN = 0.45*vn(px*0.0045+11.0) + 0.25*vn(px*0.012+5.0) + 0.15*vn(px*0.03+7.0) + 0.15*vn(px*0.08+2.0);
+  float topo = vn(px*0.0012 + uSeed*1.7 + 40.0);
+  wetN = wetN*0.8 + topo*0.35 - 0.1 + 0.35*smoothstep(uRes.x*0.22, 0.0, length((uv - uDrain)*uRes));
+  float frontRamp = smoothstep(cost - 160.0, cost + 30.0, uFront);
+  float wet = max(smoothstep(0.0, 0.32, uWet*(1.0 + 0.5*cut)*1.25 - wetN) * gate, gate * frontRamp * uRainWet);
+  wet = max(wet, splat);
+
+  float disc = smoothstep(uRes.x*0.34, uRes.x*0.07, length(dp));
+  vec3 rp = ripples(px, t, uRain*(0.1 + 0.9*disc), 60.0);
+  vec2 rip = rp.xy * uRain * 1.5 + dropN;
+  float spark = rp.z * uRain;
+
+  float lvl = uPool * smoothstep(cost, cost + 240.0, uFront);
+  float wdepth = uDepth*(cut*(1.0 - 0.85*crust) - (1.0 - lvl)) - 0.25;
+  float inWater = smoothstep(0.0, 0.6, wdepth) * step(0.001, uPool);
+
+  vec3 Ns = normalize(N + vec3(rip*0.30*max(wet,0.2), 0.0));
+
+  /* light */
+  vec3 sunCol = mix(vec3(1.0,0.975,0.94), vec3(1.0,0.80,0.60), smoothstep(0.7,1.0,max(lowness*0.85, uWarm))) * mix(1.55, 1.40, lowness);
+  sunCol = mix(sunCol, vec3(0.45,0.55,0.80)*0.25, uMoon);
+  sunCol *= mix(uSunStr, 0.7, uMoon) * uCloud;
+  vec3 skyAmb = mix(vec3(0.60,0.60,0.62), vec3(0.17,0.195,0.245), uSky);
+  skyAmb = mix(skyAmb, vec3(0.03,0.04,0.08), uMoon) * well;
+  skyAmb *= mix(1.0, 1.25, uFog);
+
+  float sh = (cut > 0.002 && patch > 0.01) ? shadow(uv, -uDepth*cut, L) : 1.0;
+  float ndl = max(dot(Ns, L), 0.0);
+  float ao = 1.0 - 0.48*cut*(1.0 - crust);
+  vec3 Lsky = normalize(vec3((uPlumb - uv)*uRes, 0.9*uRes.x));
+  float skyShade = 0.35 + 0.65*max(dot(Ns, Lsky), 0.0);
+
+  vec2 ddr = (uv - uDrain)*uRes; float ddl = length(ddr); float dr = uRes.x*0.011;
+  float hole = 1.0 - smoothstep(dr*0.76, dr*0.86, ddl);
+  float rim = smoothstep(dr*0.76, dr*0.88, ddl) * (1.0 - smoothstep(dr*1.02, dr*1.16, ddl));
+  float metal = max(smoothstep(0.3,0.7,staple), rim);
+  vec3 alb = stoneAlb(B, cut, crack, staple);
+  alb = mix(alb, vec3(0.50,0.38,0.20), rim);
+  alb *= 1.0 - 0.25*smoothstep(dr*4.0, dr*1.2, ddl);
+  vec2 sd = (uv - uStaple)*uRes; sd.x *= sd.x < 0.0 ? 0.45 : 1.3; sd.y *= 1.5;
+  float verd = smoothstep(70.0, 6.0, length(sd)) * (0.45 + 0.55*vn(px*0.06 + 2.0)) * (1.0 - metal);
+  alb = mix(alb, vec3(0.28,0.42,0.40), verd*0.6);
+  alb = mix(alb, lichenAlb(px, cut, wet), lichVis);
+  alb = mix(alb, alb*vec3(0.38,0.37,0.38), wet*(1.0 - 0.4*lichVis));
+
+  vec3 V = vec3(0.0,0.0,1.0); vec3 Hv = normalize(L+V);
+  float specPow = mix(mix(16.0, 180.0, wet), 70.0, metal);
+  float specAmt = mix(mix(0.04, 0.32, wet), 0.6, metal) * (1.0 - 0.9*lichVis);
+  float spec = pow(max(dot(Ns,Hv),0.0), specPow) * specAmt * sh;
+  float sheen = pow(max(dot(Ns,Hv),0.0), 5.0) * mix(0.04, 0.12, wet) * (1.0 - 0.8*lichVis);
+
+  vec3 direct = sunCol * patch;
+  vec3 skyLum = mix(vec3(0.55,0.60,0.66)*1.6, vec3(0.55,0.68,0.95)*2.2, uSky);
+  skyLum = mix(skyLum, vec3(0.04,0.05,0.09), uMoon);
+  float bounce = 1.0 - smoothstep(0.9, 3.0, ed);
+  vec2 pa = (uv - uPlumb)*uRes; vec2 ba = (uLightPos - uPlumb)*uRes; float bl = max(length(ba), 1.0);
+  float tseg = clamp(dot(pa, ba)/(bl*bl), 0.0, 1.0);
+  float segd = length(pa - ba*tseg);
+  float halfw = mix(0.035*uRes.x, uEllipse.x, tseg);
+  float shaft = (1.0 - smoothstep(halfw*0.55, halfw*1.15, segd)) * (0.6 + 0.4*tseg);
+  float dust = 0.55 + 0.45*fbm3(px*0.0035 + t*vec2(0.9, -0.6) + uSeed*11.0);
+  dust *= 0.8 + 0.2*vn(px*0.02 + t*vec2(4.0,-3.0));
+  vec3 col = alb * (direct*ndl*sh + skyAmb*skyShade*ao + sunCol*0.12*bounce*uSunStr) + (spec+sheen)*direct;
+  col += sunCol * shaft * dust * (0.045 + 0.30*uFog) * uSunStr;
+  col += oculus(uv, Nsm.xy + rip*0.5, 0.02 + 0.05*(1.0-wet)) * skyLum * (0.006 + 0.19*wet + 0.25*metal) * (1.0 - 0.9*lichVis) * (1.0 - inWater);
+
+  if (inWater > 0.0) {
+    vec2 wob = 0.045*vec2(sin(px.x*0.12+t*1.7+px.y*0.05), cos(px.y*0.10+t*1.3-px.x*0.04)) + 0.025*vec2(sin(px.x*0.31-t*2.9), cos(px.y*0.27+t*2.3));
+    vec3 Nw = normalize(vec3(rip*0.55 + wob, 1.0));
+    vec3 fAlb = stoneAlb(B, cut, crack, staple)*vec3(0.40,0.39,0.40);
+    vec3 Nf = normalize(mix(Nsm, vec3(0.0,0.0,1.0), 0.5));
+    float aoW = 1.0 - 0.15*cut;
+    vec3 floorCol = fAlb * (direct*max(dot(Nf,L),0.0)*mix(sh,1.0,0.5)*0.55 + skyAmb*(0.35 + 0.65*max(dot(Nf,Lsky),0.0))*aoW*0.85);
+    floorCol *= exp(-max(wdepth - 1.5, 0.0)*vec3(0.20,0.15,0.10));
+    float ca = vn(px*0.07 + t*vec2(0.5,0.3)) * vn(px*0.07 - t*vec2(0.35,0.45) + 7.0);
+    floorCol *= 1.0 + 3.5*ca*ca*patch*uSunStr;
+    vec2 dplR = (uv + Nw.xy*0.45 - uPlumb)*vec2(uRes.x/uRes.y, 1.0);
+    float wellR = 0.14 + 0.86*exp(-dot(dplR,dplR)*3.0);
+    vec3 skyC = skyColor(px + Nw.xy*400.0, t) * (0.25 + 0.75*wellR);
+    float fres = 0.04 + 0.96*pow(1.0 - max(dot(Nw,V),0.0), 5.0);
+    float reflAmt = clamp(0.55 + fres*2.0, 0.0, 0.92);
+    vec3 water = mix(floorCol, skyC*0.55, reflAmt);
+    water += oculus(uv, Nw.xy*1.2, 0.01) * skyLum * 0.55;
+    water *= 1.0 - 0.30*smoothstep(0.7, 0.0, wdepth);
+    float glint = pow(max(dot(Nw,Hv),0.0), 200.0) * 4.0 + pow(max(dot(Nw,Hv),0.0), 30.0) * 0.3;
+    water += glint * direct;
+    col = mix(col, water, inWater);
+  }
+
+  /* rain falling through the opening: a shimmer in the air above the disc */
+  float mirror = oculus(uv, vec2(0.0), 0.05);
+  col += specks(px, t) * disc*disc * uRain * skyLum * 0.45;
+  col += spark * skyLum * 0.30 * wet * (0.15 + mirror);
+  
+  /* mist pools in the cuts first; the beam shows in it as a halo */
+  vec2 wind = vec2(22.0, 5.0)*t;
+  float fa = fbm3((px + wind)*0.0011 + uSeed*3.0);
+  float fb = vn((px + wind*1.7)*0.0038 + 9.0);
+  float banks = smoothstep(0.42, 0.82, fa*(0.5+0.85*fb) + 0.18*uFog);
+  float fd = banks*uFog*0.2 + smoothstep(0.0, 0.5, uFog)*cut*(1.0 - crust)*(0.9 + 0.8*fb)*1.4;
+  float fogA = 1.0 - exp(-fd*1.3);
+  vec3 fogCol = mix(skyAmb*1.6, sunCol*0.45, 0.5*glow) ;
+  col = mix(col, fogCol, fogA);
+  col += sunCol * 0.10 * uFog * glow * (0.6 + 0.4*banks);
+
+  col = mix(col, vec3(0.004,0.005,0.007) + skyAmb*0.03, hole);
+  /* the room: dark toward the walls */
+  vec2 vq = (uv-0.5)*vec2(1.0,0.85);
+  float vig = 1.0 - 0.22*pow(length(vq)*1.3, 2.4);
+  col *= vig;
+  col = aces(col*1.65);
+  col = pow(max(col,0.0), vec3(1.0/2.2));
+  col += (hash12(px + fract(t)*vec2(13.0,7.0)) - 0.5) * 0.007;
+  gl_FragColor = vec4(col, 1.0);
+}
+</script>
+
+<script>
+(function(){
+  const canvas = document.getElementById('c');
+  const gl = canvas.getContext('webgl', {antialias:false, alpha:false, depth:false, stencil:false, powerPreference:'high-performance'});
+  if (!gl) { document.body.innerHTML = '<p style="color:#777;font:14px/1.5 serif;padding:3em">This piece needs WebGL.</p>'; return; }
+
+  const tOffset = 2;
+  const fixedLight = null;
+  const seed = Math.random()*10;
+  const lichenInit = 1;
+  const common = document.getElementById('common').textContent;
+
+  function compile(type, src){
+    const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s);
+    if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+    return s;
+  }
+  function program(fsId){
+    const p = gl.createProgram();
+    gl.attachShader(p, compile(gl.VERTEX_SHADER, document.getElementById('vs').textContent));
+    gl.attachShader(p, compile(gl.FRAGMENT_SHADER, common + document.getElementById(fsId).textContent));
+    gl.linkProgram(p);
+    if (!gl.getProgramParameter(p, gl.LINK_STATUS)) console.error(gl.getProgramInfoLog(p));
+    return {prog:p, u:{}};
+  }
+  const P_BAKE = program('bake'), P_LICHEN = program('lichen'), P_MAIN = program('fs');
+  const U = (p, n) => (n in p.u) ? p.u[n] : (p.u[n] = gl.getUniformLocation(p.prog, n));
+
+  const quad = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  function use(p){ gl.useProgram(p.prog); const a = gl.getAttribLocation(p.prog, 'aPos'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a, 2, gl.FLOAT, false, 0, 0); }
+  const draw = () => gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  function makeTex(filter){
+    const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, filter); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, filter);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return t;
+  }
+  function makeTarget(w, h, filter){
+    const tex = makeTex(filter);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    const fb = gl.createFramebuffer(); gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return {tex, fb, w, h};
+  }
+  const texText = makeTex(gl.LINEAR);
+  let bakeT = null, lichA = null, lichB = null;
+  let W = 0, H = 0, LW = 0, LH = 0, fontReady = false, depthTexels = 0; const stapleUV = {x:0.86, y:0.3};
+  const FONT = '"Cormorant Garamond"';
+  const PLUMB = {x:0.74, y:0.49};      /* where the opening is, in floor uv */
+  const TEXTC = {x:0.35, y:0.49};
+
+  /* The inscription, V-cut by stroking the glyph outline ever thinner and shallower. Then a crack, and a bronze staple across it. */
+  function buildText(){
+    const c = document.createElement('canvas'); c.width = W; c.height = H;
+    const g = c.getContext('2d');
+    const family = fontReady ? FONT : 'Georgia, "Times New Roman", serif';
+    const lines = W/H < 1.1 ? ['CUT DEEP', 'ENOUGH', 'TO HOLD', 'THE RAIN'] : ['CUT DEEP ENOUGH', 'TO HOLD THE RAIN'];
+    const widthAt = (px) => { g.font = `700 ${px}px ${family}`; let wmax = 0;
+      for (const ln of lines){ let w = 0; for (const ch of ln) w += g.measureText(ch).width + (ch === ' ' ? px*0.144 : px*0.16); wmax = Math.max(wmax, w); }
+      return wmax; };
+    let fontPx = H*0.105;
+    const maxLine = W*0.56;
+    if (widthAt(fontPx) > maxLine) fontPx *= maxLine/widthAt(fontPx);
+    const track = fontPx*0.16, lh = fontPx*1.26, x0 = W*0.08;
+    const blockH = (lines.length-1)*lh, capH = fontPx*0.68;
+    const y0 = (1-PLUMB.y)*H - blockH/2 + capH/2;
+    const dmax = fontPx*0.082; depthTexels = dmax;
+    g.lineJoin = 'round'; g.lineCap = 'round';
+    function setFont(px){ g.font = `700 ${px}px ${family}`; g.textBaseline = 'alphabetic'; }
+    function layout(line, y, fn){ let x = x0; for (const ch of line){ fn(ch, x, y); x += g.measureText(ch).width + (ch === ' ' ? track*0.9 : track); } }
+    function carve(drawLines, px, depthScale){
+      setFont(px);
+      g.globalCompositeOperation = 'source-over';
+      g.fillStyle = `rgb(${Math.round(255*depthScale)},0,0)`;
+      drawLines((ch,x,y) => g.fillText(ch, x, y));
+      g.globalCompositeOperation = 'source-atop';
+      const dm = dmax*depthScale, N = 44;
+      for (let i = 0; i < N; i++){
+        const d = dm*(1 - i/N), v = Math.round(255*d/dmax);
+        g.strokeStyle = `rgb(${v},0,0)`; g.lineWidth = 2*d;
+        drawLines((ch,x,y) => g.strokeText(ch, x, y));
+      }
+    }
+    carve(fn => lines.forEach((ln,i) => layout(ln, y0 + i*lh, fn)), fontPx, 1.0);
+    const small = fontPx*0.26;
+    carve(fn => { setFont(small); let x = x0; const y = y0 + blockH + small*2.6;
+      for (const ch of 'MMXXVI'){ fn(ch, x, y); x += g.measureText(ch).width + small*0.22; } }, small, small/fontPx);
+
+    g.globalCompositeOperation = 'source-over';
+    const pts = [], n = 48;
+    for (let i = 0; i <= n; i++){
+      const u = i/n;
+      pts.push([W*(0.66 + 0.42*u), H*(0.86 - 0.30*u) + Math.sin(u*7+seed)*H*0.018 + Math.sin(u*19+seed*2)*H*0.006 + Math.sin(u*43+seed)*H*0.002]);
+    }
+    const sc = W/1800;
+    for (const [w, v] of [[7, 45],[5, 100],[3.4, 170],[2.0, 255]]){
+      g.strokeStyle = `rgb(0,${v},0)`; g.lineWidth = Math.max(0.8, w*sc);
+      g.beginPath(); pts.forEach((p,i) => i ? g.lineTo(p[0],p[1]) : g.moveTo(p[0],p[1])); g.stroke();
+    }
+    const k = 22, a = pts[k], b = pts[k+1];
+    const tx = b[0]-a[0], ty = b[1]-a[1], tl = Math.hypot(tx,ty), nx = -ty/tl, ny = tx/tl, len = W*0.014;
+    stapleUV.x = a[0]/W; stapleUV.y = 1 - a[1]/H;
+    g.strokeStyle = 'rgb(0,0,255)'; g.lineWidth = W*0.0052;
+    g.beginPath(); g.moveTo(a[0]-nx*len, a[1]-ny*len); g.lineTo(a[0]+nx*len, a[1]+ny*len); g.stroke();
+
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.bindTexture(gl.TEXTURE_2D, texText);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, c);
+  }
+
+  function bake(){
+    gl.bindFramebuffer(gl.FRAMEBUFFER, bakeT.fb); gl.viewport(0, 0, W, H);
+    use(P_BAKE); gl.uniform2f(U(P_BAKE,'uRes'), W, H); gl.uniform1f(U(P_BAKE,'uSeed'), seed);
+    draw();
+  }
+  function lichenStep(brush, grow, wet, init){
+    gl.bindFramebuffer(gl.FRAMEBUFFER, lichB.fb); gl.viewport(0, 0, LW, LH);
+    use(P_LICHEN);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, lichA.tex);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texText);
+    gl.uniform1i(U(P_LICHEN,'uPrev'), 0); gl.uniform1i(U(P_LICHEN,'uText'), 1);
+    gl.uniform2f(U(P_LICHEN,'uRes'), LW, LH); gl.uniform1f(U(P_LICHEN,'uSeed'), seed);
+    gl.uniform4f(U(P_LICHEN,'uBrush'), brush[0], brush[1], brush[2], brush[3]);
+    gl.uniform1f(U(P_LICHEN,'uFrame'), frameNo); gl.uniform1f(U(P_LICHEN,'uGrow'), grow);
+    gl.uniform1f(U(P_LICHEN,'uWet'), wet); gl.uniform1f(U(P_LICHEN,'uInit'), init ? 1 : 0); gl.uniform1f(U(P_LICHEN,'uInitScale'), lichenInit);
+    draw();
+    const tmp = lichA; lichA = lichB; lichB = tmp;
+  }
+  function size(){
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let w = Math.round(innerWidth*dpr), h = Math.round(innerHeight*dpr);
+    const s = Math.min(1, Math.sqrt(2.3e6/(w*h)));
+    w = Math.round(w*s); h = Math.round(h*s);
+    if (w < 2 || h < 2 || (w === W && h === H)) return;
+    W = w; H = h; LW = Math.ceil(W/2); LH = Math.ceil(H/2);
+    canvas.width = W; canvas.height = H;
+    for (const t of [bakeT, lichA, lichB]) if (t) { gl.deleteFramebuffer(t.fb); gl.deleteTexture(t.tex); }
+    bakeT = makeTarget(W, H, gl.NEAREST); lichA = makeTarget(LW, LH, gl.LINEAR); lichB = makeTarget(LW, LH, gl.LINEAR);
+    buildText(); bake(); lichenStep([0,0,1,0], 0, 0, true);
+  }
+
+  /* one day, five minutes long */
+  const DAY = 120;
+  const sm = (a,b,x) => { x = Math.min(1, Math.max(0, (x-a)/(b-a))); return x*x*(3-2*x); };
+  function dayState(s){
+    const sunDay = sm(0.00,0.02,s) * (1 - sm(0.88,0.93,s));
+    const warm = Math.min(1, (1 - sm(0.01,0.06,s)) + sm(0.78,0.90,s));
+    const overcast = sm(0.06,0.10,s) * (1 - sm(0.23,0.30,s));
+    const rain = sm(0.08,0.11,s) * (1 - sm(0.21,0.25,s));
+    const wet  = sm(0.085,0.14,s) * (1 - sm(0.45,0.72,s));
+    const pool = sm(0.10,0.19,s) * (1 - sm(0.50,0.80,s));
+    const fog  = sm(0.60,0.66,s) * (1 - sm(0.72,0.78,s));
+    const sky = 1 - 0.8*overcast;
+    const sunStr = sunDay * (1 - 0.97*overcast) * (1 - 0.5*fog);
+    const front = sm(0.085,0.19,s);
+    const rainWet = sm(0.085,0.12,s) * (1 - sm(0.26,0.42,s));
+    return {sunDay, warm, moon: 1 - sunDay, fog, rain, wet, pool, sky, sunStr, front, rainWet};
+  }
+  function dayPath(s){
+    const u = Math.min(1, Math.max(0, (s - 0.02)/0.88));
+    return { x: PLUMB.x - 0.52 + 0.76*u, y: PLUMB.y - 0.05 - 0.19*Math.sin(Math.PI*u) - 0.05*sm(0.70,1.0,u) };
+  }
+
+  /* sound: a small stone room. Rain through the opening, drops on stone and into the pools, wind at the hole. */
+  const audio = (() => {
+    let ac = null, master, bus, rainGain, rainLP, hissGain, windGain, scrapeGain, tick, started = false, acc = 0, gust = 1, gustT = 0;
+    function noiseBuffer(sec){ const n = Math.floor(ac.sampleRate*sec); const b = ac.createBuffer(2, n, ac.sampleRate);
+      for (let ch = 0; ch < 2; ch++){ const d = b.getChannelData(ch); for (let i = 0; i < n; i++) d[i] = Math.random()*2-1; } return b; }
+    function impulse(sec, decay){ const n = Math.floor(ac.sampleRate*sec); const b = ac.createBuffer(2, n, ac.sampleRate);
+      for (let ch = 0; ch < 2; ch++){ const d = b.getChannelData(ch); let lp = 0, lp2 = 0;
+        for (let i = 0; i < n; i++){ const t = i/n; const k = 0.30 - 0.26*t; lp += ((Math.random()*2-1) - lp)*k; lp2 += (lp - lp2)*k; d[i] = lp2*Math.pow(1-t, decay)*(i < 200 ? i/200 : 1); } } return b; }
+    function loopNoise(){ const src = ac.createBufferSource(); src.buffer = noiseBuffer(4); src.loop = true; src.start(); return src; }
+    function start(){
+      if (started) return; started = true;
+      ac = new (window.AudioContext || window.webkitAudioContext)();
+      master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+      master.gain.setTargetAtTime(0.85, ac.currentTime + 0.05, 1.2);
+      const soft = ac.createBiquadFilter(); soft.type = 'lowpass'; soft.frequency.value = 6500; soft.Q.value = 0.3;
+      bus = ac.createGain(); bus.connect(soft);
+      const dry = ac.createGain(); dry.gain.value = 0.75;
+      const conv = ac.createConvolver(); conv.buffer = impulse(2.1, 3.2);
+      const wetLP = ac.createBiquadFilter(); wetLP.type = 'lowpass'; wetLP.frequency.value = 3200;
+      const wetG = ac.createGain(); wetG.gain.value = 0.42;
+      soft.connect(dry).connect(master); soft.connect(conv).connect(wetLP).connect(wetG).connect(master);
+      const room = ac.createBiquadFilter(); room.type = 'lowpass'; room.frequency.value = 90; room.Q.value = 0.5;
+      const roomG = ac.createGain(); roomG.gain.value = 0.05;
+      loopNoise().connect(room).connect(roomG).connect(master);
+      rainLP = ac.createBiquadFilter(); rainLP.type = 'lowpass'; rainLP.frequency.value = 600; rainLP.Q.value = 0.3;
+      rainGain = ac.createGain(); rainGain.gain.value = 0;
+      loopNoise().connect(rainLP).connect(rainGain).connect(bus);
+      const hp = ac.createBiquadFilter(); hp.type = 'bandpass'; hp.frequency.value = 3800; hp.Q.value = 0.5;
+      hissGain = ac.createGain(); hissGain.gain.value = 0;
+      loopNoise().connect(hp).connect(hissGain).connect(bus);
+      const wlp = ac.createBiquadFilter(); wlp.type = 'lowpass'; wlp.frequency.value = 150; wlp.Q.value = 0.8;
+      windGain = ac.createGain(); windGain.gain.value = 0;
+      loopNoise().connect(wlp).connect(windGain).connect(master);
+      const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1500; bp.Q.value = 0.6;
+      scrapeGain = ac.createGain(); scrapeGain.gain.value = 0;
+      loopNoise().connect(bp).connect(scrapeGain).connect(bus);
+      tick = noiseBuffer(0.1);
+    }
+    function out(x){ if (ac.createStereoPanner){ const p = ac.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, (x - 0.5)*1.3)); p.connect(bus); return p; } return bus; }
+    function env(g, t0, peak, attack, release){ g.gain.setValueAtTime(0.0001, t0); g.gain.exponentialRampToValueAtTime(peak, t0 + attack); g.gain.exponentialRampToValueAtTime(0.0001, t0 + attack + release); }
+    /* a drop: a dry tick on stone; into water, a low plop, and sometimes the bubble's rising ring */
+    function drip(x, size, water){
+      if (!ac) return;
+      const t0 = ac.currentTime + 0.01, dest = out(x);
+      const nb = ac.createBufferSource(); nb.buffer = tick;
+      const bpf = ac.createBiquadFilter(); bpf.type = 'bandpass'; bpf.frequency.value = water ? 1400 + 1200*Math.random() : 2600 + 2600*Math.random(); bpf.Q.value = 1.4;
+      const g1 = ac.createGain(); env(g1, t0, 0.025 + 0.05*size, 0.002, 0.010 + 0.025*size);
+      nb.connect(bpf).connect(g1).connect(dest); nb.start(t0); nb.stop(t0 + 0.1);
+      if (water){
+        const o2 = ac.createOscillator(); o2.type = 'sine';
+        const f2 = 220 + 140*Math.random();
+        o2.frequency.setValueAtTime(f2, t0); o2.frequency.exponentialRampToValueAtTime(f2*0.55, t0 + 0.07);
+        const g2 = ac.createGain(); env(g2, t0, 0.018 + 0.04*size, 0.004, 0.05 + 0.04*size);
+        o2.connect(g2).connect(dest); o2.start(t0); o2.stop(t0 + 0.2);
+        if (Math.random() < 0.55){
+          const o3 = ac.createOscillator(); o3.type = 'sine';
+          const f3 = 1300 + 1700*Math.random()*(1 - 0.5*size);
+          o3.frequency.setValueAtTime(f3, t0 + 0.006); o3.frequency.exponentialRampToValueAtTime(f3*1.4, t0 + 0.04);
+          const g3 = ac.createGain(); env(g3, t0 + 0.006, 0.012 + 0.03*size, 0.004, 0.035 + 0.05*Math.random());
+          o3.connect(g3).connect(dest); o3.start(t0); o3.stop(t0 + 0.2);
+        }
+      }
+    }
+    function update(d, dt, tt){
+      if (!ac) return;
+      const r = d.rain, now = ac.currentTime;
+      gustT -= dt; if (gustT < 0){ gustT = 0.4 + Math.random()*0.8; gust = 0.8 + 0.4*Math.random(); }
+      rainGain.gain.setTargetAtTime(0.26*Math.pow(r, 1.3)*gust, now, 0.5);
+      rainLP.frequency.setTargetAtTime(400 + 2000*r, now, 0.5);
+      hissGain.gain.setTargetAtTime(0.03*r*r*gust, now, 0.5);
+      const wind = 0.02 + 0.03*d.moon + 0.02*d.fog + 0.01*Math.sin(tt*0.31) + 0.007*Math.sin(tt*0.83);
+      windGain.gain.setTargetAtTime(Math.max(0, wind), now, 1.2);
+      const after = d.wet*(1 - r);
+      const rate = 12*r + 1.1*after + 0.05 + 0.1*d.moon;
+      acc += dt*rate;
+      while (acc > 1){ acc -= 1;
+        const inRain = Math.random() < r;
+        if (inRain) drip(PLUMB.x + (Math.random()-0.5)*0.3, 0.3*Math.random(), Math.random() < 0.5*r);
+        else drip(TEXTC.x + (Math.random()-0.5)*0.5, 0.4 + 0.6*Math.random(), Math.random() < 0.3 + 0.7*d.pool); }
+    }
+    function scrape(level){ if (ac) scrapeGain.gain.setTargetAtTime(level*0.05, ac.currentTime, 0.06); }
+    return {start, drip, update, scrape, get on(){ return started; }};
+  })();
+
+  /* the hand: moving it moves the light; pressing and rubbing scrapes the lichen; a tap leaves a bead of water */
+  const mouse = {x:0.5, y:0.5}; let lastMove = -1e9;
+  const light = {x: PLUMB.x - 0.52, y: PLUMB.y - 0.05};
+  let down = null, scraping = false, rub = 0;
+  const drops = new Float32Array(48); let dropIdx = 0;
+  const nowS = () => performance.now()/1000;
+  const toUV = e => ({x: e.clientX/innerWidth, y: 1 - e.clientY/innerHeight});
+  addEventListener('pointermove', e => {
+    const p = toUV(e); mouse.x = p.x; mouse.y = p.y; lastMove = nowS();
+    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 4) scraping = true;
+    if (scraping) rub = Math.min(1, rub + Math.hypot(e.movementX || 0, e.movementY || 0)/60);
+  });
+  addEventListener('pointerdown', e => {
+    down = {x:e.clientX, y:e.clientY}; scraping = false; const p = toUV(e); mouse.x = p.x; mouse.y = p.y; lastMove = nowS();
+    if (!audio.on) { audio.start(); document.getElementById('snd').style.opacity = 0; }
+  });
+  addEventListener('pointerup', e => {
+    if (down && !scraping) { const i = dropIdx++ % 12; const p = toUV(e); drops[i*4] = p.x; drops[i*4+1] = p.y; drops[i*4+2] = tNow; drops[i*4+3] = 1; setTimeout(() => audio.drip(p.x, 0.9, true), 40); }
+    down = null; scraping = false;
+  });
+  addEventListener('pointercancel', () => { down = null; scraping = false; });
+
+  const start = nowS(); let prev = start, tNow = tOffset, frameNo = 0, tOff = tOffset;
+  const override = {};
+  function frame(){
+    if (!W) { size(); if (!W) { requestAnimationFrame(frame); return; } }
+    const now = nowS(); const dt = Math.min(0.05, now - prev); prev = now; frameNo++;
+    tNow = now - start + tOff;
+    const s = ((tNow % DAY) + DAY) % DAY / DAY;
+    const d = Object.assign(dayState(s), override);
+
+    let target;
+    if (fixedLight) { target = {x:fixedLight[0], y:fixedLight[1]}; light.x = target.x; light.y = target.y; }
+    else if (now - lastMove < 3) target = mouse;
+    else target = dayPath(s);
+    const k = 1 - Math.exp(-dt * (now - lastMove < 3 ? 7 : 0.5));
+    light.x += (target.x - light.x)*k; light.y += (target.y - light.y)*k;
+
+    const dx = (PLUMB.x - light.x)*W, dy = (PLUMB.y - light.y)*H, dz = 0.14*W;
+    const len = Math.hypot(dx, dy, dz);
+    const minor = 0.09*W, major = minor * len/dz;
+    const ddx = (TEXTC.x - PLUMB.x)*W, ddy = (TEXTC.y - PLUMB.y)*H, dl = Math.hypot(ddx, ddy) || 1;
+    const cloud = 0.72 + 0.28*(0.5 + 0.5*Math.sin(tNow*0.11 + Math.sin(tNow*0.037)*2.0));
+
+    const brushOn = scraping && !fixedLight;
+    rub *= Math.exp(-dt*6.0); audio.scrape(brushOn ? rub : 0); audio.update(d, dt, tNow);
+    lichenStep([mouse.x, mouse.y, 0.03*LW, brushOn ? 1 : 0], override.grow !== undefined ? override.grow : 0.008*(1 + d.wet), d.wet, false);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.viewport(0, 0, W, H);
+    use(P_MAIN);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, lichA.tex);
+    gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, texText);
+    gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, bakeT.tex);
+    gl.uniform1i(U(P_MAIN,'uLichen'), 0); gl.uniform1i(U(P_MAIN,'uText'), 1); gl.uniform1i(U(P_MAIN,'uBake'), 2);
+    gl.uniform2f(U(P_MAIN,'uRes'), W, H); gl.uniform2f(U(P_MAIN,'uTexel'), 1/W, 1/H); gl.uniform1f(U(P_MAIN,'uSeed'), seed);
+    gl.uniform2f(U(P_MAIN,'uLightPos'), light.x, light.y); gl.uniform2f(U(P_MAIN,'uPlumb'), PLUMB.x, PLUMB.y);
+    gl.uniform2f(U(P_MAIN,'uDown'), ddx/dl, ddy/dl); gl.uniform2f(U(P_MAIN,'uStaple'), stapleUV.x, stapleUV.y); gl.uniform2f(U(P_MAIN,'uDrain'), 0.21, 0.13); gl.uniform2f(U(P_MAIN,'uEllipse'), minor, major);
+    gl.uniform3f(U(P_MAIN,'uSunDir'), dx/len, dy/len, dz/len);
+    gl.uniform1f(U(P_MAIN,'uTime'), tNow); gl.uniform1f(U(P_MAIN,'uDepth'), depthTexels*1.1);
+    gl.uniform1f(U(P_MAIN,'uSunStr'), d.sunStr); gl.uniform1f(U(P_MAIN,'uWarm'), d.warm); gl.uniform1f(U(P_MAIN,'uMoon'), d.moon);
+    gl.uniform1f(U(P_MAIN,'uSky'), d.sky); gl.uniform1f(U(P_MAIN,'uFog'), d.fog); gl.uniform1f(U(P_MAIN,'uRain'), d.rain);
+    gl.uniform1f(U(P_MAIN,'uWet'), d.wet); gl.uniform1f(U(P_MAIN,'uPool'), d.pool); gl.uniform1f(U(P_MAIN,'uFront'), d.front*1.6*W);
+    gl.uniform1f(U(P_MAIN,'uCloud'), cloud); gl.uniform1f(U(P_MAIN,'uRainWet'), d.rainWet);
+    gl.uniform4fv(U(P_MAIN,'uDrops'), drops);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  let resizeTimer;
+  addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(size, 160); });
+  const fontLoad = document.fonts ? document.fonts.load(`700 100px ${FONT}`) : Promise.resolve();
+  Promise.race([fontLoad, new Promise(r => setTimeout(r, 2500))]).then(() => {
+    fontReady = document.fonts && document.fonts.check(`700 100px ${FONT}`);
+    size();
+    requestAnimationFrame(() => { frame(); setTimeout(() => document.getElementById('fade').style.opacity = 0, 60); });
+  });
+})();
+</script>
+</body>
+</html>

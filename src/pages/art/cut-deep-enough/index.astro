@@ -1,0 +1,99 @@
+---
+// A work's page, as The Vellum Stacks: the header row with Enter, then the page's one big frame —
+// here the work itself, light enough to run in the page: the morning still until a click starts it
+// in place — then the facts, the statement with two stills beneath it, and the close with Enter
+// again. The full-window piece is /art/cut-deep-enough/live, with a way back added.
+import { getImage } from 'astro:assets';
+import Sheet from '../../../layouts/Sheet.astro';
+import Figure from '../../../components/Figure.astro';
+import CursorLabel from '../../../components/CursorLabel.astro';
+import { href } from '../../../lib/url';
+import { nextAfter } from '../../../data/art';
+import '../../../styles/home.css';
+import '../../../styles/case.css';
+import '../../../styles/art.css';
+import morning from '../../../assets/img/art/cut-morning.jpg';
+import rain from '../../../assets/img/art/cut-rain.jpg';
+import clearing from '../../../assets/img/art/cut-clearing.jpg';
+
+const still = await getImage({ src: morning, width: 1920, format: 'webp' });
+const live = href('/art/cut-deep-enough/live');
+---
+<Sheet
+  title="Cut Deep Enough — Kyle Xu"
+  description="Cut Deep Enough (2026), an interactive piece in the browser: the stone floor of a dark room, seen from above, with two lines cut into it. A day passes in two minutes; light reads the words, rain fills them, lichen grows back in them."
+  ogImage="/og-cut-deep-enough.jpg"
+  next={nextAfter('cut-deep-enough', 'I design how AI products behave, and the interface that keeps people in control of it.')}
+>
+  <section class="col hero work-head" aria-labelledby="h1">
+    <div class="id">
+      <h1 id="h1">Cut Deep Enough</h1>
+      <p class="meta">2026 · Interactive, WebGL, sound</p>
+    </div>
+    <div class="about">
+      <p>The stone floor of a dark room, seen from above, with two lines cut into it. A day passes in two minutes, and the rain fills the letters.</p>
+      <p class="meta">Runs in the browser, on a phone too. Sound starts at your first click.</p>
+    </div>
+    <a class="btn enter" href={live}>Enter the work</a>
+  </section>
+
+  <section class="col sec" aria-label="The work">
+    <figure class="fig">
+      <div class="frame bare film" data-live={live}>
+        <img src={still.src} alt="Morning: a blade of light across the dark stone floor, the cut words CUT DEEP ENOUGH TO HOLD THE RAIN half lit" width={still.attributes.width} height={still.attributes.height} decoding="async" />
+        <button type="button" class="play" data-cursor="Run it here" aria-label="Run the work here, in the page"><span>Run it here</span></button>
+      </div>
+      <span class="meta under"><b>Live</b> · The work, running in the page. Move the pointer to move the light; click to let a drop fall.</span>
+    </figure>
+  </section>
+
+  <section class="col sec snap" aria-label="Facts">
+    <dl class="facts">
+      <div><dt class="meta">Year</dt><dd>2026</dd></div>
+      <div><dt class="meta">Medium</dt><dd>Custom software (WebGL, three shaders), sound synthesised in the browser</dd></div>
+      <div><dt class="meta">Dimensions</dt><dd>Variable; the whole browser window</dd></div>
+      <div><dt class="meta">Duration</dt><dd>A day lasts two minutes, then begins again</dd></div>
+      <div><dt class="meta">Interaction</dt><dd><span class="line">Move the pointer to move the light; left alone, the light walks through the day by itself</span><span class="line">Press and rub to scrape the lichen from the letters</span><span class="line">Click to let a drop fall; the first click turns the sound on</span><span class="line">On touch: drag to move the light and scrape, tap for a drop</span></dd></div>
+      <div><dt class="meta">Credits</dt><dd><span class="line">Commissioned by Kyle Xu</span><span class="line">Made by Claude</span><span class="line">Type: Cormorant Garamond, by Christian Thalmann</span></dd></div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-statement">
+    <div class="head">
+      <h2 id="c-statement">Statement</h2>
+    </div>
+    <div class="body">
+      <p>A piece written in code: the bluestone floor of a dark room, seen from directly above. Two lines are cut into the floor, and a blade of light falling from an opening above reads them. Rain comes in through the opening and runs across the floor into the letters, and the words turn to water. Lichen grows slowly in the cuts; wipe it away by hand and it comes back. A day is pressed into two minutes.</p>
+      <p>Morning light falls across the words for the first ten seconds, then the rain comes. It clears, and the letters hold water that mirrors the sky. The afternoon dries them; in the evening the light reaches the crack in the slab and the iron cramp that mends it; a short night, and morning again. The lichen keeps a slower clock, measured in minutes.</p>
+    </div>
+    <div class="figs">
+      <Figure bare set="pair" items={[
+        { src: rain, evidence: 'Still', name: 'Rain', note: 'drops landing at the joint, the letters beginning to fill', alt: 'Rain on the dark stone floor: a bright splash where drops land at a joint, the cut words beginning to fill with water' },
+        { src: clearing, evidence: 'Still', name: 'Clearing', note: 'the letters full of water, mirroring the sky, the light moving off them', alt: 'After the rain: the cut words full of water and shining, an ellipse of light falling across the floor' },
+      ]} />
+    </div>
+  </section>
+
+  <section class="col sec close" aria-label="Enter">
+    <p class="stance">Cut deep enough to hold the rain.</p>
+    <div class="go">
+      <p>Runs in the browser, on a phone too. Sound starts at your first click.</p>
+      <a class="btn" href={live}>Enter the work</a>
+    </div>
+  </section>
+
+  <CursorLabel />
+  <script is:inline>
+    // The work in the page: the still until it is asked for; one click starts it in place, framed,
+    // and hands it the pointer.
+    (function () {
+      var frame = document.querySelector('.film[data-live]'); if (!frame) return;
+      var play = frame.querySelector('.play');
+      play.addEventListener('click', function () {
+        var f = document.createElement('iframe');
+        f.src = frame.dataset.live; f.title = 'Cut Deep Enough, running'; f.allow = 'autoplay; fullscreen';
+        frame.appendChild(f); frame.classList.add('playing'); f.focus();
+      });
+    })();
+  </script>
+</Sheet>

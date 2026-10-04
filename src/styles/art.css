@@ -29,10 +29,11 @@
 .tomb .medium, .tomb .year { font-size: 14px; color: var(--fg-2); }
 .tomb .year { margin-left: auto; font-variant-numeric: tabular-nums; }
 
-/* the film: the page's one big frame at 16:10. A click plays it with sound; until then nothing loads.
+/* the page's one big frame at 16:10: the film, or a light live work. A click plays it or starts it in
+   place; until then nothing loads.
    On a pointer the cursor says Play; on touch, and to the keyboard, the same pill sits at the centre */
 .film { position: relative; aspect-ratio: 16 / 10; background: var(--fill); }
-.film video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+.film video, .film img, .film iframe { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; border: 0; }   /* the film, or a live work's still and then the work itself */
 .play { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; display: grid; place-items: center; padding: 0; border: 0; background: none; font: inherit; cursor: pointer; }
 .play span { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: var(--r-pill); background: var(--fill); color: var(--fill-fg); font-size: 14px; font-weight: 500; opacity: 0; transition: opacity 140ms ease-out; }
 .play:focus-visible span { opacity: 1; }
