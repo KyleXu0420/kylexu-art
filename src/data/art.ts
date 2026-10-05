@@ -1,9 +1,9 @@
-// The works in the Art section, in the order Kyle sets. The index lays them out from this list — the
-// first on the full row, the rest in pairs, and a plate that would sit alone in a row takes the row —
-// and each work's page names the next (the last wraps to the first).
+// The works in the Art section, in the order Kyle sets. The index stacks them in this order, each on
+// the full row, and each work's page names the next (the last wraps to the first).
 import type { ImageMetadata } from 'astro';
 import vellumPoster from '../assets/img/art/vellum-poster.jpg';
 import cutPoster from '../assets/img/art/cut-clearing.jpg';
+import walkPoster from '../assets/img/art/walk-grid.jpg';
 
 export interface Work {
   slug: string;              // the page at /art/<slug>
@@ -32,6 +32,14 @@ export const works: Work[] = [
     year: '2026',
     poster: cutPoster,
     alt: 'A dark stone floor seen from above, the words CUT DEEP ENOUGH TO HOLD THE RAIN cut into it, an ellipse of light falling across them',
+  },
+  {
+    slug: 'a-walk-through-history',
+    title: 'A Walk Through History',
+    medium: 'Interactive, Canvas, sound',
+    year: '2026',
+    poster: walkPoster,
+    alt: 'Sixteen small pictures in a grid, each in a different period medium — manuscript, fresco, woodcut, sea chart, red-figure vase, gold-leaf screen — with a hooded figure in each',
   },
 ];
 

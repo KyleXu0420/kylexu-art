@@ -13,11 +13,10 @@
 .work-head .about p:first-child { color: var(--fg-2); }
 .work-head .enter { grid-column: 11 / -1; justify-self: end; white-space: nowrap; }
 
-/* the plates: the home card at 16:10 — the film's own ratio — with the tombstone under it. An odd
-   count opens with the newest on the full row; the rest go in pairs */
+/* the plates: the home card at 16:10 — the film's own ratio — with the tombstone under it, one to a
+   row, stacked in the order Kyle sets */
 .plates-sec { margin-top: var(--s-2); }
-.plates { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-2) var(--gutter); }
-.plate.full { grid-column: 1 / -1; }
+.plates { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
 .plate a { display: grid; gap: 12px; color: inherit; text-decoration: none; }
 .plate .media { position: relative; display: block; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden; background: var(--selection); }
 .plate .media::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px var(--line); pointer-events: none; }
@@ -49,7 +48,4 @@
   .art-head h1, .art-head p, .work-head .id, .work-head .about, .work-head .enter { grid-column: 1 / -1; }
   .work-head .enter { justify-self: start; }
   .close .go { grid-column: 1; }
-}
-@media (max-width: 767px) {
-  .plates { grid-template-columns: minmax(0, 1fr); }
 }

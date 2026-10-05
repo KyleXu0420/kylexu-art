@@ -1,0 +1,163 @@
+---
+// A work's page, as the other two: the header row with Enter, the page's one big frame holding the
+// work itself (the sixteen-up grid until a click starts it in place — it is one 390 KB file, light
+// enough to run in the page), the facts, the statement, the sixteen pictures in order four across,
+// seven of them up close (each picture holds finer drawing that appears only when zoomed), the
+// figure's rig, and the close with Enter again. The full-window piece is
+// /art/a-walk-through-history/live, with a way back added.
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Sheet from '../../../layouts/Sheet.astro';
+import Figure from '../../../components/Figure.astro';
+import CursorLabel from '../../../components/CursorLabel.astro';
+import { href } from '../../../lib/url';
+import { nextAfter } from '../../../data/art';
+import '../../../styles/home.css';
+import '../../../styles/case.css';
+import '../../../styles/art.css';
+import grid from '../../../assets/img/art/walk-grid.jpg';
+import cast from '../../../assets/img/art/walk-rig-cast-walk-run.jpg';
+import woodcut from '../../../assets/img/art/walk-rig-woodcut-mode-connor.jpg';
+import zJerusalem from '../../../assets/img/art/walkzoom-01-jerusalem-2.6x.jpg';
+import zVenice from '../../../assets/img/art/walkzoom-03-venice-3x.jpg';
+import zConstantinople from '../../../assets/img/art/walkzoom-05-constantinople-2.4x.jpg';
+import zCaribbean from '../../../assets/img/art/walkzoom-08-the-caribbean-2.4x.jpg';
+import zLondon from '../../../assets/img/art/walkzoom-11-london-3x.jpg';
+import zBaghdad from '../../../assets/img/art/walkzoom-15-baghdad-2.4x.jpg';
+import zAzuchi from '../../../assets/img/art/walkzoom-16-azuchi-2.4x.jpg';
+
+// the sixteen pictures, in the loop's order: place and year, then the medium it is drawn in
+const files = Object.entries(import.meta.glob<{ default: ImageMetadata }>('../../../assets/img/art/walk-[0-9]*.jpg', { eager: true }))
+  .sort(([a], [b]) => a.localeCompare(b)).map(([, m]) => m.default);
+const pictures = [
+  ['Jerusalem, 1191', 'illuminated manuscript'], ['Florence, 1476', 'fresco'], ['Venice, 1486', 'tempera'], ['Rome, 1503', 'ink and wash'],
+  ['Constantinople, 1511', 'Ottoman miniature'], ['Boston, 1773', 'copperplate'], ['The Frontier, 1775', 'woodcut and survey'], ['The Caribbean, 1715', 'portolan chart'],
+  ['North Atlantic, 1752', 'cold watercolour'], ['Paris, 1789', 'etched broadsheet'], ['London, 1868', 'steel engraving'], ['Giza, 49 BCE', 'painted relief'],
+  ['The Aegean, 431 BCE', 'red-figure vase'], ['England, 873', 'carved timber'], ['Baghdad, 861', 'Abbasid manuscript'], ['Azuchi, 1579', 'gold-leaf screen'],
+].map(([name, note], i) => ({ src: files[i], name, note, alt: `${name}: the scene drawn as ${note}, with the hooded figure in it` }));
+
+// up close: what a picture shows only when zoomed in
+const zooms = [
+  { src: zJerusalem, name: 'Jerusalem, 2.6×', note: 'the toy-house city behind the wall, its domes and gable, every course of the wall', alt: 'Close up: Altaïr leaping over a toy-house city behind a crenellated wall, domes and a bell gable against a starred blue ground' },
+  { src: zVenice, name: 'Venice, 3×', note: 'brick courses and shuttered windows, the flagpole, the crowd on the quay', alt: 'Close up: Ezio leaping from a red-and-white flagpole toward a brick palace with arched, shuttered windows; small figures on the quay' },
+  { src: zConstantinople, name: 'Constantinople, 2.4×', note: 'the hillside of red roofs, the minarets, the sea drawn in waves', alt: 'Close up: an old Ezio on a zip line above a pink domed mosque, a green hillside of red-roofed houses and cypresses, minarets and a blue sea' },
+  { src: zCaribbean, name: 'The Caribbean, 2.4×', note: 'the rigging and gunports, soundings and rhumb lines on the chart', alt: 'Close up: a sailor in the rigging of a black ship with white gunports, drawn over a parchment chart with rhumb lines and depth soundings' },
+  { src: zLondon, name: 'London, 3×', note: 'the viaduct\'s brick joints, the pub sign, top hats under the gas lamps', alt: 'Close up: a steel-engraved viaduct of brick arches, a pub sign reading THE ANCHOR, silhouettes in top hats beneath gas lamps' },
+  { src: zBaghdad, name: 'Baghdad, 2.4×', note: 'hung tapestries, the stucco band, the awning\'s fringe and dotted cloth', alt: 'Close up: Basim running along a beam above a market, hung tapestries, an arched door, merchants in turbans under a striped awning' },
+  { src: zAzuchi, name: 'Azuchi, 2.4×', note: 'every window grille of the keep, the gold clouds, a samurai at the gate', alt: 'Close up: a white castle keep with rows of gridded windows and grey roofs, gold clouds around it, a samurai helmet at the gate below' },
+];
+
+const still = await getImage({ src: grid, width: 1920, format: 'webp' });
+const live = href('/art/a-walk-through-history/live');
+---
+<Sheet
+  title="A Walk Through History — Kyle Xu"
+  description="A Walk Through History (2026), an interactive procedural animation: one Assassin walks through sixteen centuries of picture-making, from illuminated manuscript to gold-leaf screen, every pixel and every note generated live in the browser, each picture holding finer drawing to zoom into. A fan tribute to Assassin's Creed."
+  ogImage="/og-a-walk-through-history.jpg"
+  next={nextAfter('a-walk-through-history', 'I design how AI products behave, and the interface that keeps people in control of it.')}
+>
+  <section class="col hero work-head" aria-labelledby="h1">
+    <div class="id">
+      <h1 id="h1">A Walk Through History</h1>
+      <p class="meta">2026 · Interactive, Canvas, sound</p>
+    </div>
+    <div class="about">
+      <p>One Assassin walks through sixteen centuries of picture-making, from illuminated manuscript to gold-leaf screen. Every pixel and every note is generated live in the browser.</p>
+      <p class="meta">Runs in the browser. Sound starts at your first click or key.</p>
+    </div>
+    <a class="btn enter" href={live}>Enter the work</a>
+  </section>
+
+  <section class="col sec" aria-label="The work">
+    <figure class="fig">
+      <div class="frame bare film" data-live={live}>
+        <img src={still.src} alt="The sixteen pictures in a grid, each in a different period medium, a hooded figure in each" width={still.attributes.width} height={still.attributes.height} decoding="async" />
+        <button type="button" class="play" data-cursor="Run it here" aria-label="Run the work here, in the page"><span>Run it here</span></button>
+      </div>
+      <span class="meta under"><b>Live</b> · The work, running in the page. Space plays and pauses; G moves between the grid and one picture; in a picture, scroll or pinch to zoom up to 4×.</span>
+    </figure>
+  </section>
+
+  <section class="col sec snap" aria-label="Facts">
+    <dl class="facts">
+      <div><dt class="meta">Year</dt><dd>2026</dd></div>
+      <div><dt class="meta">Medium</dt><dd>Custom software (Canvas 2D, Web Audio). No bitmaps, font files or audio samples; one HTML file of about 480 KB</dd></div>
+      <div><dt class="meta">Dimensions</dt><dd>A 1920 × 1080 stage, letterboxed to the window</dd></div>
+      <div><dt class="meta">Duration</dt><dd>A 67.2-second loop: sixteen pictures of 4.2 seconds, the last leap landing back in the first</dd></div>
+      <div><dt class="meta">Interaction</dt><dd><span class="line">Space, or a click on the picture, to play and pause</span><span class="line">Drag the timeline to scrub; arrow keys step a second, with Shift five</span><span class="line">G between the sixteen-up grid and one picture; click a cell to enter it, Esc to go back</span><span class="line">In a single picture, scroll or pinch to zoom from 1× to 4× and drag to pan; double-click, 0 or Esc to reset</span><span class="line">M to mute</span></dd></div>
+      <div><dt class="meta">Rights</dt><dd>A fan tribute, non-commercial. Assassin's Creed and its characters are trademarks of Ubisoft; no Ubisoft images, text or music are used, and the score is original.</dd></div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-statement">
+    <div class="head">
+      <h2 id="c-statement">Statement</h2>
+    </div>
+    <div class="body">
+      <p>Along a seamless 67.2-second loop, one Assassin crosses sixteen pictures, each drawn in the medium its own century would have used, from Jerusalem in 1191 to Azuchi in 1579. Each picture follows the visual logic of real works: three material layers (substrate, mark-making, age), one edge policy, and one action native to that game.</p>
+      <p>Each picture is drawn in three tiers. The sixteen-up grid draws only what reads at thumbnail size; a single picture adds a fine tier of far cities, crowds, objects, inscriptions and ornament; above 1.6× a micro tier appears, down to brick joints, tile courses, craquelure and tool marks. Textures hold their screen frequency and hairlines get finer as you zoom, so enlarging a picture shows more drawing, never bigger pixels.</p>
+      <p>The protagonist is a single articulated rig with sixteen builds, gaits and costumes, rendered in each picture's medium: ink line, chalk outline, hatching, woodcut black, transparent wash, red-figure reserve. The score is synthesised in Web Audio on the same timeline: an original vocalise restated in each picture's mode over a plucked ostinato and the instruments of its period.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-pictures">
+    <div class="head">
+      <h2 id="c-pictures">The sixteen pictures</h2>
+    </div>
+    <div class="body">
+      <p>In the loop's order. Each was designed against the real works it takes its logic from: the Maciejowski Bible, Carpaccio, Matrakçı Nasuh, Paul Revere, Thomas Bewick, Battista Agnese, Gustave Doré, the Nebamun tomb-chapel, the Niobid Painter, al-Wasiti, Kanō Eitoku.</p>
+    </div>
+    <div class="figs">
+      <Figure bare set="gallery" items={pictures} caption="Stills, 1920 × 1080, one from each picture." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-close">
+    <div class="head">
+      <h2 id="c-close">Up close</h2>
+    </div>
+    <div class="body">
+      <p>Seven of the pictures zoomed in, with the fine and micro tiers showing: what the grid leaves out, drawn for whoever leans in.</p>
+    </div>
+    <div class="figs">
+      <Figure bare set="gallery" items={zooms} caption="Stills, 1920 × 1080, taken at the zoom shown." />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-figure">
+    <div class="head">
+      <h2 id="c-figure">The figure</h2>
+    </div>
+    <div class="body">
+      <p>One skeleton with a neck, a waist, tapering limbs, heeled feet and hands that grip, posed by blending between keys, its cloth trailing its speed. Each of the sixteen protagonists has their own build, gait and kit, and the same rig is drawn in sixteen media.</p>
+    </div>
+    <div class="figs">
+      <Figure bare set="pair" items={[
+        { src: cast, evidence: 'Process', name: 'The cast', note: 'sixteen builds walking and running, side by side', alt: 'Sixteen hooded figures in two rows, each a different protagonist and costume, shown walking and running' },
+        { src: woodcut, evidence: 'Process', name: 'Woodcut mode', note: 'the same rig as solid black blocks with white knife cuts', alt: 'The hooded figure drawn as solid black woodcut shapes in eight poses: walk, run, draw a bow, crouch, leap, land' },
+      ]} />
+    </div>
+  </section>
+
+  <section class="col sec close" aria-label="Enter">
+    <p class="stance">Every picture in the medium its own century would have used.</p>
+    <div class="go">
+      <p>Runs in the browser. Sound starts at your first click or key.</p>
+      <a class="btn" href={live}>Enter the work</a>
+    </div>
+  </section>
+
+  <CursorLabel />
+  <script is:inline>
+    // The work in the page: the grid still until it is asked for; one click starts it in place, framed.
+    (function () {
+      var frame = document.querySelector('.film[data-live]'); if (!frame) return;
+      var play = frame.querySelector('.play');
+      play.addEventListener('click', function () {
+        var f = document.createElement('iframe');
+        f.src = frame.dataset.live; f.title = 'A Walk Through History, running'; f.allow = 'autoplay; fullscreen';
+        frame.appendChild(f); frame.classList.add('playing'); f.focus();
+      });
+    })();
+  </script>
+</Sheet>
