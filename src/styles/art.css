@@ -39,6 +39,14 @@
 @media (hover: none) { .play span { opacity: 1; } }
 .film.playing .play { display: none; }
 
+/* sets of silent loops (Clips.astro): three across, or two for wide ones; each frame at its own ratio */
+.clips .frames { display: grid; gap: var(--s-1) var(--gutter); align-items: start; }
+.clips.c3 .frames { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.clips.c2 .frames { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.clip { background: var(--fill); }
+.clip video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 767px) { .clips.c3 .frames, .clips.c2 .frames { grid-template-columns: minmax(0, 1fr); } }
+
 /* the close: the work's rule at the stance size, then the way in again */
 .close .go { grid-column: 6 / -1; display: grid; gap: var(--s-1); justify-items: start; max-width: 72ch; }
 .close .go p { margin: 0; color: var(--fg-2); }

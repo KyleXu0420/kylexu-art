@@ -1,0 +1,41 @@
+---
+// A set of short silent loops (motion work): each in a bare frame at its own ratio, its poster shown
+// until it is half in view, then playing muted on a loop; paused off-screen. Never plays under reduced
+// motion or Save-Data, where the poster stays. One caption line under each: what it is, what to see.
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { href } from '../lib/url';
+
+export interface Clip { src: string; poster: ImageMetadata; name: string; note?: string; alt: string }
+interface Props { items: Clip[]; cols?: 2 | 3; caption?: string }
+const { items, cols = 3, caption } = Astro.props;
+const posters = await Promise.all(items.map((c) => getImage({ src: c.poster, width: Math.min(c.poster.width, cols === 2 ? 1440 : 1080), format: 'webp' })));
+---
+<figure class:list={['fig', 'clips', cols === 2 ? 'c2' : 'c3']}>
+  <div class="frames">
+    {items.map((c, i) => (
+      <div class="item">
+        <div class="frame bare clip" style={`aspect-ratio: ${c.poster.width} / ${c.poster.height}`}>
+          <video data-src={href(c.src)} poster={posters[i].src} muted loop playsinline preload="none" aria-label={c.alt}></video>
+        </div>
+        <span class="meta under">{c.name}{c.note && ' — '}{c.note}</span>
+      </div>
+    ))}
+  </div>
+  {caption && <figcaption class="meta">{caption}</figcaption>}
+</figure>
+
+<script>
+  // every silent loop on the page (these, and a page's own hero loop): fetched and played once half in view
+  const calm = matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator as any).connection?.saveData;
+  if (!calm && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) {
+        const v = e.target as HTMLVideoElement;
+        if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src!; v.play().catch(() => {}); }
+        else v.pause();
+      }
+    }, { threshold: 0.5 });
+    document.querySelectorAll<HTMLVideoElement>('video[data-src]').forEach((v) => io.observe(v));
+  }
+</script>

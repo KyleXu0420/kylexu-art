@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../../favicon.png" type="image/png">
+<style>/* added for kylexu.art: a way back to the work's page */
+#leave{position:fixed;right:18px;top:14px;z-index:50;font:500 11px/1 ui-monospace,"SF Mono",Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#121512;background:rgba(236,238,233,.86);border:1px solid #cdd3c9;border-radius:999px;padding:8px 12px;text-decoration:none}
+#leave:hover,#leave:focus-visible{background:#eceee9;outline:none}</style>
+<title>Droploft Motion Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@600&display=swap" rel="stylesheet">
+<style>
+/* Layout: one 1120px column. A dark forest stage holds the live mark with its score beneath; anatomy, frames, states, sizes and spec follow on cool paper. */
+:root{
+  color-scheme: light;
+  --paper:#eceee9; --paper-2:#e3e6df; --ink:#121512; --ink-2:#394038; --muted:#6c7469; --rule:#cdd3c9;
+  --stage:#0f1713; --stage-2:#16211b; --stage-rule:#24312a; --on-stage:#eef1ea; --on-stage-muted:#87958a;
+  --sage:#9db79a; --forest:#2f4b35; --accent:#d9a35f; --accent-ink:#9a5f1c; --accent-wash:#f4efe4;
+  --f-ui:"Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --f-word:"Outfit", "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ui);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:24px;padding-block:28px 96px}
+@media (max-width:560px){.wrap{padding-inline:16px}}
+header.top{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--rule)}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:clamp(28px,4.4vw,46px);line-height:1.04;font-weight:500;letter-spacing:-.02em;margin:22px 0 10px;text-wrap:balance}
+.lede{max-width:68ch;color:var(--ink-2);margin:0 0 26px}
+.lede b{color:var(--ink);font-weight:600}
+h2{font-size:22px;font-weight:500;letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
+section{padding-block:56px 0}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:24px;align-items:end;margin-bottom:22px}
+.sec-head p{margin:0;color:var(--ink-2);max-width:62ch}
+@media (max-width:760px){.sec-head{grid-template-columns:1fr}}
+
+.stage{position:relative;background:var(--stage);border-radius:6px 6px 0 0;color:var(--on-stage);overflow:hidden;cursor:pointer;outline:none}
+.stage:focus-visible{box-shadow:0 0 0 2px var(--sage)}
+.stage.dragging{box-shadow:inset 0 0 0 2px var(--sage)}
+.stage .mark-host{display:flex;align-items:center;justify-content:center;height:clamp(360px,58vw,600px);padding-block:12px}
+.stage svg.mark{height:100%;width:auto;overflow:hidden;display:block}
+.readout{position:absolute;left:18px;top:16px;right:18px;font-family:var(--f-mono);font-size:12px;color:var(--on-stage-muted);display:flex;gap:14px;flex-wrap:wrap;pointer-events:none}
+.readout b{color:var(--on-stage);font-weight:500;font-variant-numeric:tabular-nums}
+.hint{position:absolute;right:18px;bottom:72px;font-family:var(--f-mono);font-size:11.5px;color:var(--on-stage-muted);pointer-events:none;text-align:right;max-width:30ch}
+@media (max-width:560px){.hint{display:none}}
+.controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-top:1px solid var(--stage-rule);background:var(--stage-2);cursor:default}
+.controls button{font:500 12.5px/1 var(--f-mono);color:var(--on-stage);background:transparent;border:1px solid var(--stage-rule);border-radius:999px;padding:8px 12px;cursor:pointer}
+.controls button:hover{border-color:var(--on-stage-muted)}
+.controls button[aria-pressed="true"]{background:var(--on-stage);color:var(--stage);border-color:var(--on-stage)}
+.controls button:focus-visible,input[type=range]:focus-visible{outline:2px solid var(--sage);outline-offset:2px}
+.controls input[type=range]{flex:1 1 200px;min-width:0;accent-color:var(--sage)}
+.controls .sep{width:1px;align-self:stretch;background:var(--stage-rule)}
+
+.score{background:var(--stage-2);border-top:1px solid var(--stage-rule);border-radius:0 0 6px 6px;padding:10px 14px 12px;color:var(--on-stage-muted)}
+.score .lanes{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-family:var(--f-mono);font-size:11.5px;margin-bottom:6px}
+.score .lanes b{font-weight:500;color:var(--on-stage)}
+.score .lanes .c{color:var(--accent)}
+.score .scroll{overflow-x:auto}
+.score svg{display:block;width:100%;min-width:720px;height:auto}
+.score text{font-family:var(--f-mono);font-size:10px}
+
+.anatomy{background:var(--paper-2);border-radius:6px;padding:20px 16px;overflow-x:auto}
+.anatomy svg{display:block;width:100%;min-width:720px;height:auto}
+.anatomy text{font-family:var(--f-mono);font-size:2.5px;fill:var(--ink-2)}
+.anatomy text.h{font-family:var(--f-ui);font-size:3.1px;font-weight:600;fill:var(--ink)}
+
+.frames{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+@media (max-width:900px){.frames{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.fr{background:var(--paper);padding:8px 6px 10px;display:flex;flex-direction:column;gap:8px;min-width:0;position:relative}
+.fr svg{width:100%;height:auto;aspect-ratio:54/92;overflow:hidden}
+.fr .cap{font-family:var(--f-mono);font-size:10.5px;color:var(--muted);display:flex;flex-direction:column;gap:1px;font-variant-numeric:tabular-nums}
+.fr .cap b{color:var(--ink);font-weight:500}
+.fr.mo{background:var(--accent-wash)}
+.fr.mo .cap .k{color:var(--accent-ink);font-weight:500}
+.fr.mo::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--accent)}
+.legend-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.legend-row i{display:inline-block;width:12px;height:12px;vertical-align:-2px;margin-right:6px;background:var(--accent-wash);box-shadow:inset 0 -3px 0 var(--accent)}
+
+.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:1000px){.grid4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.grid4{grid-template-columns:1fr}}
+.card{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mini{position:relative;background:var(--stage);border-radius:6px;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.mini svg{height:100%;width:auto;overflow:hidden}
+.tag{position:absolute;left:10px;top:9px;font-family:var(--f-mono);font-size:10.5px;color:var(--on-stage-muted);letter-spacing:.04em}
+.strip{display:flex;gap:0;background:var(--paper);border:1px solid var(--rule);overflow-x:auto;height:88px}
+.strip div{background:var(--paper);flex:0 0 auto;padding:3px 1px;height:100%;border-right:1px solid var(--rule);position:relative}
+.strip svg{display:block;height:100%;width:auto}
+.card h3{margin:0;font-size:15px;font-weight:600}
+.card p{margin:0;color:var(--ink-2);font-size:14px}
+.card .meta{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+
+.sizes{position:relative;display:flex;gap:28px;align-items:flex-end;flex-wrap:wrap;background:var(--stage);border-radius:6px;padding:150px 32px 28px;overflow:hidden}
+.sizes figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:12px}
+.sizes figcaption{font-family:var(--f-mono);font-size:11.5px;color:var(--on-stage-muted);text-align:center;line-height:1.35}
+.sizes svg{overflow:visible;display:block}
+.sizes .floor{width:1px;align-self:stretch;background:var(--stage-rule)}
+.sizes svg.px{image-rendering:pixelated;shape-rendering:crispEdges}
+
+.lockups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+@media (max-width:820px){.lockups{grid-template-columns:1fr}}
+.lockup{position:relative;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:clamp(12px,2vw,20px);padding:120px 24px 44px;overflow:hidden}
+.lockup.dark{background:var(--stage);color:var(--on-stage)}
+.lockup.light{background:var(--paper-2);color:var(--ink)}
+.lockup.light .tag{color:var(--muted)}
+.lockup svg{width:auto;overflow:visible;flex:0 0 auto}
+.lockup .word{font-family:var(--f-word);font-weight:600;font-size:51px;letter-spacing:-.025em;line-height:1}
+@media (max-width:420px){.lockup .word{font-size:40px}}
+
+.spec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px}
+@media (max-width:820px){.spec{grid-template-columns:1fr}}
+.rules{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px}
+.rules li{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:8px}
+.rules .n{font-family:var(--f-mono);font-size:12px;color:var(--muted);padding-top:3px}
+.rules b{font-weight:600}
+.rules code{font-family:var(--f-mono);font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th,td{text-align:left;padding:7px 8px 7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--f-mono);font-weight:500;font-size:11.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+td .k{font-family:var(--f-mono);font-size:11px;color:var(--accent-ink)}
+.tablewrap{overflow-x:auto}
+.files{margin-top:18px;font-size:13.5px;color:var(--ink-2)}
+.files code{font-family:var(--f-mono);font-size:12.5px;color:var(--ink)}
+
+.construction{display:none}
+.show-construction .construction{display:inline}
+
+body.capture{background:var(--stage)}
+body.capture .wrap > *:not(#hero){display:none}
+body.capture #hero > :not(.stage){display:none}
+body.capture #hero .controls, body.capture #hero .readout, body.capture #hero .hint{display:none}
+body.capture .wrap{padding:0;max-width:none}
+body.capture #hero{padding:0}
+body.capture #hero .stage{border-radius:0}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">Droploft · Mark in motion · v13</span>
+    <span class="eyebrow">Canon R28.30 · 13 tracks · everything flows · 2026-10-04</span>
+  </header>
+
+  <section id="hero" style="padding-top:0">
+    <h1>Drop it in. The loft holds it.</h1>
+    <p class="lede" id="lede">One rule runs the whole system: <b>everything flows</b>. Nothing jumps, and no edge ever changes speed in an instant: every move starts from rest and lands softly, and each hands the eye on to the next. At rest the loft is its two beads. A small drop forms high above them, centre first; after a breath, in which it draws itself out a little as a hanging drop does, it lets go. As it falls the beads close and rise to meet it, as fast as it falls; the loft slows it and takes it at its waist, and loft and drop sink together under its weight and spring back. Held there, the drop opens into the mark, and the beads ride out with its widest point until they let go and rest. The last frame is the static mark, exactly.</p>
+    <div class="stage" id="stage" tabindex="0" role="button" aria-label="Drop something into the mark">
+      <div class="readout"><span><b id="phase">held</b></span><span>t <b id="tread">—</b></span><span>moment <b id="lastmo">—</b></span></div>
+      <div class="mark-host" id="heroHost"></div>
+      <div class="hint" id="hint">Click, tap or drag files here to drop something in. One file per drop.</div>
+      <div class="controls" id="controls">
+        <button id="replay">Replay reveal</button>
+        <button id="dropBtn">Drop in</button>
+        <button id="exitBtn">Put away</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button id="slow" aria-pressed="false">¼ speed</button>
+        <button id="cons" aria-pressed="false">Construction</button>
+        <input id="scrub" type="range" min="0" max="1000" value="1000" aria-label="Scrub the reveal">
+      </div>
+    </div>
+    <div class="score" id="score" aria-label="Score of the current sequence: every bar's top and foot, and the beads, over time, with the named moments marked">
+      <div class="lanes"><span><b>Score · <span id="scoreName">reveal</span></b> · every bar's top and foot, and the beads (green), over time, y down</span><span>every line is continuous · <span class="c">named moments ▲</span></span></div>
+      <div class="scroll" id="scoreSvg"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Anatomy of the catch</h2>
+      <p id="anatomyNote">The frame the drop opens from. The beads have moved in from their rest to take it at its waist; loft and drop are sinking together under its weight. Nothing has been placed yet: every bar is about to open onto the dashed track it ends on, and the beads will ride out with it to theirs.</p>
+    </div>
+    <div class="anatomy" id="anatomy"></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>The reveal, frame by frame</h2>
+      <p>Every frame at 30 a second, as drawn. There are no cuts: from one frame to the next every bar and bead moves a little, or not at all. The marked frames are where a named moment begins, each one already under way before the last has finished.</p>
+    </div>
+    <div class="frames" id="frames"></div>
+    <div class="legend-row"><span><i></i>a named moment begins in this frame</span></div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>States</h2>
+      <p>Four sequences, one motion language: the same three curves, the same eased fall, the same give. Whatever falls in is slowed by the loft before it is taken. Nothing loops for decoration: in the product the mark moves when something is dropped in and rests when the work is done. The specimens below repeat so they can be read.</p>
+    </div>
+    <div class="grid4">
+      <div class="card"><div class="mini" id="stReveal"><span class="tag">specimen · repeats</span></div><div class="strip" id="stripReveal"></div><h3>Reveal</h3><p>App launch, once per session. A small drop forms above the loft and falls; the beads move in, take it at its waist and give with it. Held, it opens into the mark, and the beads let go to their rest.</p><span class="meta" id="metaReveal"></span></div>
+      <div class="card"><div class="mini" id="stIngest"><span class="tag">specimen · repeats</span></div><div class="strip" id="stripIngest"></div><h3>Ingest</h3><p>One file forms above a bead and drops. The loft slows it, and the bead takes it in: the file slides on down into the bead as the bead and the nearest feet give. The drop's outline never changes. Below 96&nbsp;px the bead takes the file in without the fall.</p><span class="meta" id="metaIngest"></span></div>
+      <div class="card"><div class="mini" id="stBurst"><span class="tag">specimen · repeats</span></div><div class="strip" id="stripBurst"></div><h3>Burst</h3><p>Several files: up to three a period, alternating beads, each slowed and taken in the same way, in the order they arrive.</p><span class="meta" id="metaBurst"></span></div>
+      <div class="card"><div class="mini" id="stExit"><span class="tag">specimen · repeats</span></div><div class="strip" id="stripExit"></div><h3>Put away</h3><p>Leaving. The drop folds back into a small drop, outer bars leading, the beads closing on it; a breath; then it is drawn in, and as the last of it goes the beads close over it until the loft is one bead, holding it and giving under its weight. Then the loft opens again into its two beads. Nothing is thrown out; it ends on the empty loft.</p><span class="meta" id="metaExit"></span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Sizes and lockups</h2>
+      <p id="sizesNote">Shown at actual size. The motion is drawn from the vector frames at any size from 48&nbsp;px, here at 160, 96, 64 and 48. At 48–64&nbsp;px the small falling drop's gaps are under a pixel, so it falls as a tone and resolves into bars as it opens; from 48 to 95&nbsp;px a bead takes a file in without the fall. Below 48&nbsp;px the mark is static on the pixel grid, with its beads: 9 bars at 32&nbsp;px, 7 at 24, and a solid drop at 16, as in the client's own 16&nbsp;px trim.</p>
+    </div>
+    <div class="sizes" id="sizes"><span class="tag">specimen · repeats</span></div>
+    <div class="lockups">
+      <div class="lockup dark" id="lockDark"><span class="tag">specimen · repeats</span><span class="word">Droploft</span></div>
+      <div class="lockup light" id="lockLight"><span class="tag">specimen · repeats</span><span class="word">Droploft</span></div>
+    </div>
+    <p class="files">The mark is 1.8 × the wordmark's cap height, the client's own ratio, with its waist line on the middle of the x-height. The word stays still while the mark moves. It is set here in a stand-in face; the client's wordmark artwork replaces it.</p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Spec</h2>
+      <p id="specNote">Units are the canon's own: bar width 2.0, track pitch 3.0, corner radius 0.353&nbsp;× width, beads at ±19.895, waist line at y&nbsp;35.903.</p>
+    </div>
+    <div class="spec">
+      <ol class="rules" id="rules"></ol>
+      <div>
+        <div class="tablewrap"><table id="timing"><thead><tr><th>At</th><th>Moment</th><th>What happens</th></tr></thead><tbody></tbody></table></div>
+        <p class="files" id="filesNote">Delivered with this study: the frame set as <code>droploft-frames.json</code> (every sequence sampled at 60&nbsp;fps: each frame's bars and beads with position, length, width and corner; the named moments; the curves, fall and spring; the box, anchor, size and queue rules); Lottie files for all six sequences in light and ink at 60&nbsp;fps, a keyframe on every frame; transparent animated PNGs of every sequence at 48, 64 and 96&nbsp;px and of the reveal at 540&nbsp;px; 60&nbsp;fps PNG sequences of the reveal; every named moment as an SVG in <code>currentColor</code>; MP4, WebM and GIF renders on dark and light that play once; the static mark in its own box; and the icons — pixel designs from 16 to 96&nbsp;px — as SVG, PNG and ICO.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="engine.js"></script>
+<script>
+(() => {
+  const M = window.DroploftMotion, GEO = M.GEO, NS = 'http://www.w3.org/2000/svg';
+  const mod = (a, n) => ((a % n) + n) % n;
+  const B = M.BOX, SB = M.STATIC_BOX, R = M.REV;
+  const VB_STAGE = `${B.x} ${B.y} ${B.w} ${B.h}`, VB_TIGHT = `${SB.x} ${SB.y} ${SB.w} ${SB.h}`;
+  const params = new URLSearchParams(location.search);
+  const capture = params.has('capture'), still = capture || params.has('still');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (capture) document.body.classList.add('capture');
+  const el = id => document.getElementById(id);
+  const ms = s => Math.round(s * 1000) + ' ms';
+  const LABEL = { reveal: 'reveal', revealFromLoft: 'reveal', ingest: 'ingest', ingestBurst: 'burst', ingestTick: 'tick', ingestTickBurst: 'tick burst', exit: 'put away' };
+
+  function makeMark(host, opts = {}) {
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', opts.viewBox || VB_TIGHT);
+    svg.setAttribute('class', 'mark');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Droploft mark');
+    if (opts.height) svg.style.height = opts.height + 'px';
+    if (opts.construction) {
+      const cons = document.createElementNS(NS, 'g');
+      cons.setAttribute('class', 'construction');
+      let h = '';
+      for (let c = 0; c < 11; c++) h += `<line x1="${M.X(c)}" x2="${M.X(c)}" y1="${B.y}" y2="${B.y + B.h}" stroke="var(--sage)" stroke-width=".12" opacity=".3"/>`;
+      [-GEO.BX, GEO.BX].forEach(x => h += `<line x1="${x}" x2="${x}" y1="${B.y}" y2="${B.y + B.h}" stroke="var(--sage)" stroke-width=".12" opacity=".3"/>`);
+      h += `<line x1="-24" x2="24" y1="${M.P0}" y2="${M.P0}" stroke="var(--sage)" stroke-width=".15" stroke-dasharray=".8 .8"/>`;
+      M.canon().pills.forEach(q => h += `<rect x="${q.x - q.w / 2}" y="${q.top}" width="${q.w}" height="${q.bot - q.top}" rx="${q.rx}" fill="none" stroke="var(--sage)" stroke-width=".12" stroke-dasharray=".8 .5" opacity=".7"/>`);
+      h += `<rect x="${SB.x}" y="${SB.y}" width="${SB.w}" height="${SB.h}" fill="none" stroke="var(--sage)" stroke-width=".12" opacity=".5"/>`;
+      cons.innerHTML = h;
+      svg.appendChild(cons);
+    }
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('fill', 'currentColor');
+    svg.appendChild(g);
+    let lastF = null;
+    function draw(F) { if (F === lastF) return; lastF = F; g.innerHTML = M.toSVG(F); }
+    host.appendChild(svg);
+    return { svg, draw };
+  }
+  const HELD = M.canon(), EMPTY = M.empty();
+  const endFrame = name => name === 'exit' ? EMPTY : HELD;
+  const momentsOf = seq => seq.events;
+
+  // ---------------- score: every bar's top and foot, and the beads, over time; named moments marked ----------------
+  const score = (() => {
+    const host = el('scoreSvg'), W = 1000, H = 230, L = 40, Rr = 26, Y0 = -26, Y1 = 64, top = 20, bot = 196;
+    const yOf = y => top + (bot - top) * (y - Y0) / (Y1 - Y0);
+    let cur = null, xOf = null, head = null;
+    function build(name) {
+      const seq = M[name]; cur = name; el('scoreName').textContent = LABEL[name];
+      xOf = t => L + (W - L - Rr) * t / seq.dur;
+      const n = Math.max(300, Math.round(seq.dur * 360)), tracks = new Map();
+      const add = (id, t, a, b) => { if (!tracks.has(id)) tracks.set(id, []); tracks.get(id).push([t, a, b]); };
+      for (let i = 0; i <= n; i++) {
+        const t = seq.dur * i / n, F = seq.at(t).frame;
+        for (const p of F.pills) add(p.id, t, p.top, p.bot);
+        F.posts.forEach((q, j) => add(j ? 'beadR' : 'beadL', t, q[0], q[1]));
+      }
+      let h = `<clipPath id="plotClip"><rect x="${L}" y="${top}" width="${W - L - Rr}" height="${bot - top}"/></clipPath>`, lines = '';
+      [0, M.P0, 57.923].forEach(y => h += `<line x1="${L}" x2="${W - Rr}" y1="${yOf(y)}" y2="${yOf(y)}" stroke="#24312a" stroke-width="1"/>`);
+      h += `<text x="0" y="${yOf(M.P0) + 3}" fill="#87958a">waist</text><text x="0" y="${yOf(0) + 3}" fill="#87958a">apex</text><text x="0" y="${yOf(57.923) + 3}" fill="#87958a">base</text>`;
+      for (const [id, pts] of tracks) {
+        const centre = id === 'b5', file = id[0] === 'f', bead = id.startsWith('bead');
+        const path = k => { let d = '', prevT = null; for (const p of pts) { const gap = prevT != null && p[0] - prevT > seq.dur / n * 1.5; d += `${d && !gap ? 'L' : 'M'}${xOf(p[0]).toFixed(1)} ${yOf(p[k]).toFixed(1)}`; prevT = p[0]; } return d; };
+        const col = file ? '#d9a35f' : bead ? '#9db79a' : centre ? '#eef1ea' : '#87958a', sw = centre || file || bead ? 1.3 : .8;
+        lines += `<path d="${path(1)}" fill="none" stroke="${col}" stroke-width="${sw}" opacity="${centre || file || bead ? 1 : .75}"/><path d="${path(2)}" fill="none" stroke="${col}" stroke-width="${sw}" opacity="${centre || file || bead ? 1 : .75}"/>`;
+      }
+      h += `<g clip-path="url(#plotClip)">${lines}</g>`;
+      momentsOf(seq).forEach(e => h += `<path d="M${xOf(e.t).toFixed(1)} ${bot + 4}l-3.5 7h7z" fill="#d9a35f"/><line x1="${xOf(e.t).toFixed(1)}" x2="${xOf(e.t).toFixed(1)}" y1="${top}" y2="${bot + 2}" stroke="#d9a35f" stroke-width=".6" opacity=".3"/>`);
+      // labels: stagger the rows so close moments stay legible
+      let lastX = -1e9, row = 0;
+      momentsOf(seq).forEach(e => { const x = xOf(e.t); row = x - lastX < 62 ? (row + 1) % 2 : 0; lastX = x; h += `<text x="${(x - 3).toFixed(1)}" y="${bot + 23 + row * 11}" fill="#d9a35f">${e.name}</text>`; });
+      [0, .25, .5, .75, 1, 1.25, 1.5, 1.75, 2].filter(t => t <= seq.dur + 1e-6).forEach(t => h += `<text x="${xOf(t) - (t ? 10 : 0)}" y="${H + 22}" fill="#5d6b61">${Math.round(t * 1000)}${t ? '' : ' ms'}</text>`);
+      h += `<line id="scoreHead" x1="${L}" x2="${L}" y1="0" y2="${bot + 2}" stroke="#eef1ea" stroke-width="1" opacity=".7"/>`;
+      host.innerHTML = `<svg viewBox="0 0 ${W} ${H + 26}" role="img" aria-label="Score of the ${LABEL[name]}">${h}</svg>`;
+      head = host.querySelector('#scoreHead');
+    }
+    return { set(name) { if (name !== cur) build(name); }, at(t) { if (!head) return; const x = xOf(Math.min(t, M[cur].dur)); head.setAttribute('x1', x); head.setAttribute('x2', x); } };
+  })();
+
+  // ---------------- hero ----------------
+  const stage = el('stage');
+  const hero = makeMark(el('heroHost'), { construction: true, viewBox: VB_STAGE });
+  hero.svg.style.color = 'var(--on-stage)';
+  const phaseEl = el('phase'), tread = el('tread'), lastmo = el('lastmo'), scrub = el('scrub');
+  let speed = 1, run = null, resting = 'held', queue = 0;
+
+  function show(F, label, t, seq) {
+    hero.draw(F);
+    phaseEl.textContent = label + (queue > 0 ? ` · ${queue} waiting` : '');
+    tread.textContent = t == null ? '—' : ms(t);
+    if (seq && t != null) {
+      const done = momentsOf(seq).filter(e => e.t <= t + 1e-9), e = done[done.length - 1];
+      lastmo.textContent = e ? `${e.name} · ${ms(e.t)}` : '—';
+      score.at(t);
+    }
+  }
+  function start(name) { run = { name, seq: M[name], t0: null }; score.set(name); loop(); }
+  function startReading() { if (queue >= 2) { queue -= Math.min(3, queue); start('ingestBurst'); } else { queue = Math.max(0, queue - 1); start('ingest'); } }
+  function finish() {
+    const name = run.name; run = null;
+    resting = name === 'exit' ? 'empty' : 'held';
+    if (queue > 0 && resting === 'held') { startReading(); return; }
+    show(endFrame(name), resting === 'held' ? 'held' : 'the loft waits · drop something in', null);
+    score.at(M[name].dur);
+    if (resting === 'held') scrub.value = '1000';
+  }
+  function dropIn(n = 1) {
+    if (reduced) { const tl = M.ingest.events.find(e => e.name === 'Taken in').t; hero.draw(M.ingest.at(tl + .05).frame); setTimeout(() => hero.draw(HELD), 250); return; }
+    const reading = run && (run.name === 'ingest' || run.name === 'ingestBurst');
+    if (reading) { queue = Math.min(queue + n, 999); return; }
+    if (run) return;
+    if (resting === 'empty') { queue = Math.min(999, n - 1); start('revealFromLoft'); return; }   // the loft is already there: nothing blinks out
+    queue = Math.min(999, n); startReading();
+  }
+  let raf = 0;
+  function loop() { if (!raf) raf = requestAnimationFrame(frame); }
+  function frame(now) {
+    raf = 0;
+    if (!run) return;
+    if (run.t0 == null) run.t0 = now;
+    const t = (now - run.t0) / 1000 * speed, seq = run.seq;
+    if (t >= seq.dur) { finish(); return; }
+    const r = seq.at(t);
+    show(r.frame, r.phase.toLowerCase() + (!run.name.startsWith('reveal') ? ' · ' + LABEL[run.name] : ''), t, seq);
+    if (run.name.startsWith('reveal')) scrub.value = String(Math.round(1000 * Math.min(1, t / seq.dur)));
+    loop();
+  }
+  el('replay').onclick = e => { e.stopPropagation(); queue = 0; start('reveal'); };
+  el('dropBtn').onclick = e => { e.stopPropagation(); dropIn(1); };
+  el('exitBtn').onclick = e => { e.stopPropagation(); if (run && (run.name === 'ingest' || run.name === 'ingestBurst')) { queue = 0; return; } if (!run && resting === 'held') start('exit'); };
+  const tog = (id, fn) => { const b = el(id); b.onclick = e => { e.stopPropagation(); const v = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', String(v)); fn(v); }; };
+  tog('slow', v => { const was = speed; speed = v ? .25 : 1; if (run && run.t0 != null) { const now = performance.now(); run.t0 = now - (now - run.t0) * was / speed; } });
+  tog('cons', v => stage.classList.toggle('show-construction', v));
+  el('controls').addEventListener('click', e => e.stopPropagation());
+  scrub.addEventListener('input', () => {
+    run = null; queue = 0; score.set('reveal');
+    const t = +scrub.value / 1000 * M.reveal.dur, r = M.reveal.at(t);
+    show(r.frame, r.phase.toLowerCase(), t, M.reveal);
+    resting = 'held';
+  });
+  stage.addEventListener('click', () => dropIn(1));
+  stage.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); dropIn(1); } });
+  stage.addEventListener('dragover', e => { e.preventDefault(); stage.classList.add('dragging'); });
+  stage.addEventListener('dragleave', () => stage.classList.remove('dragging'));
+  stage.addEventListener('drop', e => {
+    e.preventDefault(); stage.classList.remove('dragging');
+    dropIn(Math.max(1, (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) || 1));
+  });
+
+  // ---------------- anatomy: the frame the drop opens from ----------------
+  (function anatomy() {
+    const t = R.tu, F = M.reveal.at(t).frame;
+    const host = el('anatomy');
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '-118 -18 236 84');
+    svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'The frame the drop opens from: the beads have moved in to take the small drop at its waist; dashed, the tracks it will open onto and the beads at rest');
+    let h = '';
+    for (let c = 0; c < 11; c++) h += `<line x1="${M.X(c)}" x2="${M.X(c)}" y1="-16" y2="65" stroke="#b9c2b5" stroke-width=".1"/>`;
+    [-GEO.BX, GEO.BX].forEach(x => h += `<line x1="${x}" x2="${x}" y1="-16" y2="65" stroke="#b9c2b5" stroke-width=".1"/>`);
+    h += `<line x1="-36" x2="36" y1="${M.P0}" y2="${M.P0}" stroke="#2f4b35" stroke-width=".25" stroke-dasharray="1 .8"/>`;
+    const dash = q => `<rect x="${q.x - q.w / 2}" y="${q.top}" width="${q.w}" height="${q.bot - q.top}" rx="${q.rx}" fill="none" stroke="#9a5f1c" stroke-width=".12" stroke-dasharray=".7 .5" opacity=".75"/>`;
+    M.canon().pills.forEach(q => h += dash(q));
+    [-1, 1].forEach(s => h += dash({ x: s * GEO.BX, top: GEO.bead[0], bot: GEO.bead[1], w: GEO.W, rx: GEO.RX }));
+    h += `<g fill="#121512">${M.toSVG(F)}</g>`;
+    const lab = (x1, y1, x2, y2, head, body, body2, anchor) => {
+      h += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#394038" stroke-width=".15"/><circle cx="${x1}" cy="${y1}" r=".45" fill="#394038"/>`;
+      const tx = anchor === 'end' ? x2 - 1 : x2 + 1, a = anchor || 'start';
+      h += `<text x="${tx}" y="${y2 - .6}" class="h" text-anchor="${a}">${head}</text><text x="${tx}" y="${y2 + 2.8}" text-anchor="${a}">${body}</text>${body2 ? `<text x="${tx}" y="${y2 + 5.8}" text-anchor="${a}">${body2}</text>` : ''}`;
+    };
+    const byId = id => F.pills.find(p => p.id === id);
+    const [bl, br] = F.posts, xb = br[2], centre = byId('b5'), outerL = byId('b0');
+    const dip = ((bl[0] + bl[1]) / 2 - M.P0);
+    const giveMax = R.giveMax;
+    lab(xb + 1.1, (br[0] + br[1]) / 2 - 1.5, 38, 24, 'Bead', `moved in from rest (dashed) to ±${xb.toFixed(1)},`, `taking the drop at its waist, ${R.grip} u off its edge`);
+    lab(xb, br[1], 38, 46, 'Give', `loft and drop sink together, ${giveMax.toFixed(1)} u at most,`, `one spring (${M.GIVE.f} Hz, ζ ${M.GIVE.z}), and come back`);
+    lab(GEO.BX + 1.1, GEO.bead[0] + 1, 38, 6, 'Rest', 'where the beads let go to,', 'once the drop is whole');
+    lab(centre.x, centre.top + .4, -38, 2, 'Opens next', 'about its waist, centre first,', `${Math.round(R.unfold.stagger * 1000)} ms a bar, onto its dashed track`, 'end');
+    lab(-xb - 1.1, (bl[0] + bl[1]) / 2, -38, 28, 'Waist line', `y ${M.P0.toFixed(1)}: the loft takes it here`, `(${dip >= 0 ? 'now ' + dip.toFixed(1) + ' u below it, giving' : ''})`, 'end');
+    lab(outerL.x - outerL.w / 2, (outerL.top + outerL.bot) / 2 + 1.5, -38, 48, 'The drop, small', `${R.s} scale; slowed by the loft to`, `${R.vc} u/s before it was taken`, 'end');
+    svg.innerHTML = h;
+    host.appendChild(svg);
+    host.scrollLeft = (host.scrollWidth - host.clientWidth) / 2;   // narrow screens: open on the mark, labels either side
+  })();
+
+  // ---------------- frames ----------------
+  const framesEl = el('frames'), VB_FRAME = '-27 -30 54 94';
+  const fr30 = M.reveal.frames(30);
+  fr30.forEach(f => {
+    const d = document.createElement('div'); d.className = 'fr' + (f.cut ? ' mo' : '');
+    const m = makeMark(d, { viewBox: VB_FRAME });
+    m.svg.style.color = 'var(--ink)'; m.svg.style.height = 'auto';
+    m.draw(f.frame);
+    const cap = document.createElement('div'); cap.className = 'cap';
+    cap.innerHTML = `<b>${ms(f.t)}</b><span>${f.phase.toLowerCase()}</span>${f.cut ? `<span class="k">${f.cut.toLowerCase()}</span>` : '<span>&nbsp;</span>'}`;
+    d.appendChild(cap); framesEl.appendChild(d);
+  });
+  const fillLegend = () => { framesEl.querySelectorAll('.fill').forEach(n => n.remove()); const cols = getComputedStyle(framesEl).gridTemplateColumns.split(' ').length, rest = (cols - fr30.length % cols) % cols;
+    if (rest) { const d = document.createElement('div'); d.className = 'fr fill'; d.style.gridColumn = `span ${rest}`; d.style.justifyContent = 'flex-end';
+      d.innerHTML = `<div class="cap"><b>${fr30.length} frames · ${ms(M.reveal.dur)}</b><span>no cuts: every frame moves on from the last</span></div>`; framesEl.appendChild(d); } };
+  fillLegend(); addEventListener('resize', fillLegend);
+
+  // ---------------- states ----------------
+  const specimens = [];
+  function addState(id, stripId, metaId, seqName, pad, stripTimes, meta) {
+    const seq = M[seqName];
+    const m = makeMark(el(id), { viewBox: VB_STAGE });
+    m.svg.style.color = 'var(--on-stage)';
+    specimens.push({ m, seq, loop: seq.dur + pad, endFrame: endFrame(seqName) });
+    const strip = el(stripId);
+    stripTimes.forEach(t => {
+      const d = document.createElement('div');
+      strip.appendChild(d); const s = makeMark(d, { viewBox: '-27 -36 54 120' }); s.svg.style.color = 'var(--ink)';
+      s.draw(t >= seq.dur ? endFrame(seqName) : seq.at(t).frame);
+    });
+    el(metaId).textContent = meta;
+  }
+  const evT = (n, name, k = 0) => M[n].events.filter(e => e.name === name)[k].t;
+  addState('stReveal', 'stripReveal', 'metaReveal', 'reveal', 1.6, [.12, .3, .5, R.release + .12, R.tc - .03, R.tu + .12, R.tu + .3, R.tg + .2, R.end], `${ms(M.reveal.dur)} · from the beads to the mark`);
+  const ti = evT('ingest', 'Taken in');
+  addState('stIngest', 'stripIngest', 'metaIngest', 'ingest', 0, [.15, .3, .5, ti - .06, ti + .02, ti + .08, ti + .16, ti + .3], `one file · ${ms(M.ingest.dur)} period`);
+  addState('stBurst', 'stripBurst', 'metaBurst', 'ingestBurst', 0, [.3, .55, ...M.ingestBurst.events.filter(e => e.name === 'Taken in').map(e => e.t + .05), 1.25], `up to 3 files · ${ms(M.ingestBurst.dur)} period`);
+  addState('stExit', 'stripExit', 'metaExit', 'exit', 1.2, [0, .15, .3, .45, .55, .65, .75, .9, M.exit.dur], `${ms(M.exit.dur)} · ends on the empty loft`);
+
+  // ---------------- sizes + lockups ----------------
+  const sizesEl = el('sizes');
+  const sized = [];
+  [160, 96, 64, 48].forEach(hpx => {
+    const f = document.createElement('figure'); const holder = document.createElement('div'); f.appendChild(holder);
+    const m = makeMark(holder, { height: hpx * SB.h / 57.923 }); m.svg.style.color = 'var(--on-stage)'; m.svg.style.overflow = 'visible';
+    const cap = document.createElement('figcaption'); cap.innerHTML = `${hpx} px<br>vector · moves`; f.appendChild(cap);
+    sizesEl.appendChild(f); sized.push(m);
+  });
+  const fl = document.createElement('span'); fl.className = 'floor'; fl.setAttribute('aria-hidden', 'true'); sizesEl.appendChild(fl);
+  [...M.SMALLSIZES].reverse().forEach(pm => {
+    const f = document.createElement('figure');
+    const svg = document.createElementNS(NS, 'svg'); svg.setAttribute('class', 'px'); svg.setAttribute('viewBox', `0 0 ${pm.px} ${pm.px}`); svg.setAttribute('width', pm.px); svg.setAttribute('height', pm.px);
+    svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', `Droploft mark at ${pm.px} px`); svg.style.color = 'var(--on-stage)';
+    svg.innerHTML = `<g fill="currentColor">${[...pm.pills, ...pm.posts].map(p => `<rect x="${p.x}" y="${p.y0}" width="${p.w}" height="${p.y1 - p.y0}"/>`).join('')}</g>`;
+    f.appendChild(svg);
+    const cap = document.createElement('figcaption'); cap.innerHTML = `${pm.px} px<br>pixels · static`; f.appendChild(cap); sizesEl.appendChild(f);
+  });
+  // lockup: the vector mark at 64 px (48 on narrow screens); the word is sized so the mark is 1.8 × its cap height,
+  // and the mark sits with its waist line on the middle of the x-height
+  const lockSize = () => innerWidth < 520 ? 48 : 64;
+  let lockups = [];
+  function buildLockups() {
+    const px = lockSize();
+    lockups.forEach(l => l.m.svg.remove());
+    lockups = ['lockDark', 'lockLight'].map(id => {
+      const host = el(id), word = host.querySelector('.word'), m = makeMark(host, { height: px * SB.h / 57.923 });
+      m.svg.style.color = id === 'lockDark' ? 'var(--on-stage)' : 'var(--ink)'; m.svg.style.overflow = 'visible';
+      host.insertBefore(m.svg, word);
+      return { m, word, px };
+    });
+    placeLockups();
+  }
+  function placeLockups() {
+    lockups.forEach(({ m, word, px }) => {
+      m.svg.style.transform = '';
+      const cs = getComputedStyle(word), cv = document.createElement('canvas').getContext('2d');
+      cv.font = `${cs.fontWeight} 100px ${cs.fontFamily}`;
+      const capRatio = cv.measureText('D').actualBoundingBoxAscent / 100;
+      const size = px / 1.8 / capRatio; word.style.fontSize = size.toFixed(1) + 'px';
+      cv.font = `${cs.fontWeight} ${size}px ${cs.fontFamily}`;
+      const mm = cv.measureText('D'), xh = cv.measureText('x').actualBoundingBoxAscent;
+      const wr = word.getBoundingClientRect(), asc = mm.fontBoundingBoxAscent || size * .8, desc = mm.fontBoundingBoxDescent || size * .2;
+      const base = wr.top + (wr.height + asc - desc) / 2, targetY = base - xh / 2;
+      const mr = m.svg.getBoundingClientRect(), waistY = mr.top + (M.P0 - SB.y) / SB.h * mr.height;
+      m.svg.style.transform = `translateY(${Math.round(targetY - waistY)}px)`;
+    });
+  }
+
+  // ---------------- spec: rules and the timing table, from the engine ----------------
+  const E = M.EASE, giveMax = R.giveMax;
+  const rules = [
+    ['One material.', 'Every frame is drawn with the mark\'s own rounded bars: the drop\'s bars, the two beads, and files the size of a bead. No outlines, no opacity, no new shapes.'],
+    ['One pitch.', 'The drop\'s width and spacing always scale together, from one lead scale (the centre bar as it forms and opens, the outer bars as it folds); only the heights are staggered. The gap between neighbouring bars stays half a bar wide in every frame: they never crowd, cross or fuse.'],
+    ['Everything flows.', `Nothing jumps, and no edge's speed changes in an instant. Anything already on screen moves on <code>${E.move.css}</code>; anything forming from a point grows on <code>${E.grow.css}</code>; the drop opens on <code>${E.open.css}</code>.`],
+    ['Falls are slowed, not stopped.', `Gravity, ${M.REV.G} u/s², eases in over 60 ms. Before contact the loft slows the fall, so position, speed and acceleration all stay continuous: the drop arrives at ${R.vc} u/s, a file at ${M.ING.vc}. A falling thing is drawn out lengthwise by its speed, 10 % at 240 u/s, and never sideways.`],
+    ['One give.', `Every arrival gives on the same damped spring, ${M.GIVE.f} Hz at ζ ${M.GIVE.z}, in every state. The drop and the loft sink ${giveMax.toFixed(1)} u together and come back.`],
+    ['The loft meets what falls.', `The beads close as the drop falls, driven by its fall rather than the clock and never ahead of it, and rise ${R.lift} u to take it at its waist, ${R.grip} u off its edge, arriving with a little closing speed that a stiff spring takes up as a clasp. They ride out with its widest point as it opens and settle a beat after the last bars land.`],
+    ['Held, then opened.', `The drop opens about its waist, out of the give, centre first, ${Math.round(R.unfold.stagger * 1000)} ms a bar, onto the tracks of the mark.`],
+    ['Overlap.', 'Each move begins before the last has finished: the beads move in while the drop falls; it opens while the loft is still giving; the beads let go while the last bars land.'],
+    ['Files fall into the beads.', 'A file forms above a bead and drops; the loft slows it, and it slides on down into the bead as the bead and the nearest feet give. The drop\'s outline never changes.'],
+    ['Nothing is thrown out.', 'Put away folds the drop back to a small drop, holds it for a breath, and draws it in; as the last of it goes the beads close over it until the loft is one bead, which takes its weight with the same give, then opens again into its two beads. It ends on the two beads alone, the empty state. From there the reveal plays from the loft (revealFromLoft): the beads are already in place, so nothing blinks out.'],
+    ['Rest is still; once per session.', 'After the reveal the mark holds; motion returns only when something is dropped in. The reveal plays at launch only.'],
+    ['Ingest lasts as long as reading.', `One file: ingest. Several: burst, up to three per ${(M.ING.period).toFixed(1)} s period. Keep going while reading continues; rest only when nothing is being read.`],
+    ['Sizes.', 'The motion is drawn from the vector frames at any size from 48 px. Ingest and burst drop their files from 96 px; from 48 to 95 px, where a file would be 5 px or less, a bead takes it in without the fall (ingestTick, ingestTickBurst), at the same moments and on the same spring. At 48–64 px the small falling drop renders as a tone and resolves into bars as it opens: keep it, never substitute fewer bars; while it opens at those sizes the stripes alias for a frame or two as their pitch sweeps through 1–2 px (never snap them to pixels: that would bring back stepping). Below 48 px the mark is static on the pixel grid, with its beads: 9 bars at 32, 7 at 24, a solid drop at 16.'],
+    ['Reduced motion.', 'Show the static mark. Ingest shows the bead holding the file, drawn out, for 250 ms, then the mark.'],
+    ['Lockup.', 'The mark is 1.8 × the wordmark\'s cap height, the client\'s own ratio, with the waist line on the middle of the x-height. The word stays still while the mark moves.'],
+    ['Composition box and anchor.', 'Every stage is a square, x −55…55, y −26…84 in mark units, centred on the static mark. Place the animation by its static box (x −22…22, y −1…59), not by its canvas.']
+  ];
+  el('rules').innerHTML = rules.map(([b, s], i) => `<li><span class="n">${String(i + 1).padStart(2, '0')}</span><span><b>${b}</b> ${s}</span></li>`).join('');
+  const rows = M.reveal.events.map(e => ({ t: e.t, name: e.name, what: e.what[0].toUpperCase() + e.what.slice(1) }));
+  rows.push({ t: R.settled, name: 'Held', what: 'Every bar is on its track and the beads are at rest: the static mark' });
+  el('timing').querySelector('tbody').innerHTML = rows.sort((a, b) => a.t - b.t).map(r =>
+    `<tr><td class="num">${ms(r.t)}</td><td><span class="k">${r.name}</span></td><td>${r.what}</td></tr>`).join('');
+
+  // ---------------- specimen clock ----------------
+  let wall0 = null;
+  const SPEC_LOOP = M.reveal.dur + 2.2;
+  function specimenTick(now) {
+    if (wall0 == null) wall0 = now;
+    const w = (now - wall0) / 1000;
+    for (const s of specimens) { const t = mod(w, s.loop); s.m.draw(t >= s.seq.dur ? s.endFrame : s.seq.at(t).frame); }
+    const t = mod(w, SPEC_LOOP), F = t >= M.reveal.dur ? HELD : M.reveal.at(t).frame;
+    sized.forEach(m => m.draw(F));
+    lockups.forEach(l => l.m.draw(F));
+    requestAnimationFrame(specimenTick);
+  }
+
+  // ---------------- boot ----------------
+  score.set('reveal'); score.at(M.reveal.dur);
+  show(HELD, 'held', null);
+  specimens.forEach(s => s.m.draw(HELD));
+  sized.forEach(m => m.draw(HELD));
+  buildLockups(); lockups.forEach(l => l.m.draw(HELD));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(placeLockups);
+  let lockPx = lockSize(); addEventListener('resize', () => { if (lockSize() !== lockPx) { lockPx = lockSize(); buildLockups(); lockups.forEach(l => l.m.draw(HELD)); } else placeLockups(); });
+  if (reduced) { el('hint').textContent = 'Reduced motion: the mark holds still.'; }
+  else if (!still) { start('reveal'); requestAnimationFrame(specimenTick); }
+
+  window.DL = {
+    M,
+    show(name, t, opts = {}) {
+      run = null;
+      stage.classList.toggle('show-construction', !!opts.construction);
+      const seq = M[name]; score.set(name);
+      if (t >= seq.dur) { hero.draw(endFrame(name)); score.at(seq.dur); return; }
+      const r = seq.at(t); show(r.frame, r.phase.toLowerCase(), t, seq);
+    }
+  };
+})();
+</script>
+
+<a id="leave" href="../droploft-motion">Leave</a>
+<script>if (window.top !== window.self) document.getElementById('leave').remove();</script>
