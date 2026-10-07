@@ -15,8 +15,6 @@ import '../../../styles/case.css';
 import '../../../styles/art.css';
 import mark from '../../../assets/img/art/droploft/mark-dark.png';
 import gap from '../../../assets/img/art/droploft/gap-anatomy.png';
-import grid from '../../../assets/img/art/droploft/states-grid-dark.png';
-import score from '../../../assets/img/art/droploft/state-score.png';
 import small from '../../../assets/img/art/droploft/small-sizes.png';
 import pReveal from '../../../assets/img/art/droploft/logo-reveal-poster.png';
 import pIngest from '../../../assets/img/art/droploft/logo-ingest-poster.png';
@@ -103,7 +101,7 @@ const c = (f: string) => '/art/droploft-motion/clips/' + f + '.mp4';
       <p>A gap is one bar wide, 2 u. It enters and leaves only through a bar's end, starting and stopping at rest, and the bar closes behind it. Direction is the meaning: going down, things are coming in; going up, the loft is working on what it holds. Gaps travel only in the eight middle bars, so the drop's outline never changes.</p>
     </div>
     <div class="figs">
-      <Figure bare src={gap} evidence="Still" name="One gap, 0 to 828 ms" note="it sets off from rest, keeps its size, leaves through the other end, and the bar closes behind it" alt="Nine frames of a single bar as a square gap travels down through it and leaves; labelled in milliseconds" />
+      <Figure bare src={gap} evidence="Still" name="One gap, 0 to 828 ms" note="it sets off from rest just outside the end, keeps its 2 u size, leaves through the other end, and the bar closes behind it" alt="Nine frames of a single bar as a square gap travels down through it and leaves; labelled in milliseconds" />
     </div>
   </section>
 
@@ -121,10 +119,6 @@ const c = (f: string) => '/art/droploft-motion/clips/' + f + '.mp4';
         { src: c('state-thinking'), poster: pThinking, name: 'Processing', note: 'gaps rising, left to right', alt: 'Square gaps rise through the bars in a sweep from left to right' },
         { src: c('state-done'), poster: pDone, name: 'Done', note: 'the mark sinks and springs back', alt: 'The whole mark and its beads dip together and spring back' },
         { src: c('state-error'), poster: pError, name: 'Error', note: 'the beads shake; nothing is thrown out', alt: 'The two beads shake side to side while the mark stays whole' },
-      ]} />
-      <Figure bare set="pair" items={[
-        { src: grid, evidence: 'Still', name: 'The six states', note: 'one frame of each, as the product shows them', alt: 'Six copies of the mark on dark tiles, each mid-state: ready, loading, progress at 80 percent, processing, done, error' },
-        { src: score, evidence: 'Still', name: 'The score', note: 'every gap drawn as a line: blue falling, amber rising', alt: 'A timeline chart of loading, progress and processing, each gap a short line on the bar it travels' },
       ]} />
     </div>
   </section>
@@ -149,7 +143,7 @@ const c = (f: string) => '/art/droploft-motion/clips/' + f + '.mp4';
       <p>Measured every millisecond across the states: no gap ever off its 2 u size in tens of thousands of measurements; no speed change over 6 u/s within 1 ms; never more than one gap in a bar; no frame where the mark is whole while a state runs; and a shaking bead never closer than 1.25 u to the drop.</p>
     </div>
     <div class="figs">
-      <Figure bare src={small} evidence="Still" name="Small sizes" note="the states at their real pixel sizes" alt="The mark at several small pixel sizes, each showing a state with a single gap" />
+      <Figure bare src={small} evidence="Still" name="Small sizes" note="rows: loading, processing, progress, error; six frames at 48 px, six at 64 px, shown at 4×" alt="The mark at several small pixel sizes, each showing a state with a single gap" />
     </div>
   </section>
 
