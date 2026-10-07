@@ -1,0 +1,165 @@
+---
+// A motion work, told as a short case: the header with Enter (the live motion study), the hero loop
+// in the page's one big frame, the facts, then the system chapter by chapter — the name, the logo
+// motion, the gaps, the six states, the hand-overs, the rules and what was measured — each with its
+// own loops or stills, and the close. Every loop is silent and plays only while in view.
+import { getImage } from 'astro:assets';
+import Sheet from '../../../layouts/Sheet.astro';
+import Figure from '../../../components/Figure.astro';
+import Clips from '../../../components/Clips.astro';
+import CursorLabel from '../../../components/CursorLabel.astro';
+import { href } from '../../../lib/url';
+import { nextAfter } from '../../../data/art';
+import '../../../styles/home.css';
+import '../../../styles/case.css';
+import '../../../styles/art.css';
+import mark from '../../../assets/img/art/droploft/mark-dark.png';
+import gap from '../../../assets/img/art/droploft/gap-anatomy.png';
+import grid from '../../../assets/img/art/droploft/states-grid-dark.png';
+import score from '../../../assets/img/art/droploft/state-score.png';
+import small from '../../../assets/img/art/droploft/small-sizes.png';
+import pReveal from '../../../assets/img/art/droploft/logo-reveal-poster.png';
+import pIngest from '../../../assets/img/art/droploft/logo-ingest-poster.png';
+import pPutAway from '../../../assets/img/art/droploft/logo-put-away-poster.png';
+import pReady from '../../../assets/img/art/droploft/state-ready-then-drop-poster.png';
+import pLoading from '../../../assets/img/art/droploft/state-loading-poster.png';
+import pProgress from '../../../assets/img/art/droploft/state-progress-then-done-poster.png';
+import pThinking from '../../../assets/img/art/droploft/state-thinking-poster.png';
+import pDone from '../../../assets/img/art/droploft/state-done-poster.png';
+import pError from '../../../assets/img/art/droploft/state-error-poster.png';
+import pFlowA from '../../../assets/img/art/droploft/flow-drop-load-progress-think-done-poster.png';
+import pFlowB from '../../../assets/img/art/droploft/flow-leave-load-error-think-done-poster.png';
+
+const hero = await getImage({ src: mark, width: 1920, format: 'webp' });   // the mark at rest: the loop starts from bare beads, which say nothing as a still
+const live = href('/art/droploft-motion/live');
+const c = (f: string) => '/art/droploft-motion/clips/' + f + '.mp4';
+---
+<Sheet
+  title="Droploft motion identity — Kyle Xu"
+  description="The Droploft mark in motion (2026): a reveal, ingest and put-away, and a system of gaps in the mark's own bars that shows what the product is doing — taking something in, working on it, done, or refusing. Every frame computed in code."
+  ogImage="/og-droploft-motion.jpg"
+  next={nextAfter('droploft-motion', 'I design how AI products behave, and the interface that keeps people in control of it.')}
+>
+  <section class="col hero work-head" aria-labelledby="h1">
+    <div class="id">
+      <h1 id="h1">Droploft motion identity</h1>
+      <p class="meta">2026 · Motion identity, product states, code</p>
+    </div>
+    <div class="about">
+      <p>The Droploft mark in motion, and a system of gaps in its own bars that shows what the product is doing: taking something in, working on it, done, or refusing.</p>
+      <p class="meta">The live study plays the logo motion; drop a file on it to see the catch.</p>
+    </div>
+    <a class="btn enter" href={live}>Enter the study</a>
+  </section>
+
+  <section class="col sec" aria-label="Hero loop">
+    <figure class="fig">
+      <div class="frame bare film" style="aspect-ratio: 16 / 9">
+        <video data-src={href('/art/droploft-motion/hero.mp4')} poster={hero.src} muted loop playsinline preload="none" aria-label="The Droploft mark moving through every state in turn and back to rest"></video>
+      </div>
+      <span class="meta under"><b>Loop</b> · 0:20 — reveal, ready, drop, loading, progress, done, processing, done, put away, and back to the start.</span>
+    </figure>
+  </section>
+
+  <section class="col sec snap" aria-label="Facts">
+    <dl class="facts">
+      <div><dt class="meta">Year</dt><dd>2026</dd></div>
+      <div><dt class="meta">Medium</dt><dd>Motion identity and product-state system, computed frame by frame in JavaScript; nothing is hand-keyframed</dd></div>
+      <div><dt class="meta">Delivered</dt><dd><span class="line">Logo motion: reveal, ingest, put away (v13)</span><span class="line">Six product states and the hand-overs between them (v6.2)</span><span class="line">For developers: the engine, a parameter spec, Lottie, SVG and PNG exports</span></dd></div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-name">
+    <div class="head"><h2 id="c-name"><span class="n">1</span>The name is the motion</h2></div>
+    <div class="body">
+      <p>Droploft takes in scattered information, files and context and organises them into a structured space: the loft. The name is the motion: drop, falling; loft, held after the fall.</p>
+      <p>The mark is eleven rounded bars whose ends trace a raindrop. The bars are what the loft holds; the two beads at the drop's waist are the loft itself. One rule runs through all of it: nothing is ever thrown out of the loft.</p>
+    </div>
+    <div class="figs">
+      <Figure narrow bare src={mark} evidence="Still" name="The mark" note="eleven bars, the drop held at its waist by two beads" alt="The Droploft mark: eleven rounded white bars of different lengths forming a raindrop shape, with a short bead either side, on dark green" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-logo">
+    <div class="head"><h2 id="c-logo"><span class="n">2</span>The logo motion</h2></div>
+    <div class="body">
+      <p><b>Reveal, 1.6 s.</b> A small drop forms above the beads and falls. The beads close in and take it at its waist; loft and drop sink and spring back. The drop opens into the mark, centre first.</p>
+      <p><b>Ingest, 1.3 s.</b> A file falls into a bead, which takes it in on the same spring. <b>Put away, 1.3 s.</b> The drop folds back and is drawn into the loft until only the beads remain, and from there the reveal can begin again.</p>
+      <p>Nothing jumps: no edge ever changes speed in an instant, checked at 1 kHz. Falls are slowed, not stopped, by eased-in gravity and a quintic brake, and one damped spring (2.2 Hz, ζ 0.6) takes every arrival.</p>
+    </div>
+    <div class="figs">
+      <Clips items={[
+        { src: c('logo-reveal'), poster: pReveal, name: 'Reveal', note: 'the drop falls and is caught at its waist', alt: 'Two beads close in to catch a falling drop, which opens into the mark' },
+        { src: c('logo-ingest'), poster: pIngest, name: 'Ingest', note: 'a file falls into a bead on the same spring', alt: 'A small bar drops into the right bead, which gives and takes it in' },
+        { src: c('logo-put-away'), poster: pPutAway, name: 'Put away', note: 'the drop folds back into the loft', alt: 'The mark folds back down until only the two beads remain' },
+      ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-gaps">
+    <div class="head"><h2 id="c-gaps"><span class="n">3</span>A gap is a passage, not a thing</h2></div>
+    <div class="body">
+      <p>The second brief was to let the mark serve the product's states. The inspiration was Pentagram's mark for TwelveLabs, a Muybridge horse drawn on fixed threads where all the motion lives in where each thread breaks. Droploft's version is gaps: empty squares in the vertical bars, under two hard rules. Gaps appear only in motion, so the mark at rest is always whole; and a gap never changes size.</p>
+      <p>A gap is one bar wide, 2 u. It enters and leaves only through a bar's end, starting and stopping at rest, and the bar closes behind it. Direction is the meaning: going down, things are coming in; going up, the loft is working on what it holds. Gaps travel only in the eight middle bars, so the drop's outline never changes.</p>
+    </div>
+    <div class="figs">
+      <Figure bare src={gap} evidence="Still" name="One gap, 0 to 828 ms" note="it sets off from rest, keeps its size, leaves through the other end, and the bar closes behind it" alt="Nine frames of a single bar as a square gap travels down through it and leaves; labelled in milliseconds" />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-states">
+    <div class="head"><h2 id="c-states"><span class="n">4</span>Six states</h2></div>
+    <div class="body">
+      <p><b>Ready.</b> The beads open while a file hovers; on a drop they stay open as it falls and close exactly as it lands, the reveal's own catch. <b>Loading.</b> A gap falls every 0.25 s from a 16-second table: sides always alternate, never neighbours, never mirrors. <b>Progress.</b> Loading on a clock that glides from 0.25 to 0.75 s; a ring closes every quarter, and it is never still before 100 %.</p>
+      <p><b>Processing.</b> Rising gaps sweep left to right, 0.18 s a column, never whole. <b>Done.</b> Once whole, mark and beads sink together and spring back on the reveal's spring. <b>Error.</b> The beads shake at once, together, while gaps already in flight land; nothing is thrown out.</p>
+    </div>
+    <div class="figs">
+      <Clips items={[
+        { src: c('state-ready-then-drop'), poster: pReady, name: 'Ready, then a drop', note: 'the beads open and close on the landing', alt: 'The beads open as a file hovers above, then close as it lands' },
+        { src: c('state-loading'), poster: pLoading, name: 'Loading', note: 'gaps falling, alternating sides', alt: 'Square gaps fall through the middle bars one after another' },
+        { src: c('state-progress-then-done'), poster: pProgress, name: 'Progress, then done', note: 'the rings close each quarter', alt: 'Falling gaps slow and close ring by ring until the mark is whole and settles' },
+        { src: c('state-thinking'), poster: pThinking, name: 'Processing', note: 'gaps rising, left to right', alt: 'Square gaps rise through the bars in a sweep from left to right' },
+        { src: c('state-done'), poster: pDone, name: 'Done', note: 'the mark sinks and springs back', alt: 'The whole mark and its beads dip together and spring back' },
+        { src: c('state-error'), poster: pError, name: 'Error', note: 'the beads shake; nothing is thrown out', alt: 'The two beads shake side to side while the mark stays whole' },
+      ]} />
+      <Figure bare set="pair" items={[
+        { src: grid, evidence: 'Still', name: 'The six states', note: 'one frame of each, as the product shows them', alt: 'Six copies of the mark on dark tiles, each mid-state: ready, loading, progress at 80 percent, processing, done, error' },
+        { src: score, evidence: 'Still', name: 'The score', note: 'every gap drawn as a line: blue falling, amber rising', alt: 'A timeline chart of loading, progress and processing, each gap a short line on the bar it travels' },
+      ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-handover">
+    <div class="head"><h2 id="c-handover"><span class="n">5</span>Hand-overs</h2></div>
+    <div class="body">
+      <p>States in the same direction hand over bar by bar: a bar joins the new state once its last gap has left and it has rested 120 ms, so loading turning into progress is invisible. A change of direction waits for the mark to be whole, then 0.4 s, so the loft is seen to hold what came in before it works on it. After a drop, each bar waits for its own give to settle, so the far side starts first.</p>
+    </div>
+    <div class="figs">
+      <Clips cols={2} items={[
+        { src: c('flow-drop-load-progress-think-done'), poster: pFlowA, name: 'Drop, load, progress, process, done', note: 'one run through the states', alt: 'A file is dropped in; the mark loads, shows progress, processes and settles as done' },
+        { src: c('flow-leave-load-error-think-done'), poster: pFlowB, name: 'Leave, load, error, process, done', note: 'a refusal, then recovery', alt: 'A file is dragged away; the mark loads, refuses with a shake, then processes and completes' },
+      ]} />
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-rules">
+    <div class="head"><h2 id="c-rules"><span class="n">6</span>Small sizes, and what was measured</h2></div>
+    <div class="body">
+      <p>Below 64 px only one gap travels at a time, in the four innermost bars, with 120 ms between them; error slows to 4 Hz and keeps 1.5 u clear, so anti-aliasing never fuses bead and bar. Every gap travels in 0.1 + 0.8·√(L / Lmax) seconds, as if under one gravity.</p>
+      <p>Measured every millisecond across the states: no gap ever off its 2 u size in tens of thousands of measurements; no speed change over 6 u/s within 1 ms; never more than one gap in a bar; no frame where the mark is whole while a state runs; and a shaking bead never closer than 1.25 u to the drop.</p>
+    </div>
+    <div class="figs">
+      <Figure bare src={small} evidence="Still" name="Small sizes" note="the states at their real pixel sizes" alt="The mark at several small pixel sizes, each showing a state with a single gap" />
+    </div>
+  </section>
+
+  <section class="col sec close" aria-label="Enter">
+    <p class="stance">Drop, then loft.</p>
+    <div class="go">
+      <p>The live study plays the logo motion; drop a file on it to see the catch.</p>
+      <a class="btn" href={live}>Enter the study</a>
+    </div>
+  </section>
+
+  <CursorLabel />
+</Sheet>

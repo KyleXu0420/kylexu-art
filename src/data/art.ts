@@ -1,6 +1,7 @@
 // The works in the Art section, in the order Kyle sets. The index stacks them in this order, each on
 // the full row, and each work's page names the next (the last wraps to the first).
 import type { ImageMetadata } from 'astro';
+import droploftPoster from '../assets/img/art/droploft/mark-dark.png';
 import vellumPoster from '../assets/img/art/vellum-poster.jpg';
 import cutPoster from '../assets/img/art/cut-clearing.jpg';
 import walkPoster from '../assets/img/art/walk-grid.jpg';
@@ -16,6 +17,15 @@ export interface Work {
 }
 
 export const works: Work[] = [
+  {
+    slug: 'droploft-motion',
+    title: 'Droploft motion identity',
+    medium: 'Motion identity, product states, code',
+    year: '2026',
+    poster: droploftPoster,
+    alt: 'The Droploft mark: eleven rounded white bars tracing a raindrop, with a bead on each side, on a dark green ground',
+    loop: '/art/droploft-motion/hero.mp4',
+  },
   {
     slug: 'vellum-stacks',
     title: 'The Vellum Stacks',
