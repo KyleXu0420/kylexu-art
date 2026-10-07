@@ -1,7 +1,7 @@
 ---
 // A motion work, told as a short case: the header with Enter (the live motion study), the hero loop
 // in the page's one big frame, the facts, then the system chapter by chapter — the name, the logo
-// motion, the gaps, the six states, the hand-overs, the rules and what was measured — each with its
+// motion, the gaps, the six states, the hand-overs — each with its
 // own loops or stills, and the close. Every loop is silent and plays only while in view.
 import { getImage } from 'astro:assets';
 import Sheet from '../../../layouts/Sheet.astro';
@@ -15,7 +15,6 @@ import '../../../styles/case.css';
 import '../../../styles/art.css';
 import mark from '../../../assets/img/art/droploft/mark-dark.png';
 import gap from '../../../assets/img/art/droploft/gap-anatomy.png';
-import small from '../../../assets/img/art/droploft/small-sizes.png';
 import pReveal from '../../../assets/img/art/droploft/logo-reveal-poster.png';
 import pIngest from '../../../assets/img/art/droploft/logo-ingest-poster.png';
 import pPutAway from '../../../assets/img/art/droploft/logo-put-away-poster.png';
@@ -133,17 +132,6 @@ const c = (f: string) => '/art/droploft-motion/clips/' + f + '.mp4';
         { src: c('flow-drop-load-progress-think-done'), poster: pFlowA, name: 'Drop, load, progress, process, done', note: 'one run through the states', alt: 'A file is dropped in; the mark loads, shows progress, processes and settles as done' },
         { src: c('flow-leave-load-error-think-done'), poster: pFlowB, name: 'Leave, load, error, process, done', note: 'a refusal, then recovery', alt: 'A file is dragged away; the mark loads, refuses with a shake, then processes and completes' },
       ]} />
-    </div>
-  </section>
-
-  <section class="col sec chap" aria-labelledby="c-rules">
-    <div class="head"><h2 id="c-rules"><span class="n">6</span>Small sizes, and what was measured</h2></div>
-    <div class="body">
-      <p>Below 64 px only one gap travels at a time, in the four innermost bars, with 120 ms between them; error slows to 4 Hz and keeps 1.5 u clear, so anti-aliasing never fuses bead and bar. Every gap travels in 0.1 + 0.8·√(L / Lmax) seconds, as if under one gravity.</p>
-      <p>Measured every millisecond across the states: no gap ever off its 2 u size in tens of thousands of measurements; no speed change over 6 u/s within 1 ms; never more than one gap in a bar; no frame where the mark is whole while a state runs; and a shaking bead never closer than 1.25 u to the drop.</p>
-    </div>
-    <div class="figs">
-      <Figure bare src={small} evidence="Still" name="Small sizes" note="rows: loading, processing, progress, error; six frames at 48 px, six at 64 px, shown at 4×" alt="The mark at several small pixel sizes, each showing a state with a single gap" />
     </div>
   </section>
 
