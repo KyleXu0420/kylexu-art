@@ -15,27 +15,27 @@ import '../../../styles/home.css';
 import '../../../styles/case.css';
 import '../../../styles/art.css';
 import poster from '../../../assets/img/art/vellum-poster.jpg';
-import approach from '../../../assets/img/art/vellum-02-approach.jpg';
-import reading from '../../../assets/img/art/vellum-03-reading.jpg';
-import above from '../../../assets/img/art/vellum-04-above.jpg';
-import skyline from '../../../assets/img/art/vellum-05-skyline.jpg';
+import skylight from '../../../assets/img/art/vellum-02-under-the-skylight.jpg';
+import pier from '../../../assets/img/art/vellum-03-pier.jpg';
+import kept from '../../../assets/img/art/vellum-04-kept-pages.jpg';
+import entries from '../../../assets/img/art/vellum-05-entries.jpg';
 
 const still = await getImage({ src: poster, width: 1600, format: 'webp' });
 const live = href('/art/vellum-stacks/live');
 ---
 <Sheet
   title="The Vellum Stacks — Kyle Xu"
-  description="The Vellum Stacks (2026), an interactive spatial artwork by Kyle Xu: an impossible archive of translucent paper over black water that opens where it is read. WebGL, sound generated in the browser."
+  description="The Vellum Stacks (2026), an interactive spatial artwork by Kyle Xu: an endless concrete hall over black water under a deep coffered ceiling, hung with translucent paper. The archive opens where it is read. WebGL, sound synthesised live."
   ogImage="/og-vellum-stacks.jpg"
   next={nextAfter('vellum-stacks', 'I design how AI products behave, and the interface that keeps people in control of it.')}
 >
   <section class="col hero work-head" aria-labelledby="h1">
     <div class="id">
       <h1 id="h1">The Vellum Stacks</h1>
-      <p class="meta">2026 · Interactive, WebGL, sound</p>
+      <p class="meta">2026 · Interactive, WebGL, sound · version 2</p>
     </div>
     <div class="about">
-      <p>An impossible archive of translucent paper towers over black water, lit from openings in a roof you never see.</p>
+      <p>An endless concrete hall over black water, under a deep coffered ceiling hung with translucent paper. Where you stand still, the ceiling opens.</p>
       <p class="meta">Best on a desktop browser. Sound starts at your first click.</p>
     </div>
     <a class="btn enter" href={live}>Enter the work</a>
@@ -45,20 +45,22 @@ const live = href('/art/vellum-stacks/live');
     <figure class="fig">
       <div class="frame bare film">
         <video id="film" preload="none" playsinline poster={still.src} src={href('/art/vellum-stacks/opening.mp4')}></video>
-        <button type="button" class="play" data-cursor="Play · 0:30" aria-label="Play the film, 30 seconds, with sound"><span>Play · 0:30</span></button>
+        <button type="button" class="play" data-cursor="Play · 0:32" aria-label="Play the film, 32 seconds, with sound"><span>Play · 0:32</span></button>
       </div>
-      <span class="meta under"><b>Film</b> · The opening, 0:30 — recorded from the live work, with sound.</span>
+      <span class="meta under"><b>Film</b> · The opening, 0:32 — recorded from the live work, with its music.</span>
     </figure>
   </section>
 
   <section class="col sec snap" aria-label="Facts">
     <dl class="facts">
       <div><dt class="meta">Year</dt><dd>2026</dd></div>
-      <div><dt class="meta">Medium</dt><dd>Custom software (three.js, WebGL 2), sound generated in the browser</dd></div>
+      <div><dt class="meta">Medium</dt><dd>Custom software (three.js, WebGL 2, Web Audio); about 6,000 instanced ribs and lids and 2,400 sheets; sound synthesised live, nothing sampled</dd></div>
       <div><dt class="meta">Dimensions</dt><dd>Variable; the whole browser window</dd></div>
-      <div><dt class="meta">Interaction</dt><dd><span class="line">Drag to look</span><span class="line">Scroll, or W and S, to walk; A and D to turn</span><span class="line">Click to walk on</span><span class="line">Stay, and the paper rises</span></dd></div>
-      <div><dt class="meta">Other readers</dt><dd>Simulated in this build. In the original, people who open it at the same time see each other reading.</dd></div>
-      <div><dt class="meta">Credits</dt><dd><span class="line">Concept, art direction: Kyle Xu</span><span class="line">Built in dialogue with Claude</span></dd></div>
+      <div><dt class="meta">Interaction</dt><dd><span class="line">Drag to look</span><span class="line">Scroll, or W and S, to walk; A and D to turn</span><span class="line">Click to walk on; left alone, it wanders by itself</span><span class="line">Stand still, and the ceiling opens above you</span></dd></div>
+      <div><dt class="meta">Other readers</dt><dd>Simulated in this build, and your kept pages stay in your browser. In the original, other viewers appear as readers and kept pages are shared.</dd></div>
+      <div><dt class="meta">References</dt><dd><span class="line">Remedy, Control: the art direction, its principles not its imagery</span><span class="line">Junya Ishigami, KAIT Workshop: space made by density, not walls</span><span class="line">La Monte Young, Dream House; Alvin Lucier, I Am Sitting in a Room: sound that belongs to a room</span></dd></div>
+      <div><dt class="meta">Versions</dt><dd><span class="line">Version 2, October 2026: concrete coffers, hard light, painted districts, music from the coffers</span><span class="line">Version 1, October 2026: a forest of paper towers under an unseen roof</span></dd></div>
+      <div><dt class="meta">Credits</dt><dd><span class="line">Concept, art direction: Kyle Xu</span><span class="line">Typeface: Archivo</span></dd></div>
     </dl>
   </section>
 
@@ -67,17 +69,17 @@ const live = href('/art/vellum-stacks/live');
       <h2 id="c-statement">Statement</h2>
     </div>
     <div class="body">
-      <p>An impossible archive: sheets of translucent paper stand like towers over black water and repeat without end. Rectangular openings in an unseen roof let light down. Every sheet hangs from a thread that runs up to the roof.</p>
-      <p>The work has a single rule: the archive opens where it is read. Wherever a reader stands, the threads draw the paper up out of the way; the longer they stay, the wider the opening grows and the higher the paper rises, into the light near the roof, until the light reaches the water at their feet. When they leave, the paper comes down over minutes, a trace that slowly heals. One page, the one they read, stays up. The archive remembers where it has been read.</p>
-      <p>The plan follows Junya Ishigami: no walls, only density. Paper gathers under the light, so the plan is the map of the light. On the horizon stands a city drawn in the same rectangles of light, mirrored in the water. The sound is made by the same rule and nothing is sampled: a hall that breathes with the light, the rustle of paper being drawn up, the creak of a thread under a large sheet, one low note when a page is left behind.</p>
+      <p>An impossible archive: an endless concrete hall over black water, under a deep coffered ceiling eight metres to the bay. Translucent paper hangs in rows on that grid, in three heights, every sheet ending at the same line above the water, each one on a thread that runs up to the lid of its coffer. The sheets carry the entries of an archive, a few of them blacked out.</p>
+      <p>The work has one rule: the archive opens where it is read. When a reader stands still, the lids of the coffers above them lift away, light falls through at a slant, and the threads draw the paper up into it. The longer the reader stays, the more coffers open, ring by ring. Some time after the reader leaves, the coffers close one by one, and only the page that was read stays up, faintly red, under a single open coffer. The archive remembers where it has been read.</p>
+      <p>The sound is made by the same rule and synthesised live. The hall is tuned to its own module: an 8 m bay resonates at about 21 Hz, and every pitch is a harmonic of it. Each open coffer holds one harmonic, so the great skylight is a chord you walk toward. While lids move, their notes drift out of tune and beat; when they come to rest, the notes settle. Every kept page holds one faint high note.</p>
     </div>
     <div class="figs">
-      <Figure narrow bare src={approach} evidence="Still" name="The approach" note="the opening in the roof from below, the threads running up into its light" alt="Looking up at a bright rectangular opening in a dark roof; hundreds of fine threads run up into it, and translucent sheets stand beneath" />
+      <Figure narrow bare src={entries} evidence="Still" name="Entries" note="the sheets up close, their ruled entries and the bars that black some out" alt="Translucent sheets hanging in the dark, ruled with lines of entries, some covered by black redaction bars" />
       <Figure bare set="pair" items={[
-        { src: reading, evidence: 'Still', name: 'Reading', note: 'the sheets around a reader drawn up on their threads, tilting toward the light', alt: 'Translucent sheets lifted and tilted on their threads, rising toward the light at the top of the frame' },
-        { src: above, evidence: 'Still', name: 'A page left up', note: 'a large sheet held high at the top left, the city of light on the horizon', alt: 'A large sheet suspended high at the upper left; below, small rectangles of light on the horizon reflected in black water' },
+        { src: pier, evidence: 'Still', name: 'A pier', note: 'a concrete pier painted with its district code, under the coffers', alt: 'Looking up a concrete pier painted E 03, the coffered ceiling receding behind it' },
+        { src: kept, evidence: 'Still', name: 'Kept pages', note: 'a few coffers left open where pages were read, the rest closed', alt: 'A long view down the hall: rows of open coffers in the distance, a few single bright coffers nearer, paper hanging below' },
       ]} />
-      <Figure bare src={skyline} evidence="Still" name="The skyline" note="the city drawn in the same rectangles of light, mirrored in the water" alt="Sheets in the foreground before a horizon of small lit rectangles, mirrored in the dark water below" />
+      <Figure bare src={skylight} evidence="Still" name="Under the skylight" note="a block of coffers open overhead, the paper drawn up into the light" alt="Looking straight up through a grid of open coffers full of white light, translucent sheets lifted toward it" />
     </div>
   </section>
 
