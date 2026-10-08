@@ -5,56 +5,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#000000">
 <link rel="icon" href="../../favicon.png" type="image/png">
-</head>
-<body>
 <title>The Vellum Stacks</title>
-<meta name="description" content="An archive of translucent paper over black water that opens where it is read.">
+<meta name="description" content="An archive of translucent paper in an endless concrete hall over black water; the coffers of the ceiling open where it is read.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
 <style>
-/* Layout: one fixed WebGL canvas fills the viewport; a few lines of small type sit in the corners like wall labels in a gallery. */
+/* Layout: one fixed WebGL canvas; small labels in the corners, and a large district card that rises over the scene like signage on concrete. */
 :root {
   --void: #000000;
-  --paper: #ece4d2;
-  --label: rgba(236, 228, 210, 0.74);
-  --label-dim: rgba(236, 228, 210, 0.42);
-  --label-faint: rgba(236, 228, 210, 0.24);
-  --font-display: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --paint: #ece8e0;
+  --label: rgba(236, 232, 224, 0.80);
+  --label-dim: rgba(236, 232, 224, 0.46);
+  --label-faint: rgba(236, 232, 224, 0.26);
+  --font: 'Archivo', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color-scheme: dark;
 }
 html, body { height: 100%; }
-body { margin: 0; background: var(--void); color: var(--label); font-family: var(--font-display); overflow: hidden; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--void); color: var(--label); font-family: var(--font); overflow: hidden; -webkit-font-smoothing: antialiased; }
 #c { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; cursor: crosshair; background: var(--void); }
 #c.dragging { cursor: grabbing; }
 .ui { position: fixed; inset: 0; pointer-events: none; }
 .ui > * { position: absolute; }
 .title { left: 24px; top: calc(22px + env(safe-area-inset-top, 0px)); }
-.title h1 { margin: 0; font-weight: 400; font-size: 15px; letter-spacing: 0.26em; text-transform: uppercase; text-wrap: balance; }
-.title p { margin: 5px 0 0; font-size: 14px; font-style: italic; font-weight: 300; color: var(--label-dim); letter-spacing: 0.03em; }
-.hint { left: 24px; right: 140px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--label-dim); line-height: 1.9; transition: opacity 3s ease; }
+.title h1 { margin: 0; font-weight: 800; font-stretch: 85%; font-size: 15px; letter-spacing: 0.22em; text-transform: uppercase; }
+.title p { margin: 6px 0 0; font-size: 12px; font-weight: 400; color: var(--label-dim); letter-spacing: 0.04em; }
+.card { left: 20px; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); opacity: 0; transition: opacity 1.4s ease; }
+.card.on { opacity: 1; }
+.card .kind { font-size: 12px; font-weight: 600; letter-spacing: 0.32em; text-transform: uppercase; color: var(--label-dim); margin: 0 0 4px 5px; }
+.card .code { font-weight: 900; font-stretch: 70%; font-size: clamp(72px, 15vw, 236px); line-height: 0.84; letter-spacing: -0.01em; color: var(--paint); opacity: 0.9; font-variant-numeric: tabular-nums; }
+.hint { left: 24px; right: 170px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--label-dim); line-height: 1.9; transition: opacity 3s ease; }
 .hint.faded { opacity: 0; }
 .index { right: 24px; bottom: calc(22px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: flex-end; gap: 8px; text-align: right; }
-.index .others { font-style: italic; font-weight: 300; font-size: 13px; letter-spacing: 0.06em; color: var(--label-dim); min-height: 1.2em; }
-.index button { pointer-events: auto; background: none; border: 0; padding: 4px 0 0; margin: 0; color: var(--label-faint); font: inherit; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; }
+.index .others { font-size: 12px; font-weight: 400; letter-spacing: 0.06em; color: var(--label-dim); min-height: 1.2em; }
+.index button { pointer-events: auto; background: none; border: 0; padding: 4px 0 0; margin: 0; color: var(--label-faint); font: inherit; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; cursor: pointer; }
 .index button:hover, .index button:focus-visible { color: var(--label); outline: none; }
-.index .leave { pointer-events: auto; padding: 4px 0 0; color: var(--label-faint); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; }   /* added for kylexu.art: back to the work's page */
-.index .leave:hover, .index .leave:focus-visible { color: var(--label); outline: none; }
+.index .leave { pointer-events: auto; padding: 4px 0 0; color: var(--label-faint, rgba(255,255,255,.4)); font: inherit; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; }   /* added for kylexu.art: back to the work's page */
+.index .leave:hover, .index .leave:focus-visible { color: var(--label, #fff); outline: none; }
 .index button:focus-visible { text-decoration: underline; text-underline-offset: 4px; }
-.fallback { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(36ch, calc(100% - 48px)); text-align: center; font-size: 15px; line-height: 1.6; color: var(--label-dim); }
+.fallback { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(36ch, calc(100% - 48px)); text-align: center; font-size: 14px; line-height: 1.6; color: var(--label-dim); }
 @media (max-width: 600px) {
   .title { left: 18px; }
-  .hint { left: 18px; right: 100px; font-size: 10px; }
+  .card { left: 14px; bottom: calc(96px + env(safe-area-inset-bottom, 0px)); }
+  .hint { left: 18px; right: 110px; font-size: 10px; }
   .index { right: 18px; }
 }
-@media (prefers-reduced-motion: reduce) { .hint { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .hint, .card { transition: none; } }
 </style>
-<canvas id="c" aria-label="Translucent paper sheets hanging over black water; they rise where a reader stands"></canvas>
+</head>
+<body>
+<canvas id="c" aria-label="An endless concrete hall with a coffered ceiling over black water; translucent paper hangs in rows and rises into the light where the coffers open"></canvas>
 <div class="ui">
   <div class="title">
     <h1>The Vellum Stacks</h1>
     <p>an archive that opens where it is read</p>
   </div>
-  <div class="hint" id="hint">drag to look &middot; scroll to walk &middot; click to walk on &middot; stay, and the paper rises &middot; sound starts at your first touch</div>
+  <div class="card" id="card" aria-live="polite"><div class="kind" id="cardKind"></div><div class="code" id="cardCode"></div></div>
+  <div class="hint" id="hint">drag to look &middot; scroll to walk &middot; click to walk on &middot; stay, and the ceiling opens &middot; sound starts at your first touch</div>
   <div class="index">
     <div class="others" id="others"></div>
     <button type="button" id="snd">Sound off</button>
@@ -71,11 +77,14 @@ const hintEl = document.getElementById('hint');
 const fsBtn = document.getElementById('fs');
 const othersEl = document.getElementById('others');
 const sndBtn = document.getElementById('snd');
+const cardEl = document.getElementById('card');
+const cardKind = document.getElementById('cardKind');
+const cardCode = document.getElementById('cardCode');
 
+const QS = new URLSearchParams(location.search);
 const coarse = matchMedia('(pointer: coarse)').matches;
 const small = Math.min(innerWidth, innerHeight) < 640;
-let lite = coarse || small;
-if (new URLSearchParams(location.search).has('full')) lite = false;
+const lite = (coarse || small) && !QS.has('full');
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 let renderer = null;
@@ -89,19 +98,25 @@ if (!renderer) {
 renderer.autoClear = false;
 renderer.setClearColor(0x000000, 1);
 
-// ---------------------------------------------------------------- the rule
-// Five things: light, paper, thread, water, readers.
-// Light falls through openings in an unseen roof. Paper gathers under the
-// light, each sheet on a thread that runs up to the roof. Where a reader
-// stands, the threads draw the paper up toward the light; the opening grows
-// the longer they stay, and closes again slowly after they leave. The water
-// reflects it all. Units are metres; the plan repeats every T metres.
-const T = 360;
-const ROOF = 52;
+// ---------------------------------------------------------------- the building
+// Units are metres. One bay of 8 m governs everything: the coffers of the ceiling, the rows of
+// paper, the piers, the openings. The plan repeats every 45 bays and is re-wrapped around the
+// camera in the shaders, so the hall has no edge. The rule: where a reader stands, the coffers
+// above lift away, light falls, and the threads draw the paper up into it.
+const M = 8, NB = 45, T = M * NB, NBB = NB * NB;
+const DIST = 5, ND = NB / DIST;               // districts of 5 x 5 bays, A-01 to I-09
+const H0 = 46, RIB_D = 1.6, RIB_W = 1.4, LID_T = 0.7, LID_LIFT = 9;
+const HC = H0 + RIB_D;                         // the top of the coffers, where the lids rest
+const SKY_Y = H0 + 46;
 const EYE = 1.6;
-const FOG_NEAR = 14, FOG_FAR = lite ? 130 : 170;
+const DATUM = 0.9;                             // every sheet ends at the same height above the water
+const HEIGHTS = [7.5, 15, 22.5];
+const FOG_NEAR = 16, FOG_FAR = lite ? 140 : 178;
 const Q = lite ? 0.6 : 1.0;
-const NREAD = 12;                                   // reader 0 is the viewer
+const NREAD = 12;
+const HOLD = 45;                               // seconds an opening stays after its reader leaves
+const SUN = new THREE.Vector3(0.15, -1, 0.09).normalize();
+const SUNOFF_X = (-SUN.x / -SUN.y) * (HC - EYE), SUNOFF_Z = (-SUN.z / -SUN.y) * (HC - EYE);
 
 function mulberry32(a) {
   return function () {
@@ -111,7 +126,7 @@ function mulberry32(a) {
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
-const rand = mulberry32(20261003);
+const rand = mulberry32(20261008);
 const lerp = (a, b, t) => a + (b - a) * t;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const smooth = (a, b, t) => { t = clamp((t - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -125,150 +140,174 @@ function pnoise(x, z, n, s) {
 function fbm(x, z, n, s, oct) { let v = 0, w = 0.5, tot = 0; for (let o = 0; o < oct; o++) { v += w * pnoise(x, z, n, s + o * 17); tot += w; w *= 0.5; n *= 2; } return v / tot; }
 function wdelta(a, b) { let d = a - b; d -= Math.round(d / T) * T; return d; }
 function wdist(x, z, cx, cz) { return Math.hypot(wdelta(x, cx), wdelta(z, cz)); }
+const mod = (a, n) => ((a % n) + n) % n;
+const bayIdx = (i, j) => mod(j, NB) * NB + mod(i, NB);
+const bayOf = v => Math.floor(mod(v, T) / M);
+const wdb = (a, b) => { let d = a - b; d -= Math.round(d / NB) * NB; return d; };
+const bayCenter = (i, j) => ({ x: (mod(i, NB) + 0.5) * M, z: (mod(j, NB) + 0.5) * M });
+const districtOfBay = (i, j) => Math.floor(mod(j, NB) / DIST) * ND + Math.floor(mod(i, NB) / DIST);
+const districtName = d => String.fromCharCode(65 + (d % ND)) + '-' + String(Math.floor(d / ND) + 1).padStart(2, '0');
 
-// the openings in the roof: centre, full size (A-series proportions), rotation, intensity
-const SKY = [
-  { x: 80,  z: 80,  w: 24, h: 34, rot: 0.2,  i: 1.0 },
-  { x: 230, z: 70,  w: 17, h: 24, rot: -0.6, i: 0.9 },
-  { x: 170, z: 190, w: 34, h: 48, rot: 0.9,  i: 1.0 },
-  { x: 60,  z: 250, w: 17, h: 24, rot: 0.4,  i: 0.8 },
-  { x: 270, z: 260, w: 24, h: 34, rot: -1.1, i: 0.9 },
+// ---------------------------------------------------------------- the plan
+// Five skylights are always open: the reading rooms. Paper gathers around the light.
+const SKYLIGHTS = [
+  { i: 17, j: 21, w: 5, h: 4 },
+  { i: 5,  j: 6,  w: 3, h: 2 },
+  { i: 33, j: 7,  w: 2, h: 3 },
+  { i: 7,  j: 34, w: 2, h: 2 },
+  { i: 34, j: 32, w: 3, h: 3 },
 ];
-function skyFoot(x, z, s, grow) {
-  const dx = wdelta(x, s.x), dz = wdelta(z, s.z), c = Math.cos(s.rot), sn = Math.sin(s.rot);
-  const u = Math.abs(dx * c + dz * sn), v = Math.abs(-dx * sn + dz * c);
-  return (1 - smooth(s.w / 2 + grow * 0.3, s.w / 2 + grow, u)) * (1 - smooth(s.h / 2 + grow * 0.3, s.h / 2 + grow, v));
+const GREAT = SKYLIGHTS[0];
+const GREAT_X = (GREAT.i + GREAT.w / 2) * M, GREAT_Z = (GREAT.j + GREAT.h / 2) * M;
+const isSkyBay = (i, j) => SKYLIGHTS.some(s => mod(i - s.i, NB) < s.w && mod(j - s.j, NB) < s.h);
+function skyDistBays(i, j) {
+  let best = 1e9;
+  for (const s of SKYLIGHTS) {
+    const cx = s.i + (s.w - 1) / 2, cz = s.j + (s.h - 1) / 2;
+    const dx = Math.max(Math.abs(wdb(i, cx)) - (s.w - 1) / 2, 0), dz = Math.max(Math.abs(wdb(j, cz)) - (s.h - 1) / 2, 0);
+    best = Math.min(best, Math.hypot(dx, dz));
+  }
+  return best;
 }
-// the plan is the light map: paper gathers under the openings
-function density(x, z) {
-  let d = 0;
-  for (const s of SKY) d += skyFoot(x, z, s, 16) * s.i;
-  d = clamp(d, 0, 1);
-  const n = fbm(x / T, z / T, 6, 11, 3);
-  return clamp(0.07 + 0.8 * d * (0.7 + 0.6 * n) + 0.12 * smooth(0.55, 0.8, n), 0, 1);
+function bayDensity(i, j) {
+  const d = skyDistBays(i, j);
+  const near = Math.exp(-(d * d) / (2 * 3.4 * 3.4));
+  const n = fbm((i + 0.5) / NB, (j + 0.5) / NB, 5, 11, 3);
+  return clamp(0.05 + 0.85 * near * (0.7 + 0.6 * n) + 0.22 * smooth(0.58, 0.82, n), 0, 1);
 }
-function orientation(x, z) { return Math.PI * 1.6 * fbm(x / T, z / T, 3, 23, 2); }
-function scatter(cell, perM2, fn) {
-  const nc = Math.round(T / cell), cs = T / nc;
-  for (let i = 0; i < nc; i++) for (let j = 0; j < nc; j++) {
-    const d = density((i + 0.5) * cs, (j + 0.5) * cs);
-    const expected = perM2(d) * cs * cs;
-    let n = Math.floor(expected); if (rand() < expected - n) n++;
-    for (let k = 0; k < n; k++) fn(i * cs + rand() * cs, j * cs + rand() * cs, d);
+const bayPermanent = new Uint8Array(NBB), bayDens = new Float32Array(NBB), bayHash = new Float32Array(NBB);
+const districtSky = new Uint8Array(ND * ND), districtAlong = new Uint8Array(ND * ND);
+for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) {
+  const b = bayIdx(i, j);
+  bayPermanent[b] = isSkyBay(i, j) ? 1 : 0;
+  bayDens[b] = bayDensity(i, j);
+  bayHash[b] = hash2(i, j, 5);
+  if (bayPermanent[b]) districtSky[districtOfBay(i, j)] = 1;
+}
+for (let d = 0; d < ND * ND; d++) districtAlong[d] = (d % ND) % 2;
+
+// ---------------------------------------------------------------- the paper
+// Rows of sheets inside each bay, parallel within a district and turned 90 degrees between
+// districts. Three heights in the ratio 1 : 2 : 3. Every sheet hangs from one thread that runs up
+// to the lid of its coffer.
+const S = { pos: [], size: [], rot: [], liftMax: [], bay: [] };
+const baySheets = Array.from({ length: NBB }, () => []);
+function pickHeight(dens, i, j, k) {
+  const r = hash2(i * 3 + k, j * 7 + k, 13), tall = 0.12 + 0.5 * dens;
+  return r < tall ? 2 : r < tall + 0.38 ? 1 : 0;
+}
+for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) {
+  const b = bayIdx(i, j), dens = bayDens[b];
+  const n = Math.min(bayPermanent[b] ? 1 : 4, Math.floor(dens * 2.8 * Q + hash2(i, j, 9)));
+  if (n <= 0) continue;
+  const along = districtAlong[districtOfBay(i, j)];
+  const cx = (i + 0.5) * M, cz = (j + 0.5) * M;
+  const slots = n === 1 ? [hash2(i, j, 21) < 0.5 ? -0.9 : 0.9] : n === 2 ? [-0.9, 0.9] : n === 3 ? (hash2(i, j, 22) < 0.5 ? [-2.6, -0.9, 0.9] : [-0.9, 0.9, 2.6]) : [-2.6, -0.9, 0.9, 2.6];
+  for (let k = 0; k < n; k++) {
+    const off = slots[k];
+    const x = along ? cx + off : cx, z = along ? cz : cz + off;
+    const hc = pickHeight(dens, i, j, k), h = HEIGHTS[hc], w = 4.8, top = DATUM + h;
+    baySheets[b].push(S.pos.length / 3);
+    S.pos.push(x, top, z); S.size.push(w, h, 0.85); S.rot.push(along ? Math.PI / 2 : 0, hc, rand(), rand() * 6.2832);
+    S.liftMax.push(Math.max(0, HC + 3.2 - top) * (bayPermanent[b] ? 0.5 : 1)); S.bay.push(b);
   }
 }
-// places readers go to: under each opening, and a few in the dark
-const PLACES = [];
-for (const s of SKY) for (let k = 0; k < 2; k++) {
-  const a = rand() * 6.2832, r = 2 + rand() * Math.min(s.w, s.h) * 0.35;
-  PLACES.push({ x: s.x + Math.cos(a) * r, z: s.z + Math.sin(a) * r });
-}
-for (let k = 0; k < 4; k++) {
-  let x, z, tries = 0;
-  do { x = rand() * T; z = rand() * T; tries++; } while (density(x, z) > 0.25 && tries < 40);
-  PLACES.push({ x, z });
-}
-
-// ---------------------------------------------------------------- generate the paper
-// three sheet sizes in the A-series ratio: A0, 16A0 and 256A0
-// two families of tall translucent slabs, towers and mid-rises, aligned to a street grid that turns slowly by district
-const SIZES = [
-  { w: [3.0, 7.0], h: [14, 30], bottom: [0.4, 2.0], lift: 20, per: 0.020, per0: 0.0022, cell: 12, op: 0.80 },
-  { w: [2.5, 5.0], h: [6, 13],  bottom: [0.3, 1.5], lift: 12, per: 0.040, per0: 0.0030, cell: 8,  op: 0.90 },
-];
-const S = { pos: [], size: [], rot: [], liftMax: [] };
-function addSheet(x, yTop, z, w, h, op, yaw, kind, seed, liftMax) {
-  S.pos.push(x, yTop, z); S.size.push(w, h, op); S.rot.push(yaw, kind, seed, rand() * 6.2832); S.liftMax.push(liftMax);
-}
-function gridYaw(x, z) {
-  const base = orientation(x, z) * 0.5;
-  return Math.round(base / (Math.PI / 2)) * (Math.PI / 2) + (rand() - 0.5) * 0.06;
-}
-SIZES.forEach((sz, k) => {
-  scatter(sz.cell, d => (sz.per * d + sz.per0) * Q, (x, z, d) => {
-    const bottom = lerp(sz.bottom[0], sz.bottom[1], rand());
-    const w = lerp(sz.w[0], sz.w[1], rand()), h = lerp(sz.h[0], sz.h[1], Math.pow(rand(), 1.4));
-    const top = bottom + h;
-    const liftMax = Math.min(sz.lift, ROOF - 0.8 - top);
-    addSheet(x, top, z, w, h, sz.op * (0.7 + 0.6 * rand()), gridYaw(x, z), k, rand(), Math.max(0, liftMax));
-  });
-});
 const sheetCount = S.pos.length / 3;
 
-// readers: the viewer and the others
+// ---------------------------------------------------------------- readers
+const PLACES = [];
+for (const s of SKYLIGHTS) {
+  PLACES.push(bayCenter(s.i - 1, s.j + (s.h >> 1)));
+  PLACES.push(bayCenter(s.i + s.w, s.j + Math.max(0, (s.h >> 1) - 1)));
+}
+for (let k = 0; k < 4; k++) {
+  let i, j, tries = 0;
+  do { i = Math.floor(rand() * NB); j = Math.floor(rand() * NB); tries++; } while ((isSkyBay(i, j) || bayDensity(i, j) > 0.3) && tries < 80);
+  PLACES.push(bayCenter(i, j));
+}
 const readers = [];
 for (let k = 0; k < NREAD; k++) {
   const p = PLACES[(k * 3 + 1) % PLACES.length];
-  readers.push({ x: k === 0 ? 0 : p.x + (rand() - 0.5) * 4, z: k === 0 ? 0 : p.z + (rand() - 0.5) * 4, tx: 0, tz: 0, yaw: rand() * 6.2832, walking: false, timer: 20 + rand() * 60, dwell: 10 + rand() * 60, speed: 0.7 + rand() * 0.35, R: 4, s: 0, active: k === 0 || k < (lite ? 7 : NREAD), simActive: k === 0 || k < (lite ? 7 : NREAD), real: false });
+  const on = k === 0 || k < (lite ? 7 : NREAD);
+  readers.push({ x: k === 0 ? 0 : p.x, z: k === 0 ? 0 : p.z, tx: 0, tz: 0, hx: 0, hz: 1, yaw: rand() * 6.2832, walking: false, timer: 20 + rand() * 60, dwell: 10 + rand() * 60, speed: 0.7 + rand() * 0.35, k: 0, lev: 0, active: on, simActive: on, real: false, wasStill: false });
 }
 function pickPlace(r) {
   let p;
   do { p = PLACES[Math.floor(rand() * PLACES.length)]; } while (wdist(p.x, p.z, r.x, r.z) < 6);
-  r.tx = p.x + (rand() - 0.5) * 5; r.tz = p.z + (rand() - 0.5) * 5; r.walking = true;
+  r.tx = p.x; r.tz = p.z; r.walking = true;
 }
+// how much of the ceiling a reader opens: one coffer, then three by three
 function readerField(r) {
-  // the opening grows with the time spent standing still
-  r.R = 4 + 8 * (1 - Math.exp(-r.dwell / 40));
-  r.s = r.walking ? 0.55 : 0.6 + 0.4 * (1 - Math.exp(-r.dwell / 20));
+  if (r.walking) { r.k = 0; r.lev = 0; }
+  else if (r.dwell >= 20) { r.k = 3; r.lev = 1; }
+  else if (r.dwell >= 1.2) { r.k = 1; r.lev = 1; }
+  else { r.k = 0; r.lev = 0; }
 }
 
 // ---------------------------------------------------------------- shared GLSL
+function dataTex(data, filter) {
+  const t = new THREE.DataTexture(data, NB, NB, THREE.RedFormat, THREE.UnsignedByteType);
+  t.unpackAlignment = 1; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.minFilter = t.magFilter = filter; t.generateMipmaps = false; t.needsUpdate = true;
+  return t;
+}
+const bayData = new Uint8Array(NBB), softData = new Uint8Array(NBB), densData = new Uint8Array(NBB);
+for (let b = 0; b < NBB; b++) densData[b] = Math.round(255 * bayDens[b]);
+const bayTex = dataTex(bayData, THREE.NearestFilter), softTex = dataTex(softData, THREE.LinearFilter), densTex = dataTex(densData, THREE.LinearFilter);
+
 const U = {
   uTime: { value: 0 }, uTile: { value: T }, uFogNear: { value: FOG_NEAR }, uFogFar: { value: FOG_FAR },
-  uRoof: { value: ROOF }, uDpr: { value: 1 }, uCamPos: { value: new THREE.Vector3() },
-  uSkyA: { value: SKY.map(s => new THREE.Vector4(s.x, s.z, Math.cos(s.rot), Math.sin(s.rot))) },
-  uSkyB: { value: SKY.map(s => new THREE.Vector4(s.w / 2, s.h / 2, s.i, 5.0)) },
-  uRead: { value: readers.map(() => new THREE.Vector4(0, 0, 0, 0)) },
-  uDensity: { value: null },
+  uCamPos: { value: new THREE.Vector3() }, uSun: { value: SUN.clone() }, uDpr: { value: 1 },
+  uBay: { value: bayTex }, uBaySoft: { value: softTex }, uDensity: { value: densTex },
 };
 
 const COMMON = /* glsl */`
-#define NSKY 5
-#define NREAD ${NREAD}
 uniform float uTime;
 uniform float uTile;
 uniform float uFogNear;
 uniform float uFogFar;
-uniform float uRoof;
 uniform vec3 uCamPos;
-uniform vec4 uSkyA[NSKY];
-uniform vec4 uSkyB[NSKY];
-uniform vec4 uRead[NREAD];
+uniform vec3 uSun;
+uniform sampler2D uBay;
+uniform sampler2D uBaySoft;
 uniform sampler2D uDensity;
+const float M = ${M.toFixed(1)};
+const float NB = ${NB.toFixed(1)};
+const float H0 = ${H0.toFixed(1)};
+const float RIB_D = ${RIB_D.toFixed(2)};
+const float RIB_W = ${RIB_W.toFixed(2)};
+const float HC = ${HC.toFixed(2)};
+const float LID_LIFT = ${LID_LIFT.toFixed(1)};
 vec2 pdelta(vec2 a, vec2 b) { vec2 d = a - b; return mod(d + 0.5 * uTile, uTile) - 0.5 * uTile; }
 vec2 wrapXZ(vec2 p) { return uCamPos.xz + pdelta(p, uCamPos.xz); }
 float fogAt(vec3 wp) { return smoothstep(uFogNear, uFogFar, distance(wp, uCamPos)); }
-float skyBox(int i, vec2 xz, float spread) {
-  vec4 A = uSkyA[i]; vec4 B = uSkyB[i];
-  vec2 d = pdelta(xz, A.xy);
-  float u = abs(d.x * A.z + d.y * A.w);
-  float v = abs(-d.x * A.w + d.y * A.z);
-  float soft = B.w + spread * 0.16;
-  float hw = B.x + spread * 0.05, hh = B.y + spread * 0.05;
-  return (1.0 - smoothstep(hw - soft, hw + soft, u)) * (1.0 - smoothstep(hh - soft, hh + soft, v)) * B.z;
+float lidE(float o) { return o * o * (3.0 - 2.0 * o); }
+float bayOpen(vec2 xz) { vec2 c = mod(floor(xz / M), NB); return texture2D(uBay, (c + 0.5) / NB).r; }
+// light through the coffer of the bay containing xz: the open fraction, cut by the ribs
+float holeAt(vec2 xz) {
+  vec2 f = fract(xz / M);
+  float e = 0.5 * RIB_W / M, s = 0.1 / M;
+  vec2 m = smoothstep(e - s, e + s, f) * (1.0 - smoothstep(1.0 - e - s, 1.0 - e + s, f));
+  return m.x * m.y * bayOpen(xz);
 }
-float openAt(vec2 xz) {
-  float o = 0.0;
-  for (int i = 0; i < NREAD; i++) {
-    vec4 r = uRead[i];
-    if (r.w <= 0.0) continue;
-    float d = length(pdelta(xz, r.xy));
-    o += r.w * (1.0 - smoothstep(r.z * 0.45, r.z, d));
-  }
-  return clamp(o, 0.0, 1.0);
+// is p in the direct light? Follow the light back up through the bottom and the top of the coffers.
+float sunlit(vec3 p) {
+  vec3 up = -uSun;
+  if (p.y >= HC) return 1.0;
+  float b = holeAt(p.xz + up.xz * ((HC - p.y) / up.y));
+  if (p.y >= H0) return b;
+  return min(b, holeAt(p.xz + up.xz * ((H0 - p.y) / up.y)));
 }
+float softAt(vec2 xz) { return texture2D(uBaySoft, xz / uTile).r; }
 float densityAt(vec2 xz) { return texture2D(uDensity, xz / uTile).r; }
-float transAt(vec3 wp) {
-  return exp(-0.035 * max(0.0, uRoof - wp.y) * densityAt(wp.xz) * (1.0 - openAt(wp.xz)));
+float transAt(vec3 p) { return exp(-0.026 * max(0.0, H0 - p.y) * densityAt(p.xz) * (1.0 - min(1.0, softAt(p.xz) * 1.5))); }
+vec3 ambientAt(vec3 wp) {
+  float h = clamp(wp.y / H0, 0.0, 1.0);
+  return vec3(0.55, 0.58, 0.64) * (0.06 + 0.04 * h) + vec3(1.0, 0.94, 0.84) * softAt(wp.xz) * (0.16 + 0.24 * h);
 }
 vec3 illumAt(vec3 wp, out float direct) {
-  float spread = max(0.0, uRoof - wp.y);
-  float s = 0.0;
-  for (int i = 0; i < NSKY; i++) s += skyBox(i, wp.xz, spread);
-  float vert = 0.40 + 0.60 * pow(clamp(wp.y / uRoof, 0.0, 1.0), 1.2);
-  s *= vert * transAt(wp);
+  float s = sunlit(wp) * transAt(wp);
   direct = s;
-  return vec3(0.64, 0.68, 0.78) * 0.26 + vec3(1.0, 0.93, 0.80) * s * 1.3;
+  return ambientAt(wp) + vec3(1.0, 0.95, 0.86) * s * 1.35;
 }
 float reflAt(vec3 wpm) {
   vec3 d = normalize(wpm - uCamPos);
@@ -291,6 +330,7 @@ attribute vec3 iSize;
 attribute vec4 iRot;
 attribute float iLift;
 attribute float iSway;
+attribute float iKept;
 uniform float uMirror;
 varying vec2 vUv;
 varying vec3 vWorld;
@@ -301,30 +341,26 @@ varying vec4 vData;
 varying float vOp;
 varying float vRefl;
 varying float vLift;
+varying float vKept;
 mat3 rotY(float a) { float c = cos(a), s = sin(a); return mat3(c, 0.0, -s, 0.0, 1.0, 0.0, s, 0.0, c); }
 void main() {
   vUv = uv;
   float w = iSize.x, h = iSize.y;
   float yaw = iRot.x, seed = iRot.z, phase = iRot.w;
   vec2 axz = wrapXZ(iPos.xz);
-  vec3 anchor = vec3(axz.x, iPos.y + iLift, axz.y);
   if (distance(axz, uCamPos.xz) > uFogFar + 25.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFog = 1.0; return; }
+  vec3 anchor = vec3(axz.x, iPos.y + iLift, axz.y);
   float hang = 1.0 - uv.y;
   mat3 R = rotY(yaw);
   vec3 n = R * vec3(0.0, 0.0, 1.0);
   vec3 local = vec3((uv.x - 0.5) * w, -hang * h, 0.0);
   float bend = pow(hang, 1.6);
-  float sway = sin(uTime * 0.19 + phase) * 0.006 * h + sin(uTime * 0.07 + phase * 2.0) * 0.004 * h;
-  float curl = sin(uv.x * 3.14159) * 0.014 * h * sin(seed * 12.0);
-  float swing = iSway * sin(uTime * 2.1 + phase) * 0.05 * h;
-  local.z += bend * (sway + curl + swing);
-  local.x += bend * iSway * sin(uTime * 1.3 + phase * 1.7) * 0.012 * h;
+  local.z += bend * (sin(uv.x * 3.14159) * 0.008 * h * sin(seed * 12.0) + iSway * sin(uTime * 2.1 + phase) * 0.025 * h);
   local = R * local;
   vec3 wp = anchor + local;
-  vLit = wp;
-  vRefl = 1.0;
+  vLit = wp; vRefl = 1.0;
   if (uMirror < 0.0) { wp.y = -wp.y; n.y = -n.y; vRefl = reflAt(wp); }
-  vWorld = wp; vNormal = n; vData = vec4(seed, iRot.y, w, h); vOp = iSize.z; vLift = iLift;
+  vWorld = wp; vNormal = n; vData = vec4(seed, iRot.y, w, h); vOp = iSize.z; vLift = iLift; vKept = iKept;
   vFog = fogAt(wp);
   gl_Position = projectionMatrix * viewMatrix * vec4(wp, 1.0);
 }
@@ -339,55 +375,60 @@ varying vec4 vData;
 varying float vOp;
 varying float vRefl;
 varying float vLift;
+varying float vKept;
 uniform float uOpacity;
-float textBlock(vec2 uv, float seed) {
-  vec2 m = vec2(0.13, 0.11);
+// ruled entries of an archive sheet; a few of them are blacked out
+vec2 textBlock(vec2 uv, float seed) {
+  vec2 m = vec2(0.12, 0.08);
   vec2 q = (uv - m) / (1.0 - 2.0 * m);
-  if (q.x < 0.0 || q.x > 1.0 || q.y < 0.0 || q.y > 1.0) return 0.0;
-  float nl = 22.0 + floor(fract(seed * 4.7) * 18.0);
+  if (q.x < 0.0 || q.x > 1.0 || q.y < 0.0 || q.y > 1.0) return vec2(0.0);
+  float nl = 30.0 + floor(fract(seed * 4.7) * 16.0);
   float ly = (1.0 - q.y) * nl;
   float li = floor(ly), lf = fract(ly);
   float vis = smoothstep(1.2, 0.4, fwidth(ly));
-  float len = 0.6 + 0.4 * hash12(vec2(li, seed * 100.0));
-  float on = step(lf, 0.5) * step(q.x, len);
-  on *= step(0.1, hash12(vec2(li * 3.0 + 1.0, seed * 50.0)));
+  float len = 0.55 + 0.45 * hash12(vec2(li, seed * 100.0));
+  float on = step(lf, 0.5) * step(q.x, len) * step(0.12, hash12(vec2(li * 3.0 + 1.0, seed * 50.0)));
   on *= 0.55 + 0.45 * hash12(vec2(floor(q.x * 40.0), li + seed));
-  return mix(0.28, on, vis);
+  float rh = hash12(vec2(li * 7.0 + 3.0, seed * 31.0));
+  float r0 = hash12(vec2(li * 5.0, seed * 17.0)) * 0.5;
+  float red = step(0.88, rh) * step(r0, q.x) * step(q.x, r0 + 0.2 + 0.4 * rh) * step(0.06, lf) * step(lf, 0.94);
+  return vec2(mix(0.25, on, vis), red * vis);
 }
 void main() {
   if (vFog > 0.995) discard;
-  float seed = vData.x, kind = vData.y, w = vData.z, h = vData.w;
+  float seed = vData.x, w = vData.z, h = vData.w;
   vec2 pu = vUv * vec2(w, h);
   vec2 fc = pu * 6.0 + seed * 37.0;
   float lod = smoothstep(1.0, 0.25, fwidth(fc.x));
-  float lod2 = smoothstep(1.0, 0.25, fwidth(fc.x) * 5.0);
-  float fiber = mix(0.5, vnoise(fc) * 0.5 + vnoise(fc * 2.7 + 11.0) * 0.3 + mix(0.5, vnoise(fc * 5.3 + 23.0), lod2) * 0.2, lod);
-  float stain = vnoise(pu * 0.3 + seed * 9.0);
-  float ink = 0.0;
-  float ks = fract(seed * 17.31);
-  if (ks < 0.6) ink = textBlock(vUv, seed) * (0.10 + 0.16 * fract(seed * 5.7));
-  vec3 paper = mix(vec3(0.93, 0.90, 0.84), vec3(0.95, 0.86, 0.68), 0.7 * fract(seed * 3.9));
-  paper = mix(paper, vec3(0.84, 0.87, 0.90), 0.7 * step(0.86, fract(seed * 9.1)));
-  vec3 col = paper * (0.9 + 0.16 * (fiber - 0.5)) * (0.9 + 0.2 * (stain - 0.5)) * (1.0 - ink);
-  float so; vec3 light = illumAt(vLit, so);
-  light *= 1.0 + 0.7 * smoothstep(0.0, 8.0, vLift);
+  float fiber = mix(0.5, vnoise(fc) * 0.6 + vnoise(fc * 2.7 + 11.0) * 0.4, lod);
+  vec2 tb = textBlock(vUv, seed);
+  float ink = tb.x * (0.10 + 0.12 * fract(seed * 5.7));
+  float red = tb.y;
+  vec3 paper = mix(vec3(0.93, 0.91, 0.86), vec3(0.95, 0.88, 0.74), 0.5 * fract(seed * 3.9));
+  vec3 col = paper * (0.92 + 0.12 * (fiber - 0.5)) * (1.0 - ink);
+  col = mix(col, col * vec3(0.78, 0.24, 0.2), vKept * 0.78);
+  float so = sunlit(vLit) * transAt(vLit);
+  vec3 light = ambientAt(vLit) + vec3(1.0, 0.95, 0.86) * so * 0.85;
   vec3 V = normalize(uCamPos - vWorld);
   float nv = abs(dot(normalize(vNormal), V));
   float facing = smoothstep(0.0, 0.22, nv);
-  float ew = max(0.012, fwidth(vUv.x) * 1.6);
-  float ewy = max(0.012 * w / h, fwidth(vUv.y) * 1.6);
+  float ew = max(0.010, fwidth(vUv.x) * 1.6);
+  float ewy = max(0.010 * w / h, fwidth(vUv.y) * 1.6);
   float edge = 1.0 - smoothstep(0.0, ew, min(vUv.x, 1.0 - vUv.x));
   edge = max(edge, 1.0 - smoothstep(0.0, ewy, vUv.y));
-  col *= 0.66 + 0.5 * vUv.y;
-  col = col * light;
-  vec3 edgeCol = light * (0.3 + 0.2 * so) * edge;
-  col = mix(col, col * vec3(0.78, 0.88, 1.08), vFog * 0.7);
-  float a = uOpacity * vOp * facing * (1.0 - vFog) * vRefl;
-  gl_FragColor = vec4(col * a + edgeCol * (1.0 - vFog) * vRefl * smoothstep(0.0, 0.08, nv), 1.0);
+  col *= 0.7 + 0.4 * vUv.y;
+  col *= light;
+  vec3 edgeCol = light * (0.3 + 0.25 * so) * edge;
+  float vis = (1.0 - vFog) * vRefl;
+  float a = uOpacity * vOp * facing * vis;
+  vec3 src = (col * a + edgeCol * vis * smoothstep(0.0, 0.08, nv)) * (1.0 - red * 0.92);
+  float lum = dot(src, vec3(0.299, 0.587, 0.114));
+  float alpha = clamp(lum + red * 0.8 * facing * vis * vOp, 0.0, 0.95);
+  gl_FragColor = vec4(src, alpha);
 }
 `;
 
-// ---------------------------------------------------------------- hairlines: threads and the roof grid
+// ---------------------------------------------------------------- threads
 const lineVert = COMMON + /* glsl */`
 attribute vec2 aMid;
 attribute float aShade;
@@ -397,13 +438,14 @@ uniform float uMirror;
 varying vec3 vCol;
 void main() {
   vec2 m = wrapXZ(aMid);
-  vec3 wp = position; wp.xz += m - aMid; wp.y += aLift * (1.0 - aTop);
+  vec3 wp = position; wp.xz += m - aMid;
   if (distance(m, uCamPos.xz) > uFogFar + 25.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vCol = vec3(0.0); return; }
+  if (aTop > 0.5) wp.y = HC + LID_LIFT * lidE(bayOpen(aMid)); else wp.y += aLift;
   float so; vec3 l = illumAt(wp, so);
   float refl = 1.0;
   if (uMirror < 0.0) { wp.y = -wp.y; refl = reflAt(wp); }
-  float fog = fogAt(wp);
-  vCol = vec3(0.6, 0.6, 0.64) * aShade * l * (1.0 - fog) * 1.7 * refl;
+  float near = 1.0 - smoothstep(18.0, 95.0, distance(wp.xz, uCamPos.xz));
+  vCol = vec3(0.6, 0.6, 0.62) * aShade * min(l, vec3(1.2)) * (1.0 - fogAt(wp)) * 1.5 * refl * near;
   gl_Position = projectionMatrix * viewMatrix * vec4(wp, 1.0);
 }
 `;
@@ -412,10 +454,76 @@ varying vec3 vCol;
 void main() { gl_FragColor = vec4(vCol, 1.0); }
 `;
 
-// ---------------------------------------------------------------- readers
-const solidVert = COMMON + /* glsl */`
+// ---------------------------------------------------------------- concrete: ribs, lids, piers
+const concreteVert = COMMON + /* glsl */`
+attribute float aCode;
 uniform float uMirror;
+uniform float uLid;
 varying vec3 vWorld;
+varying vec3 vLit;
+varying vec3 vN;
+varying float vFog;
+varying float vRefl;
+varying vec2 vUv;
+varying float vCode;
+void main() {
+  vec4 wp4 = instanceMatrix * vec4(position, 1.0);
+  vec2 c = vec2(instanceMatrix[3][0], instanceMatrix[3][2]);
+  vec2 m = wrapXZ(c);
+  if (distance(m, uCamPos.xz) > uFogFar + 30.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFog = 1.0; return; }
+  wp4.xz += m - c;
+  if (uLid > 0.5) wp4.y += LID_LIFT * lidE(bayOpen(c));
+  vec3 n = normalize(mat3(instanceMatrix) * normal);
+  vLit = wp4.xyz; vRefl = 1.0;
+  if (uMirror < 0.0) { wp4.y = -wp4.y; n.y = -n.y; vRefl = reflAt(wp4.xyz); }
+  vN = n; vWorld = wp4.xyz; vFog = fogAt(vWorld); vUv = uv; vCode = aCode;
+  gl_Position = projectionMatrix * viewMatrix * wp4;
+}
+`;
+const concreteFrag = COMMON + /* glsl */`
+uniform sampler2D uAtlas;
+uniform float uHasCode;
+varying vec3 vWorld;
+varying vec3 vLit;
+varying vec3 vN;
+varying float vFog;
+varying float vRefl;
+varying vec2 vUv;
+varying float vCode;
+void main() {
+  if (vFog > 0.995) discard;
+  vec3 n = normalize(vN);
+  vec3 p = vLit;
+  float side = 1.0 - abs(n.y);
+  float hAxis = abs(n.x) > 0.5 ? p.z : p.x;
+  float boards = mix(1.0, 0.9 + 0.1 * smoothstep(0.0, 0.05, abs(fract(p.y / 0.3) - 0.5)), side);
+  float mott = 0.86 + 0.28 * vnoise(vec2(hAxis, p.y) * 0.7 + p.xz * 0.05) * vnoise(vec2(hAxis, p.y) * 2.3 + 7.0);
+  vec2 tg = fract(vec2(hAxis / 0.6, p.y / 0.9)) - 0.5;
+  float tie = mix(1.0, 0.55 + 0.45 * smoothstep(0.035, 0.06, length(tg * vec2(0.6, 0.9))), side * uHasCode);
+  vec3 albedo = vec3(1.0, 0.97, 0.92) * 0.36 * boards * mott * tie;
+  float paint = 0.0;
+  if (uHasCode > 0.5 && side > 0.5) {
+    float fy = (vUv.y * H0 - 3.4) / 4.4;
+    float fx = (vUv.x - 0.04) / 0.92;
+    if (fx > 0.0 && fx < 1.0 && fy > 0.0 && fy < 1.0) {
+      vec2 cell = vec2(mod(vCode, 9.0), floor(vCode / 9.0 + 0.001));
+      vec2 px = vec2((cell.x + fx) * 112.0, (cell.y + 1.0 - fy) * 224.0);
+      paint = texture2D(uAtlas, vec2(px.x / 1024.0, 1.0 - px.y / 2048.0)).a;
+      paint *= 0.72 + 0.28 * vnoise(vec2(hAxis, p.y) * 5.0);
+    }
+  }
+  albedo = mix(albedo, vec3(0.84, 0.82, 0.78), paint * 0.92);
+  float so = sunlit(p) * transAt(p);
+  float ndl = max(0.0, dot(n, -uSun));
+  vec3 amb = ambientAt(p) * (0.7 + 0.6 * max(0.0, -n.y));
+  vec3 col = albedo * (amb + vec3(1.0, 0.95, 0.86) * so * 1.6 * (0.12 + 0.88 * ndl));
+  gl_FragColor = vec4(col * (1.0 - vFog) * vRefl, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- readers
+const figVert = COMMON + /* glsl */`
+uniform float uMirror;
 varying vec3 vLit;
 varying vec3 vN;
 varying float vFog;
@@ -424,89 +532,41 @@ void main() {
   vec4 wp4 = instanceMatrix * vec4(position, 1.0);
   vec2 c = vec2(instanceMatrix[3][0], instanceMatrix[3][2]);
   vec2 m = wrapXZ(c);
-  wp4.xz += m - c;
   if (distance(m, uCamPos.xz) > uFogFar + 25.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); vFog = 1.0; return; }
-  vec3 n = normalize((instanceMatrix * vec4(normal, 0.0)).xyz);
+  wp4.xz += m - c;
+  vec3 n = normalize(mat3(instanceMatrix) * normal);
   vLit = wp4.xyz; vRefl = 1.0;
   if (uMirror < 0.0) { wp4.y = -wp4.y; n.y = -n.y; vRefl = reflAt(wp4.xyz); }
-  vN = n; vWorld = wp4.xyz; vFog = fogAt(vWorld);
+  vN = n; vFog = fogAt(wp4.xyz);
   gl_Position = projectionMatrix * viewMatrix * wp4;
 }
 `;
-const solidFrag = COMMON + /* glsl */`
-varying vec3 vWorld;
+const figFrag = COMMON + /* glsl */`
 varying vec3 vLit;
 varying vec3 vN;
 varying float vFog;
 varying float vRefl;
-uniform vec3 uBase;
 void main() {
   if (vFog > 0.995) discard;
-  float so; vec3 l = illumAt(vLit, so);
   vec3 n = normalize(vN);
-  float lam = 0.55 + 0.45 * max(0.0, n.y) + 0.25 * abs(n.x) * so;
-  gl_FragColor = vec4(uBase * l * lam * (1.0 - vFog) * 1.3 * vRefl, 1.0);
+  float so = sunlit(vLit) * transAt(vLit);
+  vec3 l = ambientAt(vLit) + vec3(1.0, 0.95, 0.86) * so * 1.4 * (0.3 + 0.7 * max(0.0, dot(n, -uSun)));
+  gl_FragColor = vec4(vec3(0.34, 0.31, 0.28) * l * 1.3 * (1.0 - vFog) * vRefl, 1.0);
 }
 `;
 
-// ---------------------------------------------------------------- the shafts of light: ray-marched volumes under each opening
-const beamVert = /* glsl */`
-varying vec3 vWorld;
-void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
-`;
-const beamFrag = COMMON + /* glsl */`
-varying vec3 vWorld;
-uniform vec3 uBoxC;
-uniform vec3 uBoxH;
-uniform vec2 uBoxR;
-uniform int uSkyIndex;
-uniform float uMirror;
-uniform float uSteps;
-vec3 toLocal(vec3 p) { vec3 d = p - uBoxC; return vec3(d.x * uBoxR.x + d.z * uBoxR.y, d.y, -d.x * uBoxR.y + d.z * uBoxR.x); }
-void main() {
-  vec3 ro = uCamPos, rd = vWorld - uCamPos;
-  vec3 lo = toLocal(ro), ld = toLocal(vWorld) - lo;
-  ld += vec3(lessThan(abs(ld), vec3(1e-4))) * 1e-4;
-  vec3 t1 = (-uBoxH - lo) / ld, t2 = (uBoxH - lo) / ld;
-  vec3 tn = min(t1, t2);
-  float t0 = clamp(max(max(tn.x, tn.y), tn.z), 0.0, 1.0);
-  float refl = 1.0;
-  if (uMirror < 0.0) refl = reflAt(vWorld);
-  float n = uSteps;
-  float dt = (1.0 - t0) / n;
-  float acc = 0.0;
-  float jitter = hash12(gl_FragCoord.xy + fract(uTime) * 100.0) * dt;
-  for (float i = 0.0; i < 32.0; i += 1.0) {
-    if (i >= n) break;
-    float t = t0 + jitter + i * dt;
-    vec3 p = ro + rd * t;
-    p.y = abs(p.y);
-    float spread = max(0.0, uRoof - p.y);
-    float box = skyBox(uSkyIndex, p.xz, spread);
-    float vert = 0.15 + 0.85 * pow(clamp(p.y / uRoof, 0.0, 1.0), 1.1);
-    float tr = transAt(p);
-    float dust = 0.6 + 0.6 * vnoise(p.xz * 0.12 + vec2(uTime * 0.012, p.y * 0.05)) * vnoise(vec2(p.y * 0.18 - uTime * 0.06, p.x * 0.07 + p.z * 0.05));
-    float fog = 1.0 - fogAt(vec3(p.x, p.y * uMirror, p.z));
-    acc += box * vert * tr * dust * fog;
-  }
-  acc *= dt * length(rd) * 0.034 * refl;
-  gl_FragColor = vec4(vec3(1.0, 0.93, 0.80) * acc, 1.0);
-}
-`;
-
-// ---------------------------------------------------------------- dust in the beams
+// ---------------------------------------------------------------- dust in the light
 const dustVert = COMMON + /* glsl */`
 attribute float aSeed;
 uniform float uDpr;
 varying float vI;
 void main() {
-  vec3 box = vec3(90.0, 40.0, 90.0);
-  vec3 p = position + vec3(sin(uTime * 0.07 + aSeed * 6.28) * 2.0, -uTime * (0.08 + 0.08 * aSeed), cos(uTime * 0.05 + aSeed * 3.0));
+  vec3 box = vec3(80.0, 44.0, 80.0);
+  vec3 p = position + vec3(sin(uTime * 0.07 + aSeed * 6.28) * 2.0, -uTime * (0.06 + 0.06 * aSeed), cos(uTime * 0.05 + aSeed * 3.0));
   vec3 rel = mod(p - uCamPos + box * 0.5, box) - box * 0.5;
   vec3 wp = uCamPos + rel;
-  wp.y = clamp(wp.y, 0.3, uRoof - 0.5);
-  float so; vec3 l = illumAt(wp, so);
-  vI = (so * 1.2 + 0.01) * (1.0 - fogAt(wp));
+  wp.y = clamp(wp.y, 0.3, H0 - 0.5);
+  vI = sunlit(wp) * transAt(wp) * (1.0 - fogAt(wp));
   vec4 mv = viewMatrix * vec4(wp, 1.0);
   gl_PointSize = clamp(80.0 / max(1.0, -mv.z), 1.2, 4.5) * uDpr;
   gl_Position = projectionMatrix * mv;
@@ -516,57 +576,134 @@ const dustFrag = /* glsl */`
 varying float vI;
 void main() {
   float d = length(gl_PointCoord - 0.5);
-  float a = smoothstep(0.5, 0.05, d) * vI * 0.5;
-  gl_FragColor = vec4(vec3(1.0, 0.95, 0.85) * a, 1.0);
+  gl_FragColor = vec4(vec3(1.0, 0.95, 0.86) * smoothstep(0.5, 0.05, d) * vI * 0.55, 1.0);
 }
 `;
 
-// ---------------------------------------------------------------- water and the openings seen from below
-const waterVert = /* glsl */`
+// ---------------------------------------------------------------- water, daylight, horizon
+const planeVert = /* glsl */`
+uniform float uMirror;
 varying vec3 vWorld;
 void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
 `;
+// squares of light on the still water, where the light reaches it
 const waterFrag = COMMON + /* glsl */`
 varying vec3 vWorld;
 void main() {
-  vec3 c = uCamPos;
-  vec2 w = vWorld.xz;
-  vec2 hit = w + (w - c.xz) * (uRoof / max(0.5, c.y));
-  hit += (vec2(vnoise(w * 0.25 + uTime * 0.03), vnoise(w * 0.25 + 7.0 - uTime * 0.02)) - 0.5) * 1.2;
-  float s = 0.0;
-  for (int i = 0; i < NSKY; i++) s += skyBox(i, hit, 6.0);
-  s *= transAt(vec3(w.x, 0.0, w.y));
-  vec3 d = normalize(vWorld - c);
-  float cosT = max(0.0, -d.y);
-  float F = 0.08 + 0.92 * pow(1.0 - cosT, 4.0);
-  float dm = length(vec3(hit.x - c.x, uRoof + c.y, hit.y - c.z));
-  float a = s * F * 0.28 * (1.0 - smoothstep(uFogNear, uFogFar, dm));
-  gl_FragColor = vec4(vec3(1.0, 0.94, 0.82) * a, 1.0);
+  vec3 p = vec3(vWorld.x, 0.0, vWorld.z);
+  float s = sunlit(p) * transAt(p);
+  vec3 d = normalize(vWorld - uCamPos);
+  float F = 0.2 + 0.8 * pow(1.0 - max(0.0, -d.y), 3.0);
+  float a = (s * 0.085 + softAt(p.xz) * 0.01) * (1.0 - 0.6 * F) * (1.0 - fogAt(vWorld));
+  gl_FragColor = vec4(vec3(1.0, 0.95, 0.86) * a, 1.0);
 }
 `;
-const skyVert = /* glsl */`
-varying vec2 vUv;
-varying vec3 vWorld;
-void main() { vUv = uv; vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
-`;
+// the daylight above the ceiling, seen only through open coffers
 const skyFrag = COMMON + /* glsl */`
-varying vec2 vUv;
+uniform float uMirror;
+uniform float uSkyI;
 varying vec3 vWorld;
-uniform float uIntensity;
 void main() {
-  float bx = 1.0 - smoothstep(0.40, 0.5, abs(vUv.x - 0.5));
-  float by = 1.0 - smoothstep(0.40, 0.5, abs(vUv.y - 0.5));
-  float n = 0.85 + 0.15 * vnoise(vUv * 6.0 + uTime * 0.01);
-  float a = bx * by * n * uIntensity * 0.82 * (1.0 - fogAt(vWorld));
-  gl_FragColor = vec4(vec3(1.0, 0.94, 0.82) * a, 1.0);
+  float r = uMirror < 0.0 ? reflAt(vWorld) : 1.0;
+  vec3 up = vec3(vWorld.x, abs(vWorld.y), vWorld.z);
+  float dHole = distance(up, uCamPos) * (H0 - uCamPos.y) / max(1.0, up.y - uCamPos.y);
+  float g = 1.0 - smoothstep(uFogNear, uFogFar, dHole);
+  gl_FragColor = vec4(vec3(1.0, 0.96, 0.9) * uSkyI * g * r, 1.0);
+}
+`;
+const horizonFrag = /* glsl */`
+varying vec3 vWorld;
+uniform float uTime;
+uniform vec3 uCamPos;
+uniform float uMono;
+float hash11(float p) { p = fract(p * 0.1031); p *= p + 33.33; return fract(p * (p + p)); }
+float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
+float vnoise(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f); float a = hash12(i), b = hash12(i + vec2(1.0, 0.0)), c = hash12(i + vec2(0.0, 1.0)), d = hash12(i + vec2(1.0, 1.0)); return mix(mix(a, b, f.x), mix(c, d, f.x), f.y); }
+float cityLayer(float th, float cells, float seed, float y, float hmax, float prob, float edgeW, float edgeH) {
+  float fc = th * cells / 6.2831853;
+  float c = floor(fc), u = fract(fc);
+  float r0 = hash11(c + seed), r1 = hash11(c * 1.7 + seed + 3.0), r2 = hash11(c * 2.3 + seed + 9.0);
+  float cluster = 0.6 + 0.4 * smoothstep(0.42, 0.68, vnoise(vec2(c * 0.05 + seed, 0.5)));
+  float on = step(1.0 - prob * cluster, r0);
+  float w = 0.3 + 0.5 * r1;
+  float h = 1.5 + hmax * pow(r2, 1.6);
+  float ex = 1.0 - smoothstep(w * 0.5 - edgeW, w * 0.5 + edgeW, abs(u - 0.5));
+  float ey = smoothstep(0.0, 0.6, y) * (1.0 - smoothstep(h - edgeH, h + edgeH, y));
+  float life = smoothstep(0.15, 0.55, 0.5 + 0.5 * sin(uTime * (0.012 + 0.02 * hash11(c * 5.3 + seed)) + c * 1.3));
+  return on * ex * ey * (0.5 + 0.5 * hash11(c * 3.9 + seed)) * (0.35 + 0.65 * life);
+}
+void main() {
+  vec2 d = vWorld.xz - uCamPos.xz;
+  float th = atan(d.y, d.x) + 3.14159265;
+  float y = abs(vWorld.y);
+  float mirror = vWorld.y < 0.0 ? 0.75 : 1.0;
+  float city = cityLayer(th, 220.0, 1.0, y, 14.0, 0.92, 0.05, 0.2) * 0.6 + cityLayer(th, 90.0, 2.0, y, 30.0, 0.75, 0.04, 0.25) * 0.9;
+  // a windowless tower, taller than the rest
+  float dth = abs(mod(th - uMono + 3.14159265, 6.2831853) - 3.14159265);
+  float mono = (1.0 - smoothstep(0.026, 0.0275, dth)) * (1.0 - smoothstep(43.5, 44.5, y));
+  city *= 1.0 - mono;
+  float n = 0.9 + 0.2 * vnoise(vec2(th * 20.0, y * 0.3 + uTime * 0.01));
+  vec3 col = vec3(1.0, 0.93, 0.80) * city * 0.13 * n + vec3(0.9, 0.86, 0.8) * mono * (0.007 + 0.006 * smoothstep(44.0, 0.0, y));
+  gl_FragColor = vec4(col * mirror, 1.0);
 }
 `;
 
-// ---------------------------------------------------------------- post
+// ---------------------------------------------------------------- volumetric light, half resolution
 const quadVert = /* glsl */`
 varying vec2 vUv;
 void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }
 `;
+const volFrag = COMMON + /* glsl */`
+varying vec2 vUv;
+uniform sampler2D tDepth;
+uniform mat4 uInvProj;
+uniform mat4 uCamWorld;
+uniform float uSteps;
+uniform float uGain;
+float viewDist(vec2 uv) {
+  float d = texture2D(tDepth, uv).x;
+  vec4 v = uInvProj * vec4(uv * 2.0 - 1.0, d * 2.0 - 1.0, 1.0);
+  return length(v.xyz / v.w);
+}
+void main() {
+  vec4 v = uInvProj * vec4(vUv * 2.0 - 1.0, 1.0, 1.0);
+  vec3 dir = normalize((uCamWorld * vec4(normalize(v.xyz / v.w), 0.0)).xyz);
+  vec3 ro = uCamPos;
+  float tMax = min(viewDist(vUv), uFogFar);
+  float tFloor = dir.y < -1e-4 ? -ro.y / dir.y : 1e9;
+  float tCeil = dir.y > 1e-4 ? (H0 - ro.y) / dir.y : 1e9;
+  float tEnd = min(tMax, min(tFloor, tCeil));
+  float dt = tEnd / uSteps;
+  float j = hash12(gl_FragCoord.xy + fract(uTime * 13.7) * 91.0);
+  float acc = 0.0;
+  for (float i = 0.0; i < 48.0; i += 1.0) {
+    if (i >= uSteps) break;
+    vec3 p = ro + dir * ((i + j) * dt);
+    float s = sunlit(p);
+    if (s > 0.001) acc += s * transAt(p) * (0.8 + 0.4 * vnoise(p.xz * 0.15 + vec2(uTime * 0.01, p.y * 0.06))) * (1.0 - fogAt(p)) * smoothstep(3.0, 16.0, (i + j) * dt);
+  }
+  acc *= dt;
+  float accR = 0.0;
+  if (tFloor < tMax && tFloor < tCeil) {
+    vec3 p0 = ro + dir * tFloor;
+    vec3 rd = vec3(dir.x, -dir.y, dir.z);
+    float tEnd2 = min(H0 / max(rd.y, 1e-3), max(0.0, uFogFar - tFloor));
+    float n2 = floor(uSteps * 0.5);
+    float dt2 = tEnd2 / n2;
+    for (float i = 0.0; i < 24.0; i += 1.0) {
+      if (i >= n2) break;
+      float t = (i + j) * dt2;
+      vec3 p = p0 + rd * t;
+      float s = sunlit(p);
+      if (s > 0.001) accR += s * transAt(p) * (1.0 - smoothstep(uFogNear, uFogFar, tFloor + t));
+    }
+    accR *= dt2 * reflAt(vec3(p0.x, -0.001, p0.z));
+  }
+  gl_FragColor = vec4(vec3(1.0, 0.94, 0.84) * (acc + accR) * uGain, 1.0);
+}
+`;
+
+// ---------------------------------------------------------------- post
 const downFrag = /* glsl */`
 varying vec2 vUv;
 uniform sampler2D tDiffuse;
@@ -594,41 +731,96 @@ varying vec2 vUv;
 uniform sampler2D tScene;
 uniform sampler2D tA;
 uniform sampler2D tB;
+uniform sampler2D tVol;
 uniform vec2 uRes;
-uniform float uTime;
 uniform float uFade;
-float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
 void main() {
   vec3 c = texture2D(tScene, vUv).rgb;
-  vec3 bloom = texture2D(tA, vUv).rgb * 0.55 + texture2D(tB, vUv).rgb * 0.85;
-  c += bloom * 0.3;
+  c += (texture2D(tA, vUv).rgb * 0.5 + texture2D(tB, vUv).rgb * 0.8) * 0.24;
+  c += texture2D(tVol, vUv).rgb;
   c = c / (1.0 + 0.1 * c);
   vec2 q = vUv - 0.5; q.x *= uRes.x / uRes.y;
-  c *= 1.0 - 0.35 * smoothstep(0.45, 1.15, length(q));
-  c += (hash12(gl_FragCoord.xy + vec2(fract(uTime * 7.1) * 311.0, fract(uTime * 3.3) * 173.0)) - 0.5) * 0.014;
+  c *= 1.0 - 0.28 * smoothstep(0.5, 1.2, length(q));
   gl_FragColor = vec4(max(c, 0.0) * uFade, 1.0);
 }
 `;
 
-// ---------------------------------------------------------------- build the scene
+// ---------------------------------------------------------------- build the hall
 const scene = new THREE.Scene();
 function makeMat(vert, frag, extra, opts) {
   return new THREE.ShaderMaterial(Object.assign({ uniforms: Object.assign({}, U, extra), vertexShader: vert, fragmentShader: frag }, opts));
 }
-const SHEET_OPTS = { transparent: true, depthWrite: false, depthTest: true, side: THREE.DoubleSide, blending: THREE.CustomBlending, blendEquation: THREE.AddEquation, blendSrc: THREE.OneMinusDstColorFactor, blendDst: THREE.OneFactor };
+const SHEET_OPTS = { transparent: true, depthWrite: false, depthTest: true, side: THREE.DoubleSide, blending: THREE.CustomBlending, blendEquation: THREE.AddEquation, blendSrc: THREE.OneFactor, blendDst: THREE.OneMinusSrcAlphaFactor };
 const ADD_OPTS = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending };
-
-// the plan as a texture, so the shaders know how much paper the light has to pass through
-{
-  const N = 128, data = new Uint8Array(N * N);
-  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) data[j * N + i] = Math.round(255 * density((i + 0.5) / N * T, (j + 0.5) / N * T));
-  const tex = new THREE.DataTexture(data, N, N, THREE.RedFormat, THREE.UnsignedByteType);
-  tex.wrapS = tex.wrapT = THREE.RepeatWrapping; tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.needsUpdate = true;
-  U.uDensity.value = tex;
+const M4 = new THREE.Matrix4(), QT = new THREE.Quaternion(), V3 = new THREE.Vector3(), SC = new THREE.Vector3();
+function place(mesh, idx, x, y, z, sx, sy, sz, yaw) {
+  QT.setFromAxisAngle(V3.set(0, 1, 0), yaw || 0);
+  M4.compose(V3.set(x, y, z), QT, SC.set(sx, sy, sz));
+  mesh.setMatrixAt(idx, M4);
+}
+// draw every solid twice: upright, and mirrored into the water. The upright one also writes the depth the light needs.
+function pair(geo, count, makeMaterial, fill, occluder) {
+  const main = new THREE.InstancedMesh(geo, makeMaterial(1), count);
+  fill(main);
+  main.instanceMatrix.needsUpdate = true;
+  const twin = new THREE.InstancedMesh(geo, makeMaterial(-1), count);
+  twin.instanceMatrix = main.instanceMatrix;
+  for (const m of [main, twin]) { m.frustumCulled = false; scene.add(m); }
+  if (occluder) main.layers.enable(1);
+  return main;
 }
 
-// paper, upright and mirrored
-const plane = new THREE.PlaneGeometry(1, 1, lite ? 3 : 4, lite ? 5 : 7);
+// the painted district codes, drawn once into an atlas
+const atlasCanvas = document.createElement('canvas');
+atlasCanvas.width = 1024; atlasCanvas.height = 2048;
+const atlasTex = new THREE.CanvasTexture(atlasCanvas);
+atlasTex.anisotropy = 4;
+function drawAtlas(family) {
+  const g = atlasCanvas.getContext('2d');
+  g.clearRect(0, 0, 1024, 2048);
+  g.fillStyle = '#ffffff'; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+  for (let d = 0; d < ND * ND; d++) {
+    const cx = (d % ND) * 112 + 56, cy = Math.floor(d / ND) * 224;
+    g.font = `900 112px ${family}`; try { g.fontStretch = 'condensed'; } catch (e) { /* older canvas */ }
+    g.fillText(String.fromCharCode(65 + (d % ND)), cx, cy + 102);
+    g.font = `900 86px ${family}`; try { g.fontStretch = 'condensed'; } catch (e) { /* older canvas */ }
+    g.fillText(String(Math.floor(d / ND) + 1).padStart(2, '0'), cx, cy + 200);
+  }
+  atlasTex.needsUpdate = true;
+}
+drawAtlas("'Helvetica Neue', Arial, sans-serif");
+if (document.fonts && document.fonts.load) document.fonts.load('900 100px Archivo').then(f => { if (f && f.length) drawAtlas("Archivo, 'Helvetica Neue', Arial, sans-serif"); }).catch(() => {});
+
+// the coffered ceiling: ribs along every bay edge, and a lid over every coffer
+const box = () => new THREE.BoxGeometry(1, 1, 1);
+const concrete = (lid, code) => mirror => makeMat(concreteVert, concreteFrag, { uMirror: { value: mirror }, uLid: { value: lid }, uHasCode: { value: code }, uAtlas: { value: atlasTex } });
+const ribGeo = box(); ribGeo.setAttribute('aCode', new THREE.InstancedBufferAttribute(new Float32Array(2 * NBB), 1));
+pair(ribGeo, 2 * NBB, concrete(0, 0), mesh => {
+  let k = 0;
+  for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) {
+    place(mesh, k++, (i + 0.5) * M, H0 + RIB_D / 2, j * M, M, RIB_D, RIB_W);
+    place(mesh, k++, i * M, H0 + RIB_D / 2, (j + 0.5) * M, RIB_W, RIB_D, M);
+  }
+}, true);
+const lidGeo = box(); lidGeo.setAttribute('aCode', new THREE.InstancedBufferAttribute(new Float32Array(NBB), 1));
+pair(lidGeo, NBB, concrete(1, 0), mesh => {
+  for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) {
+    const open = bayPermanent[bayIdx(i, j)] ? 0 : 1;   // the skylights have no lids at all
+    place(mesh, j * NB + i, (i + 0.5) * M, HC + LID_T / 2, (j + 0.5) * M, (M - RIB_W + 0.02) * open, LID_T * open, (M - RIB_W + 0.02) * open);
+  }
+}, true);
+// piers, one per district, each painted with its district's code
+const pierGeo = box();
+const pierCodes = new Float32Array(ND * ND);
+for (let d = 0; d < ND * ND; d++) pierCodes[d] = d;
+pierGeo.setAttribute('aCode', new THREE.InstancedBufferAttribute(pierCodes, 1));
+const PIER_W = 2.4;
+pair(pierGeo, ND * ND, concrete(0, 1), mesh => {
+  for (let q = 0; q < ND; q++) for (let p = 0; p < ND; p++) place(mesh, q * ND + p, (p * DIST + 2) * M, H0 / 2, (q * DIST + 2) * M, PIER_W, H0, PIER_W);
+}, true);
+
+// paper
+const plane = new THREE.PlaneGeometry(1, 1, 2, lite ? 4 : 6);
 const sheetGeo = new THREE.InstancedBufferGeometry();
 sheetGeo.index = plane.index;
 sheetGeo.setAttribute('position', plane.attributes.position);
@@ -636,42 +828,30 @@ sheetGeo.setAttribute('uv', plane.attributes.uv);
 sheetGeo.setAttribute('iPos', new THREE.InstancedBufferAttribute(new Float32Array(S.pos), 3));
 sheetGeo.setAttribute('iSize', new THREE.InstancedBufferAttribute(new Float32Array(S.size), 3));
 sheetGeo.setAttribute('iRot', new THREE.InstancedBufferAttribute(new Float32Array(S.rot), 4));
-const liftAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1);
-liftAttr.setUsage(THREE.DynamicDrawUsage);
-sheetGeo.setAttribute('iLift', liftAttr);
-const swayAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1);
-swayAttr.setUsage(THREE.DynamicDrawUsage);
-sheetGeo.setAttribute('iSway', swayAttr);
+const liftAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1); liftAttr.setUsage(THREE.DynamicDrawUsage);
+const swayAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1); swayAttr.setUsage(THREE.DynamicDrawUsage);
+const keptAttr = new THREE.InstancedBufferAttribute(new Float32Array(sheetCount), 1); keptAttr.setUsage(THREE.DynamicDrawUsage);
+sheetGeo.setAttribute('iLift', liftAttr); sheetGeo.setAttribute('iSway', swayAttr); sheetGeo.setAttribute('iKept', keptAttr);
 sheetGeo.instanceCount = sheetCount;
 for (const mirror of [1, -1]) {
-  const mesh = new THREE.Mesh(sheetGeo, makeMat(sheetVert, sheetFrag, { uOpacity: { value: 0.16 }, uMirror: { value: mirror } }, SHEET_OPTS));
+  const mesh = new THREE.Mesh(sheetGeo, makeMat(sheetVert, sheetFrag, { uOpacity: { value: 0.2 }, uMirror: { value: mirror } }, SHEET_OPTS));
   mesh.frustumCulled = false; mesh.renderOrder = 10; scene.add(mesh);
 }
 
-// threads from every sheet up to the roof, plus the roof's own hairline grid
+// one thread per sheet, from its top up to the lid of its coffer
 const L = { pos: [], mid: [], shade: [], top: [] };
-const threadOf = new Int32Array(sheetCount).fill(-1);
+const threadOf = new Int32Array(sheetCount);
 for (let i = 0; i < sheetCount; i++) {
   const x = S.pos[3 * i], y = S.pos[3 * i + 1], z = S.pos[3 * i + 2];
   threadOf[i] = L.pos.length / 3;
-  L.pos.push(x, y, z, x, ROOF, z); L.mid.push(x, z, x, z); L.shade.push(0.55, 0.2); L.top.push(0, 1);
-}
-const threadVerts = L.pos.length / 3;
-{
-  const step = 8, n = T / step;
-  for (let a = 0; a < n; a++) for (let b = 0; b < n; b++) {
-    const x = a * step, z = b * step;
-    L.pos.push(x, ROOF, z, x + step, ROOF, z); L.mid.push(x + step / 2, z, x + step / 2, z); L.shade.push(0.45, 0.45); L.top.push(1, 1);
-    L.pos.push(x, ROOF, z, x, ROOF, z + step); L.mid.push(x, z + step / 2, x, z + step / 2); L.shade.push(0.45, 0.45); L.top.push(1, 1);
-  }
+  L.pos.push(x, y, z, x, HC, z); L.mid.push(x, z, x, z); L.shade.push(0.26, 0.1); L.top.push(0, 1);
 }
 const lineGeo = new THREE.BufferGeometry();
 lineGeo.setAttribute('position', new THREE.Float32BufferAttribute(L.pos, 3));
 lineGeo.setAttribute('aMid', new THREE.Float32BufferAttribute(L.mid, 2));
 lineGeo.setAttribute('aShade', new THREE.Float32BufferAttribute(L.shade, 1));
 lineGeo.setAttribute('aTop', new THREE.Float32BufferAttribute(L.top, 1));
-const threadLift = new THREE.Float32BufferAttribute(new Float32Array(L.pos.length / 3), 1);
-threadLift.setUsage(THREE.DynamicDrawUsage);
+const threadLift = new THREE.Float32BufferAttribute(new Float32Array(L.pos.length / 3), 1); threadLift.setUsage(THREE.DynamicDrawUsage);
 lineGeo.setAttribute('aLift', threadLift);
 for (const mirror of [1, -1]) {
   const lines = new THREE.LineSegments(lineGeo, makeMat(lineVert, lineFrag, { uMirror: { value: mirror } }));
@@ -690,97 +870,34 @@ function mergeGeos(list) {
 function figureGeometry() {
   const parts = [];
   const b = (w, h, d, x, y, z) => { const g = new THREE.BoxGeometry(w, h, d); g.translate(x, y, z); return g; };
-  parts.push(b(0.36, 0.70, 0.20, 0, 1.08, 0));
-  parts.push(b(0.13, 0.78, 0.16, -0.09, 0.39, 0));
-  parts.push(b(0.13, 0.78, 0.16, 0.09, 0.39, 0));
-  parts.push(b(0.09, 0.62, 0.11, -0.24, 1.05, 0));
-  parts.push(b(0.09, 0.62, 0.11, 0.24, 1.05, 0));
+  parts.push(b(0.36, 0.70, 0.20, 0, 1.08, 0), b(0.13, 0.78, 0.16, -0.09, 0.39, 0), b(0.13, 0.78, 0.16, 0.09, 0.39, 0), b(0.09, 0.62, 0.11, -0.24, 1.05, 0), b(0.09, 0.62, 0.11, 0.24, 1.05, 0));
   const head = new THREE.SphereGeometry(0.115, 8, 6); head.translate(0, 1.58, 0); parts.push(head);
   return mergeGeos(parts);
 }
-const figGeo = figureGeometry();
-const figMain = new THREE.InstancedMesh(figGeo, makeMat(solidVert, solidFrag, { uBase: { value: new THREE.Vector3(0.34, 0.31, 0.28) }, uMirror: { value: 1 } }), NREAD - 1);
-const figTwin = new THREE.InstancedMesh(figGeo, makeMat(solidVert, solidFrag, { uBase: { value: new THREE.Vector3(0.34, 0.31, 0.28) }, uMirror: { value: -1 } }), NREAD - 1);
-figTwin.instanceMatrix = figMain.instanceMatrix;
+const figMain = pair(figureGeometry(), NREAD - 1, mirror => makeMat(figVert, figFrag, { uMirror: { value: mirror } }), mesh => { for (let k = 0; k < NREAD - 1; k++) place(mesh, k, 0, 0, 0, 0, 0, 0, 0); }, true);
 figMain.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-for (const m of [figMain, figTwin]) { m.frustumCulled = false; scene.add(m); }
-const M = new THREE.Matrix4(), Qt = new THREE.Quaternion(), V3 = new THREE.Vector3(), SC = new THREE.Vector3();
 
-// the shafts under each opening, upright and mirrored
-const beams = [];
-SKY.forEach((s, i) => {
-  const hx = s.w / 2 + 16, hz = s.h / 2 + 16;
-  const geo = new THREE.BoxGeometry(2 * hx, ROOF, 2 * hz);
-  for (const mirror of [1, -1]) {
-    const mat = makeMat(beamVert, beamFrag, {
-      uBoxC: { value: new THREE.Vector3(s.x, mirror * ROOF / 2, s.z) }, uBoxH: { value: new THREE.Vector3(hx, ROOF / 2, hz) },
-      uBoxR: { value: new THREE.Vector2(Math.cos(s.rot), Math.sin(s.rot)) }, uSkyIndex: { value: i }, uMirror: { value: mirror },
-      uSteps: { value: lite ? 10 : 20 },
-    }, Object.assign({ side: THREE.BackSide, depthTest: false }, ADD_OPTS));
-    const mesh = new THREE.Mesh(geo, mat);
-    mesh.rotation.y = -s.rot; mesh.position.set(s.x, mirror * ROOF / 2, s.z);
-    mesh.frustumCulled = false; mesh.renderOrder = 15 + (mirror < 0 ? 0 : 1);
-    scene.add(mesh); beams.push({ mesh, s, mirror });
-  }
-});
-
-// dust, water, and the openings seen from below
+// dust that shows only in the light
 {
-  const n = lite ? 1000 : 2200;
+  const n = lite ? 900 : 2000;
   const pos = new Float32Array(n * 3), seed = new Float32Array(n);
-  for (let k = 0; k < n; k++) { pos[3 * k] = (rand() - 0.5) * 90; pos[3 * k + 1] = rand() * 40; pos[3 * k + 2] = (rand() - 0.5) * 90; seed[k] = rand(); }
+  for (let k = 0; k < n; k++) { pos[3 * k] = (rand() - 0.5) * 80; pos[3 * k + 1] = rand() * 44; pos[3 * k + 2] = (rand() - 0.5) * 80; seed[k] = rand(); }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
   const dust = new THREE.Points(g, makeMat(dustVert, dustFrag, {}, ADD_OPTS));
   dust.frustumCulled = false; dust.renderOrder = 20; scene.add(dust);
 }
-const water = new THREE.Mesh(new THREE.PlaneGeometry(2 * FOG_FAR + 60, 2 * FOG_FAR + 60), makeMat(waterVert, waterFrag, {}, Object.assign({ side: THREE.DoubleSide }, ADD_OPTS)));
+
+// water, the daylight above the ceiling (upright and mirrored), and the far city
+const water = new THREE.Mesh(new THREE.PlaneGeometry(2 * FOG_FAR + 60, 2 * FOG_FAR + 60), makeMat(planeVert, waterFrag, {}, Object.assign({ side: THREE.DoubleSide }, ADD_OPTS)));
 water.rotation.x = -Math.PI / 2; water.frustumCulled = false; water.renderOrder = 5; scene.add(water);
-const skyMeshes = SKY.map(s => {
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(s.w, s.h), makeMat(skyVert, skyFrag, { uIntensity: { value: s.i } }, Object.assign({ side: THREE.DoubleSide }, ADD_OPTS)));
-  m.rotation.set(Math.PI / 2, 0, s.rot); m.position.y = ROOF; m.frustumCulled = false; m.renderOrder = 14; scene.add(m);
+const skies = [1, -1].map(mirror => {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(2 * FOG_FAR + 160, 2 * FOG_FAR + 160), makeMat(planeVert, skyFrag, { uMirror: { value: mirror }, uSkyI: { value: 1.0 } }, { side: THREE.DoubleSide }));
+  m.rotation.x = Math.PI / 2; m.position.y = mirror * SKY_Y; m.frustumCulled = false; scene.add(m);
   return m;
 });
-
-// the far city: soft rectangles of light standing on the horizon, in the openings' own language, mirrored by the water
-const horizonVert = /* glsl */`
-varying vec3 vWorld;
-void main() { vec4 wp = modelMatrix * vec4(position, 1.0); vWorld = wp.xyz; gl_Position = projectionMatrix * viewMatrix * wp; }
-`;
-const horizonFrag = /* glsl */`
-varying vec3 vWorld;
-uniform float uTime;
-uniform vec3 uCamPos;
-float hash11(float p) { p = fract(p * 0.1031); p *= p + 33.33; return fract(p * (p + p)); }
-float hash12(vec2 p) { vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
-float vnoise(vec2 p) { vec2 i = floor(p); vec2 f = fract(p); f = f * f * (3.0 - 2.0 * f); float a = hash12(i), b = hash12(i + vec2(1.0, 0.0)), c = hash12(i + vec2(0.0, 1.0)), d = hash12(i + vec2(1.0, 1.0)); return mix(mix(a, b, f.x), mix(c, d, f.x), f.y); }
-float cityLayer(float th, float cells, float seed, float y, float hmax, float prob, float edgeW, float edgeH) {
-  float fc = th * cells / 6.2831853;
-  float c = floor(fc), u = fract(fc);
-  float r0 = hash11(c + seed), r1 = hash11(c * 1.7 + seed + 3.0), r2 = hash11(c * 2.3 + seed + 9.0);
-  float cluster = 0.6 + 0.4 * smoothstep(0.42, 0.68, vnoise(vec2(c * 0.05 + seed, 0.5)));
-  float on = step(1.0 - prob * cluster, r0);
-  float w = 0.3 + 0.5 * r1;
-  float h = 1.5 + hmax * pow(r2, 1.6);
-  float ex = 1.0 - smoothstep(w * 0.5 - edgeW, w * 0.5 + edgeW, abs(u - 0.5));
-  float ey = smoothstep(0.0, 0.6, y) * (1.0 - smoothstep(h - edgeH, h + edgeH, y));
-  float life = smoothstep(0.15, 0.55, 0.5 + 0.5 * sin(uTime * (0.012 + 0.02 * hash11(c * 5.3 + seed)) + c * 1.3));
-  return on * ex * ey * (0.5 + 0.5 * hash11(c * 3.9 + seed)) * (0.35 + 0.65 * life);
-}
-void main() {
-  vec2 d = vWorld.xz - uCamPos.xz;
-  float th = atan(d.y, d.x) + 3.14159265;
-  float y = abs(vWorld.y);
-  float mirror = vWorld.y < 0.0 ? 0.75 : 1.0;
-  float far = cityLayer(th, 220.0, 1.0, y, 14.0, 0.92, 0.05, 0.2);
-  float near = cityLayer(th, 90.0, 2.0, y, 30.0, 0.75, 0.04, 0.25);
-  float city = far * 0.6 + near * 0.9;
-  float n = 0.9 + 0.2 * vnoise(vec2(th * 20.0, y * 0.3 + uTime * 0.01));
-  gl_FragColor = vec4(vec3(1.0, 0.93, 0.80) * city * 0.14 * n * mirror, 1.0);
-}
-`;
-const horizon = new THREE.Mesh(new THREE.CylinderGeometry(FOG_FAR + 24, FOG_FAR + 24, 60, 96, 1, true), new THREE.ShaderMaterial({ uniforms: { uTime: U.uTime, uCamPos: U.uCamPos }, vertexShader: horizonVert, fragmentShader: horizonFrag, side: THREE.BackSide, depthWrite: false, depthTest: false }));
+const horizon = new THREE.Mesh(new THREE.CylinderGeometry(FOG_FAR + 24, FOG_FAR + 24, 100, 128, 1, true), new THREE.ShaderMaterial({ uniforms: { uTime: U.uTime, uCamPos: U.uCamPos, uMono: { value: 0 } }, vertexShader: planeVert, fragmentShader: horizonFrag, side: THREE.BackSide, depthWrite: false, depthTest: false }));
 horizon.frustumCulled = false; horizon.renderOrder = -10; scene.add(horizon);
 
 // ---------------------------------------------------------------- post pipeline
@@ -795,9 +912,14 @@ const rtOpts = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, d
 const sceneRT = new THREE.WebGLRenderTarget(2, 2, Object.assign({}, rtOpts, { depthBuffer: true, samples: lite ? 0 : 4 }));
 const rtA = new THREE.WebGLRenderTarget(2, 2, rtOpts), rtA2 = new THREE.WebGLRenderTarget(2, 2, rtOpts);
 const rtB = new THREE.WebGLRenderTarget(2, 2, rtOpts), rtB2 = new THREE.WebGLRenderTarget(2, 2, rtOpts);
-const downMat = new THREE.ShaderMaterial({ uniforms: { tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2() }, uThresh: { value: 0.2 } }, vertexShader: quadVert, fragmentShader: downFrag, depthTest: false, depthWrite: false });
+const volRT = new THREE.WebGLRenderTarget(2, 2, Object.assign({}, rtOpts, { type: THREE.HalfFloatType })), volRT2 = new THREE.WebGLRenderTarget(2, 2, Object.assign({}, rtOpts, { type: THREE.HalfFloatType }));
+const depthRT = new THREE.WebGLRenderTarget(2, 2, { depthBuffer: true, stencilBuffer: false, depthTexture: new THREE.DepthTexture(2, 2) });
+const camera = new THREE.PerspectiveCamera(46, 1, 0.2, 700);
+camera.rotation.order = 'YXZ';
+const downMat = new THREE.ShaderMaterial({ uniforms: { tDiffuse: { value: null }, uTexel: { value: new THREE.Vector2() }, uThresh: { value: 0.3 } }, vertexShader: quadVert, fragmentShader: downFrag, depthTest: false, depthWrite: false });
 const blurMat = new THREE.ShaderMaterial({ uniforms: { tDiffuse: { value: null }, uDir: { value: new THREE.Vector2() } }, vertexShader: quadVert, fragmentShader: blurFrag, depthTest: false, depthWrite: false });
-const compMat = new THREE.ShaderMaterial({ uniforms: { tScene: { value: sceneRT.texture }, tA: { value: rtA.texture }, tB: { value: rtB.texture }, uRes: { value: new THREE.Vector2(1, 1) }, uTime: U.uTime, uFade: { value: 0 } }, vertexShader: quadVert, fragmentShader: compFrag, depthTest: false, depthWrite: false });
+const volMat = new THREE.ShaderMaterial({ uniforms: Object.assign({}, U, { tDepth: { value: depthRT.depthTexture }, uInvProj: { value: camera.projectionMatrixInverse }, uCamWorld: { value: camera.matrixWorld }, uSteps: { value: lite ? 18 : 30 }, uGain: { value: 0.012 } }), vertexShader: quadVert, fragmentShader: volFrag, depthTest: false, depthWrite: false });
+const compMat = new THREE.ShaderMaterial({ uniforms: { tScene: { value: sceneRT.texture }, tA: { value: rtA.texture }, tB: { value: rtB.texture }, tVol: { value: volRT.texture }, uRes: { value: new THREE.Vector2(1, 1) }, uFade: { value: 0 } }, vertexShader: quadVert, fragmentShader: compFrag, depthTest: false, depthWrite: false });
 function pass(mat, target) { quad.material = mat; renderer.setRenderTarget(target); renderer.render(quadScene, quadCam); }
 function down(src, dst, thresh) {
   downMat.uniforms.tDiffuse.value = src.texture;
@@ -809,10 +931,8 @@ function blur(a, b, radius) {
   blurMat.uniforms.tDiffuse.value = a.texture; blurMat.uniforms.uDir.value.set(radius / a.width, 0); pass(blurMat, b);
   blurMat.uniforms.tDiffuse.value = b.texture; blurMat.uniforms.uDir.value.set(0, radius / a.height); pass(blurMat, a);
 }
-
-const camera = new THREE.PerspectiveCamera(46, 1, 0.2, 600);
-camera.rotation.order = 'YXZ';
 let dpr = Math.min(devicePixelRatio || 1, lite ? 1.5 : 1.75);
+const VOLS = lite ? 0.25 : 0.5;
 function resize() {
   const w = Math.max(1, innerWidth), h = Math.max(1, innerHeight);
   renderer.setPixelRatio(dpr);
@@ -821,6 +941,8 @@ function resize() {
   sceneRT.setSize(pw, ph);
   rtA.setSize(Math.max(2, pw >> 2), Math.max(2, ph >> 2)); rtA2.setSize(Math.max(2, pw >> 2), Math.max(2, ph >> 2));
   rtB.setSize(Math.max(2, pw >> 3), Math.max(2, ph >> 3)); rtB2.setSize(Math.max(2, pw >> 3), Math.max(2, ph >> 3));
+  const vw = Math.max(2, Math.floor(pw * VOLS)), vh = Math.max(2, Math.floor(ph * VOLS));
+  volRT.setSize(vw, vh); volRT2.setSize(vw, vh); depthRT.setSize(vw, vh);
   compMat.uniforms.uRes.value.set(pw, ph);
   U.uDpr.value = dpr;
   camera.aspect = w / h;
@@ -828,16 +950,26 @@ function resize() {
 addEventListener('resize', resize);
 resize();
 
-// ---------------------------------------------------------------- the rule, each frame
-const sheetX = new Float32Array(sheetCount), sheetZ = new Float32Array(sheetCount), liftMax = Float32Array.from(S.liftMax), riseT = new Float32Array(sheetCount);
-for (let i = 0; i < sheetCount; i++) { sheetX[i] = S.pos[3 * i]; sheetZ[i] = S.pos[3 * i + 2]; riseT[i] = 1.1 + 0.08 * S.size[3 * i + 1]; }
-const lifts = liftAttr.array, tl = threadLift.array, sways = swayAttr.array;
 // ---------------------------------------------------------------- sound: made by the same rule, nothing sampled
-// A quiet hall of pink noise that breathes with the light. Paper that is being drawn up or let
-// down rustles, pitched by its size and placed by where it hangs; the largest sheets make the
-// threads creak. A page that stays sounds once, low, like something set down on water.
-let AC = null, snd = null, soundWanted = true, soundOn = false;
-const ac = { l: 0, r: 0, big: 0, hw: 0, tot: 0 };
+// The hall is tuned to its own module. An 8 m bay resonates at about 21 Hz, and every pitch in the
+// piece is a harmonic of it. Each open coffer near you holds one of those harmonics, so the great
+// skylight is a chord you walk toward, and a reader's opening enters note by note. While lids move,
+// their notes drift a little out of tune and beat; when the lids come to rest, the notes settle.
+// Every kept page holds one faint high harmonic. Concrete grinds and knocks, paper rustles, and all
+// of it sounds inside a synthesized hall with a six-second tail.
+let AC = null, snd = null, bus = null, soundWanted = true, soundOn = false, lastThunk = 0, tNow = 0, lastMusic = 0;
+const ac = { l: 0, r: 0, big: 0, hw: 0, tot: 0, grind: 0, gpan: 0 };
+const camPos = { x: 0, z: 0, yaw: 0 };
+const F0 = 343 / (2 * M);
+const LIGHT_PARTIALS = [4, 5, 6, 8, 9, 10, 12, 15, 16, 18, 20, 24];
+const KEPT_PARTIALS = [27, 30, 32, 36];
+const bayPartial = new Uint8Array(NBB), bayKeptPartial = new Uint8Array(NBB);
+for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) {
+  bayPartial[bayIdx(i, j)] = Math.floor(hash2(i, j, 77) * LIGHT_PARTIALS.length) % LIGHT_PARTIALS.length;
+  bayKeptPartial[bayIdx(i, j)] = Math.floor(hash2(i, j, 78) * KEPT_PARTIALS.length) % KEPT_PARTIALS.length;
+}
+const pAmp = new Float32Array(LIGHT_PARTIALS.length), pPan = new Float32Array(LIGHT_PARTIALS.length), pMot = new Float32Array(LIGHT_PARTIALS.length);
+const kAmp = new Float32Array(KEPT_PARTIALS.length), kPan = new Float32Array(KEPT_PARTIALS.length);
 function noiseSource(ctx) {
   const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), data = buf.getChannelData(0);
   let b0 = 0, b1 = 0, b2 = 0;
@@ -849,26 +981,103 @@ function noiseSource(ctx) {
   const src = ctx.createBufferSource(); src.buffer = buf; src.loop = true; src.start();
   return src;
 }
+function panner(pan) {
+  if (!AC.createStereoPanner) return null;
+  const p = AC.createStereoPanner(); p.pan.value = pan; return p;
+}
+// a concrete hall: early reflections off the piers, then a long tail that darkens as it decays
+function makeHall(ctx, seconds, decay) {
+  const rate = ctx.sampleRate, len = Math.floor(rate * seconds), buf = ctx.createBuffer(2, len, rate);
+  for (let ch = 0; ch < 2; ch++) {
+    const d = buf.getChannelData(ch);
+    let lp = 0;
+    for (let i = 0; i < len; i++) {
+      const t = i / rate;
+      lp += (0.04 + 0.55 * Math.exp(-t / 1.3)) * ((Math.random() * 2 - 1) - lp);
+      d[i] = t < 0.028 ? 0 : lp * Math.exp(-t / decay);
+    }
+    for (const [tt, g] of [[0.031, 0.42], [0.047, 0.3], [0.083, 0.26], [0.121, 0.2], [0.167, 0.15], [0.233, 0.11]]) {
+      const k = Math.floor((tt + ch * 0.0043) * rate);
+      if (k < len) d[k] += g * (ch ? -1 : 1);
+    }
+  }
+  return buf;
+}
+function route(node, dryAmt, sendAmt) {
+  const gd = AC.createGain(); gd.gain.value = dryAmt; node.connect(gd); gd.connect(bus.dry);
+  if (sendAmt > 0) { const gs = AC.createGain(); gs.gain.value = sendAmt; node.connect(gs); gs.connect(bus.send); }
+}
+function placed(nodes, pan, dryAmt, sendAmt) {
+  const p = panner(pan);
+  if (p) { for (const n of nodes) n.connect(p); route(p, dryAmt, sendAmt); return p; }
+  for (const n of nodes) route(n, dryAmt, sendAmt);
+  return null;
+}
 function initSound() {
   if (AC) return;
   const Ctx = window.AudioContext || window.webkitAudioContext;
   if (!Ctx) return;
   AC = new Ctx();
-  const master = AC.createGain(); master.gain.value = 0; master.connect(AC.destination);
-  const air = noiseSource(AC), airLP = AC.createBiquadFilter(); airLP.type = 'lowpass'; airLP.frequency.value = 160; airLP.Q.value = 0.4;
-  const airG = AC.createGain(); airG.gain.value = 0; air.connect(airLP); airLP.connect(airG); airG.connect(master);
+  const comp = AC.createDynamicsCompressor();
+  comp.threshold.value = -20; comp.knee.value = 14; comp.ratio.value = 3; comp.attack.value = 0.02; comp.release.value = 0.5;
+  comp.connect(AC.destination);
+  const master = AC.createGain(); master.gain.value = 0; master.connect(comp);
+  const dry = AC.createGain(); dry.gain.value = 1; dry.connect(master);
+  const verb = AC.createConvolver(); verb.normalize = true; verb.buffer = makeHall(AC, 6.5, 0.95);
+  const wet = AC.createGain(); wet.gain.value = 0.6; verb.connect(wet); wet.connect(master);
+  const send = AC.createGain(); send.gain.value = 1; send.connect(verb);
+  bus = { dry, send, comp };
+  // the air of the hall, and its hum on the second and third harmonics
+  const air = noiseSource(AC), airLP = AC.createBiquadFilter(); airLP.type = 'lowpass'; airLP.frequency.value = 120; airLP.Q.value = 0.4;
+  const airG = AC.createGain(); airG.gain.value = 0.045; air.connect(airLP); airLP.connect(airG); route(airG, 0.9, 0.25);
+  const hum = AC.createGain(); hum.gain.value = 1; route(hum, 0.8, 0.45);
+  for (const [n, g] of [[2, 0.022], [3, 0.012]]) {
+    const o = AC.createOscillator(); o.type = 'sine'; o.frequency.value = F0 * n;
+    const og = AC.createGain(); og.gain.value = g; o.connect(og); og.connect(hum); o.start();
+  }
+  // paper and threads
   const voices = [-0.75, 0.75].map(pan => {
     const src = noiseSource(AC);
     const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 900; bp.Q.value = 0.9;
     const g = AC.createGain(); g.gain.value = 0;
-    const p = AC.createStereoPanner ? AC.createStereoPanner() : null;
-    const creak = AC.createBiquadFilter(); creak.type = 'bandpass'; creak.frequency.value = 2300; creak.Q.value = 9;
+    const creak = AC.createBiquadFilter(); creak.type = 'bandpass'; creak.frequency.value = F0 * 108; creak.Q.value = 9;
     const cg = AC.createGain(); cg.gain.value = 0;
     src.connect(bp); bp.connect(g); src.connect(creak); creak.connect(cg);
-    if (p) { p.pan.value = pan; g.connect(p); cg.connect(p); p.connect(master); } else { g.connect(master); cg.connect(master); }
+    placed([g, cg], pan, 0.8, 0.22);
     return { bp, g, cg };
   });
-  snd = { master, airG, voices };
+  // concrete
+  const gsrc = noiseSource(AC), glp = AC.createBiquadFilter(); glp.type = 'lowpass'; glp.frequency.value = 240; glp.Q.value = 0.7;
+  const gpk = AC.createBiquadFilter(); gpk.type = 'peaking'; gpk.frequency.value = F0 * 4; gpk.gain.value = 9; gpk.Q.value = 1.2;
+  const gg = AC.createGain(); gg.gain.value = 0;
+  gsrc.connect(glp); glp.connect(gpk); gpk.connect(gg);
+  const gp = placed([gg], 0, 0.7, 0.55);
+  // the light: one harmonic per partial, each doubled by a voice that drifts out of tune while lids move
+  const music = AC.createGain(); music.gain.value = 0.9;
+  const mlp = AC.createBiquadFilter(); mlp.type = 'lowpass'; mlp.frequency.value = 2400; mlp.Q.value = 0.3;
+  music.connect(mlp); route(mlp, 0.45, 0.9);
+  const partials = LIGHT_PARTIALS.map(n => {
+    const g = AC.createGain(); g.gain.value = 0;
+    const o1 = AC.createOscillator(); o1.type = 'sine'; o1.frequency.value = F0 * n;
+    const o2 = AC.createOscillator(); o2.type = 'sine'; o2.frequency.value = F0 * n; o2.detune.value = 0.6;
+    const g2 = AC.createGain(); g2.gain.value = 0.55;
+    o1.connect(g); o2.connect(g2); g2.connect(g);
+    const p = panner(0);
+    if (p) { g.connect(p); p.connect(music); } else g.connect(music);
+    o1.start(); o2.start();
+    return { g, p, o2 };
+  });
+  const keptBus = AC.createGain(); keptBus.gain.value = 1; route(keptBus, 0.4, 0.95);
+  const kepts = KEPT_PARTIALS.map(n => {
+    const g = AC.createGain(); g.gain.value = 0;
+    const o = AC.createOscillator(); o.type = 'sine'; o.frequency.value = F0 * n;
+    o.connect(g);
+    const p = panner(0);
+    if (p) { g.connect(p); p.connect(keptBus); } else g.connect(keptBus);
+    o.start();
+    return { g, p };
+  });
+  snd = { master, airG, voices, grind: { g: gg, p: gp }, partials, kepts };
 }
 function setSound(on) {
   soundWanted = on;
@@ -881,72 +1090,229 @@ function setSound(on) {
 }
 function wakeSound() { if (soundWanted && !soundOn) setSound(true); }
 sndBtn.addEventListener('click', () => setSound(!soundOn));
+function relPan(x, z) {
+  const dx = wdelta(x, camPos.x), dz = wdelta(z, camPos.z), dist = Math.hypot(dx, dz);
+  return { dist, pan: clamp((dx * Math.cos(camPos.yaw) - dz * Math.sin(camPos.yaw)) / Math.max(1, dist), -0.85, 0.85) };
+}
+function oneShot(build, x, z, range, gain, dur) {
+  const { dist, pan } = relPan(x, z);
+  const att = 1 / (1 + (dist / range) * (dist / range));
+  if (att < 0.03) return;
+  const t0 = AC.currentTime, g = AC.createGain();
+  g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(gain * att, t0 + 0.015); g.gain.exponentialRampToValueAtTime(0.0003, t0 + dur);
+  placed([g], pan, 0.6, 0.85);
+  build(g, t0, dur);
+}
+// a lid coming to rest: the third harmonic falling to the second
+function thunk(x, z) {
+  if (!snd || !soundOn || AC.currentTime - lastThunk < 0.11) return;
+  lastThunk = AC.currentTime;
+  oneShot((g, t0, dur) => {
+    const o = AC.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(F0 * 3, t0); o.frequency.exponentialRampToValueAtTime(F0 * 2, t0 + 0.45);
+    o.connect(g); o.start(t0); o.stop(t0 + dur + 0.05);
+  }, x, z, 24, 0.3, 1.1);
+}
+// a page left behind: one of the lower harmonics, settling into tune
 function pageTone(x, z) {
   if (!snd || !soundOn) return;
-  const dx = wdelta(x, cam.x), dz = wdelta(z, cam.z), dist = Math.hypot(dx, dz);
-  const att = 1 / (1 + (dist / 18) * (dist / 18));
-  if (att < 0.02) return;
-  const t0 = AC.currentTime, f = 98 + 50 * Math.random();
-  const o = AC.createOscillator(); o.type = 'sine';
-  o.frequency.setValueAtTime(f * 1.03, t0); o.frequency.exponentialRampToValueAtTime(f, t0 + 0.8);
-  const g = AC.createGain(); g.gain.setValueAtTime(0.0001, t0); g.gain.linearRampToValueAtTime(0.22 * att, t0 + 0.06); g.gain.exponentialRampToValueAtTime(0.0004, t0 + 3.2);
-  o.connect(g);
-  if (AC.createStereoPanner) { const p = AC.createStereoPanner(); p.pan.value = clamp((dx * Math.cos(cam.yaw) - dz * Math.sin(cam.yaw)) / Math.max(1, dist), -0.8, 0.8); g.connect(p); p.connect(snd.master); } else g.connect(snd.master);
-  o.start(t0); o.stop(t0 + 3.4);
+  const f = F0 * [5, 6, 8][Math.floor(Math.random() * 3)];
+  oneShot((g, t0, dur) => {
+    const o = AC.createOscillator(); o.type = 'sine';
+    o.frequency.setValueAtTime(f * 1.03, t0); o.frequency.exponentialRampToValueAtTime(f, t0 + 0.9);
+    o.connect(g); o.start(t0); o.stop(t0 + dur + 0.05);
+  }, x, z, 18, 0.2, 3.6);
+}
+function musicScan() {
+  pAmp.fill(0); pPan.fill(0); pMot.fill(0); kAmp.fill(0); kPan.fill(0);
+  for (let b = 0; b < NBB; b++) {
+    const o = bayOpen[b], kept = bayKeptN[b] > 0;
+    if (o < 0.01 && !kept) continue;
+    const { dist, pan } = relPan((b % NB + 0.5) * M, (Math.floor(b / NB) + 0.5) * M);
+    if (dist > 110) continue;
+    if (o >= 0.01 && dist < 90) {
+      const att = 1 / (1 + (dist / 24) * (dist / 24)), w = o * att, p = bayPartial[b];
+      pAmp[p] += w; pPan[p] += w * pan;
+      if (tNow >= bayT0[b] && bayOpen[b] !== bayTarget[b]) pMot[p] += att;
+    }
+    if (kept) { const att = 1 / (1 + (dist / 30) * (dist / 30)), q = bayKeptPartial[b]; kAmp[q] += att; kPan[q] += att * pan; }
+  }
 }
 function updateSound(dt) {
-  if (!snd || !soundOn) return;
+  if (!snd || !soundOn) { ac.l = ac.r = ac.big = ac.hw = ac.tot = ac.grind = ac.gpan = 0; return; }
   const now = AC.currentTime, inv = 1 / Math.max(dt, 1e-3);
-  const gl = clamp(ac.l * inv * 0.012, 0, 0.5), gr = clamp(ac.r * inv * 0.012, 0, 0.5);
+  const gl = clamp(ac.l * inv * 0.006, 0, 0.45), gr = clamp(ac.r * inv * 0.006, 0, 0.45);
   const meanH = ac.tot > 0 ? ac.hw / ac.tot : 10;
   const freq = clamp(1600 - 40 * meanH, 420, 1600);
-  const creak = clamp(ac.big * inv * 0.0035, 0, 0.12);
+  const creak = clamp(ac.big * inv * 0.0018, 0, 0.1);
   snd.voices[0].g.gain.setTargetAtTime(gl, now, 0.06); snd.voices[1].g.gain.setTargetAtTime(gr, now, 0.06);
   for (const v of snd.voices) { v.bp.frequency.setTargetAtTime(freq, now, 0.12); v.cg.gain.setTargetAtTime(creak, now, 0.08); }
-  const breath = clamp((U.uSkyB.value[2].z / SKY[2].i - 0.86) / 0.14, 0, 1);
-  snd.airG.gain.setTargetAtTime(0.035 + 0.03 * breath, now, 0.5);
-  ac.l = ac.r = ac.big = ac.hw = ac.tot = 0;
+  const grind = clamp(ac.grind * inv * 0.9, 0, 0.55) * (0.78 + 0.22 * Math.sin(tNow * 23.0) * Math.sin(tNow * 7.3));
+  snd.grind.g.gain.setTargetAtTime(grind, now, 0.05);
+  if (snd.grind.p && ac.grind > 0) snd.grind.p.pan.setTargetAtTime(clamp(ac.gpan / ac.grind, -0.85, 0.85), now, 0.1);
+  ac.l = ac.r = ac.big = ac.hw = ac.tot = ac.grind = ac.gpan = 0;
+  if (tNow - lastMusic < 0.1) return;
+  lastMusic = tNow;
+  musicScan();
+  for (let p = 0; p < LIGHT_PARTIALS.length; p++) {
+    const v = snd.partials[p], w = pAmp[p], n = LIGHT_PARTIALS[p];
+    const level = clamp(w * 0.03, 0, 0.05) / Math.sqrt(n / 4) * (0.85 + 0.15 * Math.sin(tNow * 0.05 * n + p));
+    v.g.gain.setTargetAtTime(level, now, 1.4);
+    if (v.p && w > 1e-4) v.p.pan.setTargetAtTime(clamp(pPan[p] / w, -0.8, 0.8), now, 0.5);
+    v.o2.detune.setTargetAtTime(0.6 + clamp(pMot[p] * 25, 0, 24), now, 0.25);
+  }
+  for (let q = 0; q < KEPT_PARTIALS.length; q++) {
+    const v = snd.kepts[q], w = kAmp[q];
+    v.g.gain.setTargetAtTime(clamp(w * 0.01, 0, 0.016), now, 2.5);
+    if (v.p && w > 1e-4) v.p.pan.setTargetAtTime(clamp(kPan[q] / w, -0.8, 0.8), now, 0.6);
+  }
 }
 
-// after a reader leaves, the page they read stays up. The viewer's own pages are written to the
-// artifact's shared store, so the archive remembers where it has been read, across visits.
-const kept = { real: new Uint8Array(sheetCount), until: new Float32Array(sheetCount) };
+// ---------------------------------------------------------------- the rule, each frame
+// Every coffer has an open fraction. A reader's own bay half opens so the paper makes way; a
+// reader who stays opens the coffers the light needs to reach them, ring by ring. Openings hold
+// for a while after the reader leaves, then close one by one.
+const bayOpen = new Float32Array(NBB), bayTarget = new Float32Array(NBB), bayFrom = new Float32Array(NBB);
+const bayT0 = new Float32Array(NBB), bayDur = new Float32Array(NBB).fill(1), bayHold = new Float32Array(NBB), bayLevel = new Float32Array(NBB);
+const bayWant = new Float32Array(NBB), bayRing = new Float32Array(NBB), bayKeptN = new Uint16Array(NBB), softTmp = new Float32Array(NBB);
+const bayClear = new Float32Array(NBB), bayClearHold = new Float32Array(NBB), bayClearWant = new Uint8Array(NBB);
+function openCenter(r) { return [bayOf(r.x + SUNOFF_X), bayOf(r.z + SUNOFF_Z)]; }
+function want(b, lev, ring) { if (lev > bayWant[b]) bayWant[b] = lev; if (ring < bayRing[b]) bayRing[b] = ring; }
+function blurSoft() {
+  for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) { let s = 0; for (let k = -2; k <= 2; k++) s += bayOpen[bayIdx(i + k, j)]; softTmp[j * NB + i] = s / 5; }
+  for (let j = 0; j < NB; j++) for (let i = 0; i < NB; i++) { let s = 0; for (let k = -2; k <= 2; k++) s += softTmp[mod(j + k, NB) * NB + i]; softData[j * NB + i] = Math.min(255, Math.round(s / 5 * 255 * 1.6)); }
+}
+function updateBays(t, instant) {
+  bayWant.fill(0); bayRing.fill(99); bayClearWant.fill(0);
+  for (const r of readers) {
+    if (!r.active) continue;
+    bayClearWant[bayIdx(bayOf(r.x), bayOf(r.z))] = 1;
+    if (r.walking) bayClearWant[bayIdx(bayOf(r.x + r.hx * 6), bayOf(r.z + r.hz * 6))] = 1;
+    if (r.k > 0) {
+      const [ci, cj] = openCenter(r), h = (r.k - 1) >> 1;
+      for (let dj = -h; dj <= h; dj++) for (let di = -h; di <= h; di++) want(bayIdx(ci + di, cj + dj), r.lev, Math.max(Math.abs(di), Math.abs(dj)));
+    }
+  }
+  let dirty = !!instant;
+  const ck = instant ? 1 : 1 - Math.exp(-(1 / 60) / 0.9);
+  for (let b = 0; b < NBB; b++) {
+    if (bayClearWant[b]) bayClearHold[b] = t + HOLD;
+    const ct = t < bayClearHold[b] ? 1 : 0;
+    if (bayClear[b] !== ct) { bayClear[b] += (ct - bayClear[b]) * ck; if (Math.abs(bayClear[b] - ct) < 1e-3) bayClear[b] = ct; }
+    let w = bayWant[b];
+    if (bayPermanent[b] || bayKeptN[b]) w = 1;
+    if (w > 0) { bayLevel[b] = t < bayHold[b] ? Math.max(bayLevel[b], w) : w; bayHold[b] = t + HOLD; }
+    const target = t < bayHold[b] ? bayLevel[b] : 0;
+    if (target !== bayTarget[b]) {
+      bayFrom[b] = bayOpen[b]; bayTarget[b] = target;
+      const opening = target > bayOpen[b];
+      bayT0[b] = instant ? -1e9 : t + (opening ? Math.min(bayRing[b], 3) * 0.45 + bayHash[b] * 0.2 : bayHash[b] * 3.0);
+      bayDur[b] = opening ? 1.5 : 6.0;
+    }
+    const prev = bayOpen[b];
+    if (t >= bayT0[b] && prev !== bayTarget[b]) {
+      const p = Math.min(1, (t - bayT0[b]) / bayDur[b]), e = p * p * (3 - 2 * p);
+      const next = p >= 1 ? bayTarget[b] : bayFrom[b] + (bayTarget[b] - bayFrom[b]) * e;
+      bayOpen[b] = next;
+      dirty = true;
+      if (soundOn && !instant) {
+        const cx = (b % NB + 0.5) * M, cz = (Math.floor(b / NB) + 0.5) * M, { dist, pan } = relPan(cx, cz);
+        if (dist < 70) {
+          const att = 1 / (1 + (dist / 20) * (dist / 20)), e2 = Math.abs(next - prev) * att;
+          ac.grind += e2; ac.gpan += e2 * pan;
+          if (p >= 1 && Math.abs(bayTarget[b] - bayFrom[b]) > 0.3) thunk(cx, cz);
+        }
+      }
+    }
+  }
+  if (dirty) {
+    for (let b = 0; b < NBB; b++) bayData[b] = Math.round(bayOpen[b] * 255);
+    blurSoft();
+    bayTex.needsUpdate = true; softTex.needsUpdate = true;
+  }
+}
+
+// paper follows the coffer it hangs from: the lid moves first, then the threads draw the sheets up
+const sheetX = new Float32Array(sheetCount), sheetZ = new Float32Array(sheetCount), sheetBay = Int32Array.from(S.bay), liftMax = Float32Array.from(S.liftMax);
+for (let i = 0; i < sheetCount; i++) { sheetX[i] = S.pos[3 * i]; sheetZ[i] = S.pos[3 * i + 2]; }
+const lifts = liftAttr.array, sways = swayAttr.array, keptArr = keptAttr.array, tl = threadLift.array;
+function updateLifts(dt, instant) {
+  for (let i = 0; i < sheetCount; i++) {
+    const target = liftMax[i] * Math.max(smooth(0.12, 1, bayOpen[sheetBay[i]]), 0.3 * bayClear[sheetBay[i]]);
+    const cur = lifts[i], d = target - cur;
+    if (Math.abs(d) < 1e-3) continue;
+    const vmax = d > 0 ? 5.0 : 2.5;
+    const nv = instant ? target : cur + clamp(d * 1.6, -vmax, vmax) * dt;
+    lifts[i] = nv; tl[threadOf[i]] = nv;
+    const dv = Math.abs(nv - cur);
+    if (!instant) sways[i] = Math.min(1, sways[i] + dv * 0.6);
+    if (soundOn && !instant) {
+      const { dist, pan } = relPan(sheetX[i], sheetZ[i]);
+      if (dist < 60) {
+        const att = 1 / (1 + (dist / 10) * (dist / 10)), h = S.size[3 * i + 1], e = dv * att * h;
+        ac.l += e * (1 - pan) * 0.5; ac.r += e * (1 + pan) * 0.5; ac.tot += e; ac.hw += e * h;
+        if (h > 12) ac.big += e;
+      }
+    }
+  }
+  const k = Math.exp(-dt / 3);
+  for (let i = 0; i < sheetCount; i++) if (sways[i] > 1e-3) sways[i] *= k;
+  liftAttr.needsUpdate = true; threadLift.needsUpdate = true; swayAttr.needsUpdate = true;
+}
+
+// after a reader leaves, the page they read stays up, dark red, under one open coffer. The
+// viewer's own pages are kept in the artifact's shared store (or this browser), so the archive
+// remembers where it has been read.
+const keptUntil = new Float64Array(sheetCount);
 let keptList = [], dbRef = null, dbWriting = false, dbPending = null, roomRef = null, lastSent = 0, sentKey = '';
+const LOCAL_KEY = 'vellum-stacks.kept';
+function markKept(i, until) {
+  if (!keptArr[i]) { keptArr[i] = 1; bayKeptN[sheetBay[i]]++; keptAttr.needsUpdate = true; }
+  keptUntil[i] = Math.max(keptUntil[i], until);
+}
+function unmarkKept(i) {
+  if (!keptArr[i]) return;
+  keptArr[i] = 0; bayKeptN[sheetBay[i]]--; keptAttr.needsUpdate = true; keptUntil[i] = 0;
+}
+function expireKept() { for (let i = 0; i < sheetCount; i++) if (keptArr[i] && keptUntil[i] < tNow) unmarkKept(i); }
 function nearestSheet(x, z) {
-  let bi = -1, bd = 4;
-  for (let i = 0; i < sheetCount; i++) { const dd = Math.hypot(wdelta(sheetX[i], x), wdelta(sheetZ[i], z)); if (dd < bd) { bd = dd; bi = i; } }
+  let bi = -1, bd = 3;
+  for (const i of baySheets[bayIdx(bayOf(x), bayOf(z))]) { const d = Math.hypot(wdelta(sheetX[i], x), wdelta(sheetZ[i], z)); if (d < bd) { bd = d; bi = i; } }
   return bi;
 }
 function leavePage(r, persist) {
-  let bi = -1, best = 0.5;
-  for (let i = 0; i < sheetCount; i++) {
-    if (Math.hypot(wdelta(sheetX[i], r.x), wdelta(sheetZ[i], r.z)) > r.R) continue;
-    const fr = liftMax[i] > 0 ? lifts[i] / liftMax[i] : 0;
-    if (fr > best) { best = fr; bi = i; }
+  if (r.k <= 0) return;
+  const [ci, cj] = openCenter(r), h = (r.k - 1) >> 1;
+  let bi = -1, best = 0.4;
+  for (let dj = -h; dj <= h; dj++) for (let di = -h; di <= h; di++) {
+    for (const i of baySheets[bayIdx(ci + di, cj + dj)]) {
+      const fr = liftMax[i] > 0 ? lifts[i] / liftMax[i] : 0;
+      if (fr > best && !keptArr[i]) { best = fr; bi = i; }
+    }
   }
   if (bi < 0) return;
-  if (persist) { kept.real[bi] = 1; persistKept(sheetX[bi], sheetZ[bi]); } else kept.until[bi] = tNow + 1800;
+  if (persist) { markKept(bi, Infinity); persistKept(sheetX[bi], sheetZ[bi]); r.dwell = 0; } else markKept(bi, tNow + 1800);
   pageTone(sheetX[bi], sheetZ[bi]);
 }
 async function persistKept(x, z) {
   keptList.push([Math.round(x * 2) / 2, Math.round(z * 2) / 2]);
   if (keptList.length > 240) keptList = keptList.slice(-240);
-  if (!dbRef) return;
+  if (!dbRef) { try { localStorage.setItem(LOCAL_KEY, JSON.stringify(keptList)); } catch (e) { /* storage unavailable */ } return; }
   const body = { pages: keptList.map(p => [p[0], p[1]]) };
   if (dbWriting) { dbPending = body; return; }
   dbWriting = true;
-  try { await dbRef.set(body); } catch (e) { /* a read-only viewer: the page stays lifted here only */ }
+  try { await dbRef.set(body); } catch (e) { /* a read-only viewer: the page stays up here only */ }
   dbWriting = false;
   if (dbPending) { const b = dbPending; dbPending = null; dbWriting = true; try { await dbRef.set(b); } catch (e) { /* same */ } dbWriting = false; }
 }
 function applyKept(list) {
-  kept.real.fill(0);
+  for (let i = 0; i < sheetCount; i++) if (keptArr[i] && keptUntil[i] === Infinity) unmarkKept(i);
   for (const p of list) {
     if (!Array.isArray(p) || p.length < 2) continue;
     const x = +p[0], z = +p[1];
     if (!isFinite(x) || !isFinite(z)) continue;
     const i = nearestSheet(x, z);
-    if (i >= 0) kept.real[i] = 1;
+    if (i >= 0) markKept(i, Infinity);
   }
 }
 const peerSlot = new Map();
@@ -965,10 +1331,10 @@ function setupRoom(room) {
       if (k === undefined) {
         k = freeSlot(); if (k < 0) continue;
         peerSlot.set(p.peer, k);
-        const r = readers[k]; r.real = true; r.active = true; r.x = ((x % T) + T) % T; r.z = ((z % T) + T) % T;
+        const r = readers[k]; r.real = true; r.active = true; r.x = mod(x, T); r.z = mod(z, T);
       }
       const r = readers[k];
-      r.tx = ((x % T) + T) % T; r.tz = ((z % T) + T) % T;
+      r.tx = mod(x, T); r.tz = mod(z, T);
       r.walking = !!pr.w; r.dwell = clamp(+pr.d || 0, 0, 600);
     }
     for (const [peer, k] of [...peerSlot]) if (!live.has(peer)) { peerSlot.delete(peer); const r = readers[k]; r.real = false; r.active = r.simActive; r.dwell = 0; pickPlace(r); }
@@ -977,7 +1343,10 @@ function setupRoom(room) {
 }
 (async () => {
   const cl = window.claude;
-  if (!cl || typeof cl.use !== 'function') return;
+  if (!cl || typeof cl.use !== 'function') {
+    try { const v = JSON.parse(localStorage.getItem(LOCAL_KEY) || '[]'); if (Array.isArray(v)) { keptList = v.slice(-240).map(p => [+p[0], +p[1]]); applyKept(keptList); } } catch (e) { /* storage unavailable */ }
+    return;
+  }
   try {
     const db = await cl.use('db');
     if (db) {
@@ -995,87 +1364,54 @@ function setupRoom(room) {
     if (room) setupRoom(room);
   } catch (e) { /* alone here */ }
 })();
-function updateLifts(dt) {
-  const downK = 1 - Math.exp(-dt / 160);
-  const act = readers.filter(r => r.active && r.s > 0);
-  for (let i = 0; i < sheetCount; i++) {
-    let o = 0;
-    const x = sheetX[i], z = sheetZ[i];
-    for (let k = 0; k < act.length; k++) {
-      const r = act[k];
-      let dx = x - r.x; dx -= Math.round(dx / T) * T; if (dx > r.R || dx < -r.R) continue;
-      let dz = z - r.z; dz -= Math.round(dz / T) * T; if (dz > r.R || dz < -r.R) continue;
-      o += r.s * (1 - smooth(r.R * 0.45, r.R, Math.hypot(dx, dz)));
-    }
-    if (kept.real[i]) o = 1; else if (kept.until[i] > tNow && o < 0.9) o = 0.9;
-    if (o > 1) o = 1;
-    const target = liftMax[i] * o, cur = lifts[i];
-    const v = cur + (target - cur) * (target > cur ? 1 - Math.exp(-dt / riseT[i]) : downK);
-    const dv = Math.abs(v - cur);
-    sways[i] = Math.min(1, sways[i] * Math.exp(-dt / 3.5) + dv * 2.2);
-    if (soundOn && dv > 1e-4) {
-      const ex = wdelta(x, cam.x), ez = wdelta(z, cam.z), dist = Math.hypot(ex, ez);
-      if (dist < 60) {
-        const att = 1 / (1 + (dist / 10) * (dist / 10)), h = S.size[3 * i + 1];
-        const pan = (ex * Math.cos(cam.yaw) - ez * Math.sin(cam.yaw)) / Math.max(1, dist);
-        const e = dv * att * h;
-        ac.l += e * (1 - pan) * 0.5; ac.r += e * (1 + pan) * 0.5; ac.tot += e; ac.hw += e * h;
-        if (h > 12) ac.big += e;
-      }
-    }
-    lifts[i] = v; const ti = threadOf[i]; if (ti >= 0) { tl[ti] = v; tl[ti + 1] = v; }
+
+// the readers
+const PIER_HALF = PIER_W / 2 + 0.6;
+function pushOutOfPiers(o) {
+  const p = Math.round((o.x / M - 2) / DIST), q = Math.round((o.z / M - 2) / DIST);
+  const px = (p * DIST + 2) * M, pz = (q * DIST + 2) * M;
+  const dx = wdelta(o.x, px), dz = wdelta(o.z, pz);
+  if (Math.abs(dx) < PIER_HALF && Math.abs(dz) < PIER_HALF) {
+    if (PIER_HALF - Math.abs(dx) < PIER_HALF - Math.abs(dz)) o.x += (Math.sign(dx) || 1) * (PIER_HALF - Math.abs(dx));
+    else o.z += (Math.sign(dz) || 1) * (PIER_HALF - Math.abs(dz));
   }
-  liftAttr.needsUpdate = true; threadLift.needsUpdate = true; swayAttr.needsUpdate = true;
 }
 function updateReaders(dt) {
   for (let k = 1; k < NREAD; k++) {
     const r = readers[k];
-    if (!r.active) continue;
+    if (!r.active) { place(figMain, k - 1, 0, -500, 0, 0, 0, 0, 0); continue; }
     if (r.real) {
-      const dx = wdelta(r.tx, r.x), dz = wdelta(r.tz, r.z), kk = 1 - Math.exp(-dt / 0.6);
+      const dx = wdelta(r.tx, r.x), dz = wdelta(r.tz, r.z), kk = 1 - Math.exp(-dt / 0.6), dl = Math.hypot(dx, dz);
       r.x += dx * kk; r.z += dz * kk;
-      if (Math.hypot(dx, dz) > 0.3) r.yaw = Math.atan2(dx, dz);
-      r.x = ((r.x % T) + T) % T; r.z = ((r.z % T) + T) % T;
-      readerField(r);
-      place(figMain, k - 1, r.x, 0, r.z, 1, 1, 1, r.yaw);
-      continue;
-    }
-    if (r.walking) {
+      if (dl > 0.3) { r.yaw = Math.atan2(dx, dz); r.hx = dx / dl; r.hz = dz / dl; }
+    } else if (r.walking) {
       const dx = wdelta(r.tx, r.x), dz = wdelta(r.tz, r.z), d = Math.hypot(dx, dz);
       if (d < 0.4) { r.walking = false; r.timer = 30 + rand() * 90; r.dwell = 0; }
-      else { const v = Math.min(d, r.speed * dt); r.x += dx / d * v; r.z += dz / d * v; r.yaw = Math.atan2(dx, dz); r.dwell = 0; }
+      else { const v = Math.min(d, r.speed * dt); r.x += dx / d * v; r.z += dz / d * v; r.yaw = Math.atan2(dx, dz); r.hx = dx / d; r.hz = dz / d; r.dwell = 0; pushOutOfPiers(r); }
     } else {
       r.dwell += dt; r.timer -= dt;
       if (r.timer < 0) { if (r.dwell > 20) leavePage(r, false); pickPlace(r); }
     }
-    r.x = ((r.x % T) + T) % T; r.z = ((r.z % T) + T) % T;
+    r.x = mod(r.x, T); r.z = mod(r.z, T);
     readerField(r);
     place(figMain, k - 1, r.x, 0, r.z, 1, 1, 1, r.yaw);
   }
   figMain.instanceMatrix.needsUpdate = true;
 }
-function place(mesh, idx, x, y, z, sx, sy, sz, yaw) {
-  Qt.setFromAxisAngle(V3.set(0, 1, 0), yaw || 0);
-  M.compose(V3.set(x, y, z), Qt, SC.set(sx, sy, sz));
-  mesh.setMatrixAt(idx, M);
-}
 
-// ---------------------------------------------------------------- the viewer: a reader who may walk on their own or be led
-const cam = { x: 0, y: EYE, z: 0, yaw: 0, pitch: 0.2 };
-{
-  const dx = wdelta(PLACES[10].x, SKY[2].x), dz = wdelta(PLACES[10].z, SKY[2].z), dl = Math.hypot(dx, dz) || 1;
-  cam.x = ((SKY[2].x + dx / dl * 85) % T + T) % T; cam.z = ((SKY[2].z + dz / dl * 85) % T + T) % T;
-  cam.yaw = Math.atan2(-wdelta(SKY[2].x, cam.x), -wdelta(SKY[2].z, cam.z));
-}
+// ---------------------------------------------------------------- the viewer
+// You start on the axis of the great skylight, a hundred metres out, and walk toward it.
+const START = { x: GREAT_X, z: GREAT_Z - 100 };
+const cam = { x: START.x, y: EYE, z: START.z, yaw: Math.PI, pitch: 0.29 };
 const man = Object.assign({}, cam);
-const ap = { x: cam.x, z: cam.z, yaw: cam.yaw, pitch: 0.2, fov: 46, walking: false, tx: 0, tz: 0, timer: 18, baseYaw: 0, phase: 0 };
+const ap = { x: cam.x, z: cam.z, yaw: cam.yaw, pitch: cam.pitch, fov: 50, walking: false, tx: 0, tz: 0, timer: 18, baseYaw: 0, phase: 0 };
 const vel = { f: 0, yaw: 0, pitch: 0 };
 const lean = { x: 0, y: 0, yaw: 0, pitch: 0 };
-let auto = 1, lastInput = -1e9, tNow = 0, mx = 0, my = 0, fovNow = 46;
+let auto = 1, lastInput = -1e9, mx = 0, my = 0, fovNow = 50;
 function alerp(a, b, t) { let d = b - a; d -= Math.round(d / (2 * Math.PI)) * 2 * Math.PI; return a + d * t; }
 function apPick() {
   let p; do { p = PLACES[Math.floor(rand() * PLACES.length)]; } while (wdist(p.x, p.z, ap.x, ap.z) < 10);
-  ap.tx = p.x + (rand() - 0.5) * 4; ap.tz = p.z + (rand() - 0.5) * 4; ap.walking = true;
+  ap.tx = p.x; ap.tz = p.z; ap.walking = true;
 }
 function updateAuto(dt, t) {
   if (ap.walking) {
@@ -1084,33 +1420,26 @@ function updateAuto(dt, t) {
     else {
       const v = Math.min(d, 0.9 * dt);
       ap.x += dx / d * v; ap.z += dz / d * v;
-      const want = Math.atan2(-dx, -dz);
-      ap.yaw = alerp(ap.yaw, want, 1 - Math.exp(-dt / 2.5));
-      let pitchWant = 0.05 + 0.03 * Math.sin(t / 7);
-      for (const sk of SKY) {
-        if (wdist(ap.tx, ap.tz, sk.x, sk.z) > 30) continue;
-        const ds = Math.max(8, wdist(ap.x, ap.z, sk.x, sk.z));
-        pitchWant = clamp(Math.atan((ROOF - 6 - EYE) / ds) * 0.75, 0.05, 0.45);
+      pushOutOfPiers(ap);
+      ap.yaw = alerp(ap.yaw, Math.atan2(-dx, -dz), 1 - Math.exp(-dt / 2.5));
+      let pitchWant = 0.07 + 0.03 * Math.sin(t / 7);
+      for (const s of SKYLIGHTS) {
+        const sx = (s.i + s.w / 2) * M, sz = (s.j + s.h / 2) * M;
+        if (wdist(ap.tx, ap.tz, sx, sz) > 40) continue;
+        const ds = Math.max(10, wdist(ap.x, ap.z, sx, sz));
+        pitchWant = clamp(Math.atan((H0 - EYE) / ds) * 0.7, 0.07, 0.5);
       }
       ap.pitch = lerp(ap.pitch, pitchWant, 1 - Math.exp(-dt / 2.5));
-      ap.fov = lerp(ap.fov, 48, 1 - Math.exp(-dt / 4));
+      ap.fov = lerp(ap.fov, 52, 1 - Math.exp(-dt / 4));
     }
   } else {
     ap.timer -= dt;
     if (ap.timer < 0) apPick();
-    const look = ap.baseYaw + 0.45 * Math.sin(t / 11 + ap.phase);
-    ap.yaw = alerp(ap.yaw, look, 1 - Math.exp(-dt / 3));
-    const up = 0.08 + 0.26 * Math.max(0, Math.sin(t / 17 + ap.phase));
-    ap.pitch = lerp(ap.pitch, up, 1 - Math.exp(-dt / 3));
-    ap.fov = lerp(ap.fov, 40, 1 - Math.exp(-dt / 6));
+    ap.yaw = alerp(ap.yaw, ap.baseYaw + 0.45 * Math.sin(t / 11 + ap.phase), 1 - Math.exp(-dt / 3));
+    ap.pitch = lerp(ap.pitch, 0.1 + 0.36 * Math.max(0, Math.sin(t / 17 + ap.phase)), 1 - Math.exp(-dt / 3));
+    ap.fov = lerp(ap.fov, 46, 1 - Math.exp(-dt / 6));
   }
-  ap.x = ((ap.x % T) + T) % T; ap.z = ((ap.z % T) + T) % T;
-}
-{
-  const r = readers[1];
-  const dx = wdelta(SKY[2].x, cam.x), dz = wdelta(SKY[2].z, cam.z), dl = Math.hypot(dx, dz) || 1;
-  r.x = ((cam.x + dx / dl * 27 - dz / dl * 9) % T + T) % T; r.z = ((cam.z + dz / dl * 27 + dx / dl * 9) % T + T) % T;
-  r.walking = false; r.dwell = 70; r.timer = 80 + rand() * 60; r.yaw = cam.yaw + 0.6; r.active = true; readerField(r);
+  ap.x = mod(ap.x, T); ap.z = mod(ap.z, T);
 }
 function touched() { if (auto >= 0.999) Object.assign(man, cam); lastInput = tNow; }
 function walkOn() { lastInput = -1e9; ap.x = cam.x; ap.z = cam.z; ap.yaw = cam.yaw; ap.pitch = cam.pitch; apPick(); }
@@ -1142,7 +1471,7 @@ addEventListener('pointermove', e => {
     if (dragInfo) dragInfo.moved += Math.abs(dx) + Math.abs(dy);
     if (pointers.size === 1) {
       if (dragInfo && dragInfo.moved > 4) touched();
-      man.yaw -= dx * 0.0032; man.pitch = clamp(man.pitch - dy * 0.0024, -0.9, 1.2);
+      man.yaw -= dx * 0.0032; man.pitch = clamp(man.pitch - dy * 0.0024, -0.9, 1.25);
       vel.yaw = -dx * 0.05; vel.pitch = -dy * 0.04;
     } else { vel.f = clamp(vel.f - dy * 0.02, -3.5, 3.5); touched(); }
   } else if (e.pointerType !== 'touch') {
@@ -1168,21 +1497,41 @@ function goFullscreen() {
   try { const p = req.call(el); if (p && p.catch) p.catch(() => {}); } catch (e) { /* not available here */ }
 }
 fsBtn.addEventListener('click', goFullscreen);
-setTimeout(() => hintEl.classList.add('faded'), 16000);
+setTimeout(() => hintEl.classList.add('faded'), 24000);
+
+// the district card, like signage: shown when you enter a new district
+let cardDistrict = -1, districtNow = -1, districtSince = 0, cardTimer = 0, cardsShown = 0;
+function showCard(d) {
+  cardKind.textContent = districtSky[d] ? 'Reading room' : 'Stacks';
+  cardCode.textContent = districtName(d);
+  cardEl.classList.add('on');
+  clearTimeout(cardTimer);
+  cardTimer = setTimeout(() => cardEl.classList.remove('on'), 4200);
+  cardDistrict = d; cardsShown++;
+}
+
+// ---------------------------------------------------------------- the first moment
+// A reader is already standing in the light ahead of you, and the ceiling above them is opening.
+{
+  const r = readers[1], p = bayCenter(bayOf(START.x - 12), bayOf(START.z + 34));
+  r.x = p.x; r.z = p.z; r.walking = false; r.dwell = 16; r.timer = 100 + rand() * 40; r.yaw = 2.4; r.active = true;
+}
+readers[0].x = cam.x; readers[0].z = cam.z; readers[0].dwell = 0; readers[0].walking = true;
+for (const r of readers) readerField(r);
+apPick();
+ap.tx = GREAT_X; ap.tz = GREAT_Z - 22;
+horizon.material.uniforms.uMono.value = 1.5 * Math.PI + 0.32;
+if (QS.has('pitch') || QS.has('yaw') || QS.has('at')) {
+  auto = 0; lastInput = 1e12;
+  man.pitch = parseFloat(QS.get('pitch') || '0.2'); man.yaw = parseFloat(QS.get('yaw') || String(Math.PI));
+  if (QS.has('at')) { const p = PLACES[parseInt(QS.get('at'), 10) % PLACES.length]; man.x = p.x; man.z = p.z; }
+}
+updateBays(0, true);
+updateLifts(0.016, true);
 
 // ---------------------------------------------------------------- frame
 const t0 = performance.now() / 1000;
-let last = t0, ema = 1 / 60, adaptAt = t0 + 3, prevX = cam.x, prevZ = cam.z;
-apPick();
-ap.tx = PLACES[4].x + 1; ap.tz = PLACES[4].z - 1;
-man.yaw = cam.yaw;
-readers.forEach((rd, i) => U.uRead.value[i].set(rd.x, rd.z, rd.R, rd.active ? rd.s : 0));
-updateLifts(60);
-{
-  const qs = new URLSearchParams(location.search);
-  if (qs.has('pitch') || qs.has('yaw') || qs.has('at')) { auto = 0; man.pitch = parseFloat(qs.get('pitch') || '0'); man.yaw = parseFloat(qs.get('yaw') || '0'); lastInput = 1e9; }
-  if (qs.has('at')) { const p = PLACES[parseInt(qs.get('at'), 10) % PLACES.length]; man.x = p.x; man.z = p.z; }
-}
+let last = t0, ema = 1 / 60, adaptAt = t0 + 3, prevX = cam.x, prevZ = cam.z, expireAt = 0;
 function frame() {
   requestAnimationFrame(frame);
   const nowS = performance.now() / 1000;
@@ -1190,7 +1539,6 @@ function frame() {
   last = nowS;
   const t = nowS - t0; tNow = t;
   U.uTime.value = t;
-  SKY.forEach((sk, i) => { const b = sk.i * (0.86 + 0.14 * Math.sin(t * (0.021 + 0.004 * i) + i * 1.7)); U.uSkyB.value[i].z = b; skyMeshes[i].material.uniforms.uIntensity.value = b; });
 
   ema += (dt - ema) * 0.05;
   if (nowS > adaptAt) {
@@ -1210,19 +1558,22 @@ function frame() {
   if (keys.has('KeyA') || keys.has('ArrowLeft')) vel.yaw += 1.2 * dt;
   if (keys.has('KeyD') || keys.has('ArrowRight')) vel.yaw -= 1.2 * dt;
   if (keys.size) touched();
-  man.yaw += vel.yaw * dt; man.pitch = clamp(man.pitch + vel.pitch * dt, -0.9, 1.2);
+  man.yaw += vel.yaw * dt; man.pitch = clamp(man.pitch + vel.pitch * dt, -0.9, 1.25);
   man.x += -Math.sin(man.yaw) * vel.f * dt; man.z += -Math.cos(man.yaw) * vel.f * dt;
   vel.f *= Math.exp(-dt * 1.4); vel.yaw *= Math.exp(-dt * 3.5); vel.pitch *= Math.exp(-dt * 3.5);
-  man.x = ((man.x % T) + T) % T; man.z = ((man.z % T) + T) % T;
+  pushOutOfPiers(man);
+  man.x = mod(man.x, T); man.z = mod(man.z, T);
   cam.x = man.x + wdelta(ap.x, man.x) * k; cam.z = man.z + wdelta(ap.z, man.z) * k; cam.y = EYE;
   cam.yaw = alerp(man.yaw, ap.yaw, k); cam.pitch = lerp(man.pitch, ap.pitch, k);
   if (auto >= 0.999) Object.assign(man, cam);
-  fovNow = lerp(fovNow, lerp(48, ap.fov, k), 1 - Math.exp(-dt / 3));
+  fovNow = lerp(fovNow, lerp(50, ap.fov, k), 1 - Math.exp(-dt / 3));
 
-  // the viewer is reader zero: standing still opens the archive
-  const moved = Math.hypot(wdelta(cam.x, prevX), wdelta(cam.z, prevZ)); prevX = cam.x; prevZ = cam.z;
+  // the viewer is reader zero: standing still opens the ceiling
+  const hx = wdelta(cam.x, prevX), hz = wdelta(cam.z, prevZ), moved = Math.hypot(hx, hz);
+  prevX = cam.x; prevZ = cam.z;
   const me = readers[0];
   me.x = cam.x; me.z = cam.z;
+  if (moved > 1e-4) { me.hx = hx / moved; me.hz = hz / moved; }
   const still = moved / Math.max(dt, 1e-3) < 0.2;
   const prevDwell = me.dwell;
   me.walking = !still;
@@ -1235,10 +1586,12 @@ function frame() {
     const key = px + ',' + pz + ',' + pd + ',' + me.walking;
     if (key !== sentKey) { sentKey = key; lastSent = t; roomRef.presence({ x: px, z: pz, d: pd, w: me.walking }).catch(() => {}); }
   }
+  camPos.x = cam.x; camPos.z = cam.z; camPos.yaw = cam.yaw;
   updateReaders(dt);
-  updateLifts(dt);
+  updateBays(t, false);
+  updateLifts(dt, false);
+  if (t > expireAt) { expireAt = t + 2; expireKept(); }
   updateSound(dt);
-  readers.forEach((r, i) => U.uRead.value[i].set(r.x, r.z, r.R, r.active ? r.s : 0));
 
   const lk = 1 - Math.exp(-dt * 1.3), amp = reduceMotion ? 0.3 : 1;
   lean.x += (mx * 0.6 * amp - lean.x) * lk; lean.y += (-my * 0.3 * amp - lean.y) * lk;
@@ -1248,17 +1601,26 @@ function frame() {
   camera.rotation.set(cam.pitch + lean.pitch, cam.yaw + lean.yaw, 0);
   camera.fov = camera.aspect < 1 ? 2 * Math.atan(Math.tan(fovNow * Math.PI / 360) / camera.aspect) * 180 / Math.PI : fovNow;
   camera.updateProjectionMatrix();
+  camera.updateMatrixWorld();
   U.uCamPos.value.copy(camera.position);
   water.position.set(camera.position.x, 0, camera.position.z);
+  skies[0].position.set(camera.position.x, SKY_Y, camera.position.z);
+  skies[1].position.set(camera.position.x, -SKY_Y, camera.position.z);
   horizon.position.set(camera.position.x, 0, camera.position.z);
-  for (const b of beams) { b.mesh.position.x = camera.position.x + wdelta(b.s.x, camera.position.x); b.mesh.position.z = camera.position.z + wdelta(b.s.z, camera.position.z); b.mesh.material.uniforms.uBoxC.value.set(b.mesh.position.x, b.mirror * ROOF / 2, b.mesh.position.z); }
-  SKY.forEach((s, i) => { const m = skyMeshes[i]; m.position.x = camera.position.x + wdelta(s.x, camera.position.x); m.position.z = camera.position.z + wdelta(s.z, camera.position.z); });
   compMat.uniforms.uFade.value = clamp((t - 0.3) / 4.0, 0, 1);
 
-  renderer.setRenderTarget(sceneRT);
-  renderer.clear(true, true, false);
-  renderer.render(scene, camera);
-  down(sceneRT, rtA, 0.2);
+  const dNow = districtOfBay(bayOf(cam.x), bayOf(cam.z));
+  if (dNow !== districtNow) { districtNow = dNow; districtSince = t; }
+  else if (dNow !== cardDistrict && t - districtSince > (cardsShown ? 0.8 : 2.2)) showCard(dNow);
+
+  // depth of the solid things, for the light; then the hall; then the light itself
+  camera.layers.set(1);
+  renderer.setRenderTarget(depthRT); renderer.clear(true, true, false); renderer.render(scene, camera);
+  camera.layers.set(0);
+  renderer.setRenderTarget(sceneRT); renderer.clear(true, true, false); renderer.render(scene, camera);
+  pass(volMat, volRT);
+  blur(volRT, volRT2, 1.0);
+  down(sceneRT, rtA, 0.3);
   blur(rtA, rtA2, 1.0);
   blur(rtA, rtA2, 1.6);
   down(rtA, rtB, 0.0);
@@ -1267,7 +1629,7 @@ function frame() {
   pass(compMat, null);
 }
 frame();
-console.log('sheets', sheetCount, 'thread vertices', threadVerts, 'line vertices', L.pos.length / 3, 'readers', readers.filter(r => r.active).length, 'places', PLACES.length);
+console.log('sheets', sheetCount, 'threads', sheetCount, 'bays', NBB, 'piers', ND * ND, 'readers', readers.filter(r => r.active).length);
 </script>
 
 </body>

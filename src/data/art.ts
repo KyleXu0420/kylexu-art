@@ -32,7 +32,7 @@ export const works: Work[] = [
     medium: 'Interactive, WebGL, sound',
     year: '2026',
     poster: vellumPoster,
-    alt: 'Translucent sheets of paper standing like towers in the dark, lit from a rectangular opening in the roof',
+    alt: 'An endless dark concrete hall under a coffered ceiling, a far row of open coffers letting light down onto hanging paper',
     loop: '/art/vellum-stacks/loop.mp4',
   },
   {
