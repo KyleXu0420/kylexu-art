@@ -10,7 +10,9 @@ import Sheet from '../../../layouts/Sheet.astro';
 import Figure from '../../../components/Figure.astro';
 import CursorLabel from '../../../components/CursorLabel.astro';
 import { href } from '../../../lib/url';
-import { nextAfter } from '../../../data/art';
+import { nextAfter, works } from '../../../data/art';
+import { graph, work } from '../../../lib/schema';
+const self = works.find((w) => w.slug === 'vellum-stacks')!;
 import '../../../styles/home.css';
 import '../../../styles/case.css';
 import '../../../styles/art.css';
@@ -24,6 +26,7 @@ const still = await getImage({ src: poster, width: 1600, format: 'webp' });
 const live = href('/art/vellum-stacks/live');
 ---
 <Sheet
+  schema={graph(work({ name: self.title, description: self.medium + ', ' + self.year, path: '/art/vellum-stacks', image: '/og-vellum-stacks.jpg', date: self.year, genre: 'Artwork' }))}
   title="The Vellum Stacks — Kyle Xu"
   description="The Vellum Stacks (2026), an interactive spatial artwork by Kyle Xu: an endless concrete hall over black water under a deep coffered ceiling, hung with translucent paper. The archive opens where it is read. WebGL, sound synthesised live."
   ogImage="/og-vellum-stacks.jpg"

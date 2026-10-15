@@ -11,15 +11,17 @@ interface Props {
   description: string;
   ogImage?: string;        // site-root path, e.g. "/og/home.png"
   robots?: string;
+  schema?: object;          // JSON-LD for this page (src/lib/schema.ts)
   next?: { title: string; to: string; line?: string };   // a case's way to the other case: a row in the footer
 }
-const { title, description, ogImage, robots, next } = Astro.props;
+const { title, description, ogImage, robots, next, schema } = Astro.props;
 // the index passes its closing paragraph to the footer. A slot handed down through a layout's own
 // <slot> still counts as present when it is empty, so the test is on the rendered content, not on
 // the slot's existence: a page with nothing to say gets no close.
 const signoffHtml = Astro.slots.has('signoff') ? (await Astro.slots.render('signoff')).trim() : '';
 const signoff = signoffHtml.length > 0;
-const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/', Astro.site);
+// one URL per page, as it is served: no base, no .html, no /index, no trailing slash (but the root's)
+const canonical = new URL(Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '').replace(/\.html$/, '').replace(/\/index$/, '').replace(/\/$/, '') || '/', Astro.site);
 const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
 ---
 <!doctype html>
@@ -41,6 +43,8 @@ const og = ogImage ? new URL(ogImage, Astro.site).toString() : undefined;
   <meta name="theme-color" content="#FFFFFF" />
   <link rel="icon" href={href('/favicon.png')} type="image/png" />
   <link rel="apple-touch-icon" href={href('/apple-touch-icon.png')} />
+  <link rel="alternate" type="text/plain" href={href('/llms.txt')} title="llms.txt" />
+  {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>

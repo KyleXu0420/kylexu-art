@@ -3,6 +3,7 @@ import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
 import CursorLabel from '../components/CursorLabel.astro';
 import { href } from '../lib/url';
+import { graph, person, website } from '../lib/schema';
 import '../styles/home.css';
 import cardDify from '../assets/img/card-dify.png';
 import cardHeygen from '../assets/img/card-heygen.png';
@@ -29,7 +30,8 @@ const cards = [
 
 ---
 <Sheet
-  title="Kyle Xu - AI Product Designer & Design Engineer"
+  schema={graph(website, person)}
+  title="Kyle Xu — AI Product Designer"
   description="Kyle Xu, AI product designer. I design how AI products behave, and the interface that keeps people in control of it. Dify, Curio Digital Therapeutics, Heygen, Eaton."
 >
   <section class="col hero" aria-labelledby="h1">

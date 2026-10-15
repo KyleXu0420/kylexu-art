@@ -1,0 +1,29 @@
+# kylexu.art — Kyle Xu, AI product designer. Every page is open to search engines and AI assistants.
+User-agent: *
+Allow: /
+
+# AI search and assistants, named so their access is explicit
+User-agent: GPTBot
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+User-agent: Claude-User
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://www.kylexu.art/sitemap.xml

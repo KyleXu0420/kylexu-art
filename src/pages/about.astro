@@ -3,6 +3,7 @@ import { Picture } from 'astro:assets';
 import Sheet from '../layouts/Sheet.astro';
 import HalftonePortrait from '../components/HalftonePortrait.astro';
 import { href } from '../lib/url';
+import { graph, person, SITE } from '../lib/schema';
 import '../styles/home.css';   // the same rows and the same card treatment as the index
 import '../styles/about.css';
 import portrait from '../assets/img/about-portrait.png';
@@ -40,6 +41,7 @@ const facts = [
 ];
 ---
 <Sheet
+  schema={graph({ '@type': 'ProfilePage', url: SITE + '/about', mainEntity: { '@id': person['@id'] } }, person)}
   title="About — Kyle Xu"
   description="Kyle Xu designs AI products and complex B2B software. M.S. in HCI from the University of Michigan; since 2022 at Eaton, Heygen, Infloww, Curio Digital Therapeutics, Dify and Temper. Trained in architecture before that."
   ogImage="/og-about.jpg"
