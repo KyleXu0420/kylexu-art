@@ -10,12 +10,14 @@ import Sheet from '../../layouts/Sheet.astro';
 import CursorLabel from '../../components/CursorLabel.astro';
 import { href } from '../../lib/url';
 import { works } from '../../data/art';
+import { graph, work, SITE } from '../../lib/schema';
 import '../../styles/home.css';
 import '../../styles/art.css';
 
 const plate = { formats: ['avif', 'webp'] as const, widths: [720, 1100, 1600], sizes: '(max-width: 767px) 100vw, (max-width: 1440px) 87vw, 1248px', decoding: 'async' as const };
 ---
 <Sheet
+  schema={graph({ '@type': 'CollectionPage', name: 'Art — Kyle Xu', url: SITE + '/art', hasPart: works.map((w) => work({ name: w.title, description: w.medium + ', ' + w.year, path: '/art/' + w.slug, date: w.year, genre: 'Artwork' })) })}
   title="Art — Kyle Xu"
   description="Work Kyle Xu makes outside client briefs, mostly in code: interactive and generative pieces. The Vellum Stacks, 2026."
   ogImage="/og-vellum-stacks.jpg"

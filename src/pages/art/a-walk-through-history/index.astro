@@ -11,7 +11,9 @@ import Sheet from '../../../layouts/Sheet.astro';
 import Figure from '../../../components/Figure.astro';
 import CursorLabel from '../../../components/CursorLabel.astro';
 import { href } from '../../../lib/url';
-import { nextAfter } from '../../../data/art';
+import { nextAfter, works } from '../../../data/art';
+import { graph, work } from '../../../lib/schema';
+const self = works.find((w) => w.slug === 'a-walk-through-history')!;
 import '../../../styles/home.css';
 import '../../../styles/case.css';
 import '../../../styles/art.css';
@@ -51,6 +53,7 @@ const still = await getImage({ src: grid, width: 1920, format: 'webp' });
 const live = href('/art/a-walk-through-history/live');
 ---
 <Sheet
+  schema={graph(work({ name: self.title, description: self.medium + ', ' + self.year, path: '/art/a-walk-through-history', image: '/og-a-walk-through-history.jpg', date: self.year, genre: 'Artwork' }))}
   title="A Walk Through History — Kyle Xu"
   description="A Walk Through History (2026), an interactive procedural animation: one Assassin walks through sixteen centuries of picture-making, from illuminated manuscript to gold-leaf screen, every pixel and every note generated live in the browser, each picture holding finer drawing to zoom into. A fan tribute to Assassin's Creed."
   ogImage="/og-a-walk-through-history.jpg"

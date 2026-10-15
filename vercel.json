@@ -4,5 +4,32 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/portfolio",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/cases/heygen-works",
+      "destination": "/projects/heygen",
+      "statusCode": 301
+    },
+    {
+      "source": "/cases/eaton",
+      "destination": "/projects/eaton",
+      "statusCode": 301
+    },
+    {
+      "source": "/cases/:slug",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/categories/:slug",
+      "destination": "/",
+      "statusCode": 301
+    }
+  ]
 }

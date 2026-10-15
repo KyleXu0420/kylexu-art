@@ -9,7 +9,9 @@ import Figure from '../../../components/Figure.astro';
 import Clips from '../../../components/Clips.astro';
 import CursorLabel from '../../../components/CursorLabel.astro';
 import { href } from '../../../lib/url';
-import { nextAfter } from '../../../data/art';
+import { nextAfter, works } from '../../../data/art';
+import { graph, work } from '../../../lib/schema';
+const self = works.find((w) => w.slug === 'droploft-motion')!;
 import '../../../styles/home.css';
 import '../../../styles/case.css';
 import '../../../styles/art.css';
@@ -32,6 +34,7 @@ const live = href('/art/droploft-motion/live');
 const c = (f: string) => '/art/droploft-motion/clips/' + f + '.mp4';
 ---
 <Sheet
+  schema={graph(work({ name: self.title, description: self.medium + ', ' + self.year, path: '/art/droploft-motion', image: '/og-droploft-motion.jpg', date: self.year, genre: 'Artwork' }))}
   title="Droploft motion identity — Kyle Xu"
   description="The Droploft mark in motion (2026): a reveal, ingest and put-away, and a system of gaps in the mark's own bars that shows what the product is doing — taking something in, working on it, done, or refusing. Every frame computed in code."
   ogImage="/og-droploft-motion.jpg"

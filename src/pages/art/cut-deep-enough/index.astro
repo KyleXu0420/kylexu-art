@@ -8,7 +8,9 @@ import Sheet from '../../../layouts/Sheet.astro';
 import Figure from '../../../components/Figure.astro';
 import CursorLabel from '../../../components/CursorLabel.astro';
 import { href } from '../../../lib/url';
-import { nextAfter } from '../../../data/art';
+import { nextAfter, works } from '../../../data/art';
+import { graph, work } from '../../../lib/schema';
+const self = works.find((w) => w.slug === 'cut-deep-enough')!;
 import '../../../styles/home.css';
 import '../../../styles/case.css';
 import '../../../styles/art.css';
@@ -20,6 +22,7 @@ const still = await getImage({ src: morning, width: 1920, format: 'webp' });
 const live = href('/art/cut-deep-enough/live');
 ---
 <Sheet
+  schema={graph(work({ name: self.title, description: self.medium + ', ' + self.year, path: '/art/cut-deep-enough', image: '/og-cut-deep-enough.jpg', date: self.year, genre: 'Artwork' }))}
   title="Cut Deep Enough — Kyle Xu"
   description="Cut Deep Enough (2026), an interactive piece in the browser: the stone floor of a dark room, seen from above, with two lines cut into it. A day passes in two minutes; light reads the words, rain fills them, lichen grows back in them."
   ogImage="/og-cut-deep-enough.jpg"
