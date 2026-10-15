@@ -1,0 +1,149 @@
+---
+import Case from '../../layouts/Case.astro';
+
+// The Dify case, text first. The page follows the narrative brief (kylexu-art-plan/brief/
+// narrative-brief.md §3–4) in the site's own grammar: the decisions first, 1 to 4 — what an agent
+// is made of, where it stops for a person, how its output becomes something the next node can
+// trust, how a run is debugged — then the record: the mandate, the problem, how the model was
+// scaled across the platform, what shipped and how the work was done, and the two side products.
+// Every figure slot is empty until Kyle's exported frames arrive (kylexu-art-plan/dify-sources);
+// every fact the resume and the brief don't settle carries a NEEDS KYLE mark, which the check
+// refuses to ship.
+const droploft = 'https://www.figma.com/design/3nUKfaJoAkZQdlZwzpyFff/Dify-Demos?node-id=0-1';
+---
+<Case
+  title="Dify — Kyle Xu"
+  description="AI Product Designer at Dify (LangGenius), February–June 2026, the second designer there. The Agent in Dify Enterprise, the main app: how a builder sets it up with tools, skills and context, where a run stops for a person, how model output becomes a typed contract, and how a failed run is inspected node by node. Then Droploft and Syncless, built in code."
+  eyebrow="Dify (LangGenius) · Dify Enterprise · AI Product Designer · February – June 2026"
+  deck="An agent calls tools, carries context across nodes, can keep going in the wrong direction, and returns output nobody can predict. Build, run, inspect and recover are one product problem, and I designed them as one."
+  next={{ title: 'Heygen', to: '/projects/heygen', line: 'The video editor, re-architected around the script.' }}
+>
+  <Fragment slot="claim">The Agent in Dify Enterprise, from setup to debugging.</Fragment>
+
+  <section class="col sec snap" aria-label="In thirty seconds">
+    <dl class="facts">
+      <div>
+        <dt class="meta">Scope</dt>
+        <dd>The Agent in Dify Enterprise, the main app: agent setup, variables and files, skills and their authentication states, the states where a workflow waits for a person, structured output, and the debugging surface — run this node, run to here, variable inspect, logs. NEEDS KYLE: Enterprise Edition only, or the open-source main app too?</dd>
+      </div>
+      <div>
+        <dt class="meta">Role</dt>
+        <dd>Product designer on the core platform, the second designer hired. On Droploft and Syncless, design engineer: designed and built in code. NEEDS KYLE: who else was in the room — the first designer, the PM, the engineers you worked with.</dd>
+      </div>
+      <div>
+        <dt class="meta">Shipped</dt>
+        <dd>Agent setup flows, variable and file management, the sandboxed and classic runtimes, 12+ reusable components. NEEDS KYLE: which of Human Input, Structured Output, Run to here and Variable Inspect shipped, which stayed prototype, and any release or changelog links.</dd>
+      </div>
+      <div>
+        <dt class="meta">On the side</dt>
+        <dd>Droploft, a team knowledge base on a four-level information architecture, 30+ screens, designed and built in code with no Figma hand-off. Syncless, a multi-agent workplace concept: three core workflows, an 80-screen prototype in six weeks.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-compose">
+    <div class="head">
+      <h2 id="c-compose"><span class="n">1</span>What an agent is made of</h2>
+    </div>
+    <div class="body">
+      <p>Before this work, an agent's tools, files and instructions lived inside its prompt configuration, where only the engineer who wrote it could see them. I made Agent, Tool, Skill, Context, files and typed variables into product primitives: things a builder picks, names and reuses, with a place in the interface each. The @Agent entry, the instruction editor, Assemble Variables, the tool and reference-file composition, and the skills with their authentication states are the surfaces that came out of it.</p>
+      <p>NEEDS KYLE: one sentence on what a Skill is in Dify's terms, and the one decision here you'd defend first.</p>
+    </div>
+    <!-- figures: @Agent entry and configuration · instruction editing · Assemble Variables · tool + reference-file composition · skills and authentication states -->
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-stop">
+    <div class="head">
+      <h2 id="c-stop"><span class="n">2</span>Where the agent stops</h2>
+    </div>
+    <div class="body">
+      <p>An autonomous run has moments where the next step is consequential enough that a person should take it. I defined where a workflow pauses, what state stays visible while it waits, and how a person's answer hands control back to the agent: Human Input as a node, the awaiting-input state, the input and hand-off states, breakpoints, and pause, resume and repeated checkpoints on the same run.</p>
+      <p>NEEDS KYLE: the case you designed this around — what kind of workflow, what the consequential step was.</p>
+    </div>
+    <!-- figures: Human Input · awaiting user input · input and handoff states · breakpoints · pause / resume / repeated checkpoints -->
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-typed">
+    <div class="head">
+      <h2 id="c-typed"><span class="n">3</span>Output the next node can trust</h2>
+    </div>
+    <div class="body">
+      <p>A model's output is text until something makes it a contract. Structured Output gives a node a schema, edited visually or as JSON, with defaults, and errors that propagate instead of hiding. Downstream nodes consume the result predictably; when the model fails the schema, the failure is visible where it happened.</p>
+      <p>NEEDS KYLE: whether the generated, editable structured variables shipped, and any number you have on schema failures caught.</p>
+    </div>
+    <!-- figures: Structured Output schema · visual and JSON editing · default values · error propagation · generated structured variables -->
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-debug">
+    <div class="head">
+      <h2 id="c-debug"><span class="n">4</span>Debugging a run like software</h2>
+    </div>
+    <div class="body">
+      <p>When a graph of nodes goes wrong, running the whole thing again is the slowest way to find out why. Run this node, Run to here, step and full run, Variable Inspect, View Internals, and the logs and tracing let an author isolate one failure, read the intermediate values, see where execution diverged, and fix it without another full run.</p>
+      <p>NEEDS KYLE: which of these existed before you, which you designed, and one debugging story from a real user if you have it.</p>
+    </div>
+    <!-- figures: Run this node · Run to here · step and full run · Variable Inspect · View Internals · logs and tracing -->
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-record">
+    <div class="head">
+      <h2 id="c-record"><span class="n">The record</span>The mandate, the platform, the side products</h2>
+    </div>
+    <div class="body">
+      <p>The four decisions are the case. What follows is the ground they stood on and what else the four months held.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-mandate">
+    <div class="head">
+      <h2 id="c-mandate"><span class="n">5</span>From node builder to agent platform</h2>
+    </div>
+    <div class="body">
+      <p>NEEDS KYLE: the stage Dify was at when you joined (what the product could do, what it was becoming), why the second design hire mattered in practice — what had no pattern yet and had to be defined — and what you actually owned versus advised on.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-problem">
+    <div class="head">
+      <h2 id="c-problem"><span class="n">6</span>Why an agent isn't a form or a chat</h2>
+    </div>
+    <div class="body">
+      <p>A form takes input and returns a result. A chat takes a message and returns a message. An agent calls tools, carries context from node to node, may continue in the wrong direction for several steps, returns output that differs run to run, and needs a person to step in and an author to debug it. Tool use, long-running state and nondeterministic output make build, run, inspect and recover one connected problem; the four decisions above are the four places it surfaces.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-scale">
+    <div class="head">
+      <h2 id="c-scale"><span class="n">7</span>One model across the platform</h2>
+    </div>
+    <div class="body">
+      <p>The same primitives and states then carried into the rest of the platform: skills, the node taxonomy, tool permissions, the sandboxed runtime and the migration from the classic runtime, collaboration and canvas governance. Each of those had been a one-off product and engineering decision; with one interaction model they became instances of it.</p>
+      <p>NEEDS KYLE: two concrete examples of a decision the shared model made unnecessary.</p>
+    </div>
+    <!-- figures: skills · node taxonomy · tool permissions · sandboxed runtime · classic-runtime migration · collaboration / canvas governance -->
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-shipped">
+    <div class="head">
+      <h2 id="c-shipped"><span class="n">8</span>How the work was done, and what shipped</h2>
+    </div>
+    <div class="body">
+      <p>NEEDS KYLE: shipped scope; release or changelog links; PRs you'd point to; product documentation; user feedback; coded prototypes; and one limitation or trade-off you'd own. No adoption or efficiency numbers unless they exist.</p>
+    </div>
+  </section>
+
+  <section class="col sec chap" aria-labelledby="c-side">
+    <div class="head">
+      <h2 id="c-side"><span class="n">9</span>Droploft and Syncless</h2>
+    </div>
+    <div class="body">
+      <p><a class="ref" href={droploft} rel="noopener">Droploft</a> is a team knowledge base, a durable place for the things AI produces. I designed and built it in code with Claude Code, with no Figma hand-off: a four-level information architecture, knowledge-graph patterns, publish-ready HTML flows, more than 30 screens, a design system of living tokens, and eight landing pages. Syncless is a concept for a multi-agent workplace: three core workflows with human-in-the-loop patterns, an 80-screen prototype in six weeks. Both get their own pages; for now the Droploft file stands in.</p>
+      <p>NEEDS KYLE: the public Droploft links (woven-app-phi.vercel.app/today, current-source.vercel.app) and the sentence on why the public product is named Woven.</p>
+    </div>
+  </section>
+
+  <Fragment slot="close">
+    <p class="stance">An agent is only as usable as the places where it stops and the places where you can look inside.</p>
+    <p>That is what the four decisions have in common. The composition makes the agent legible before it runs; the stops and the typed output keep a person in control while it runs; the debugging surface makes a bad run something you can read instead of something you repeat. NEEDS KYLE: is this the line you'd stand behind, or do you want the close to say something else?</p>
+  </Fragment>
+</Case>
